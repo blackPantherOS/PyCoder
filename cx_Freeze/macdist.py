@@ -187,6 +187,9 @@ class bdist_mac(Command):
            a Qt application."""
         if self.qt_menu_nib:
             return self.qt_menu_nib
+        elif any(n.startswith("PyQt5.QtCore")
+                 for n in os.listdir(self.binDir)):
+            from PyQt5 import QtCore
         elif any(n.startswith("PyQt4.QtCore")
                  for n in os.listdir(self.binDir)):
             from PyQt4 import QtCore
