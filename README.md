@@ -1,8 +1,7 @@
 PyCoder - The LightWare Python IDE based on Qt5
 =====
-
-Developing by blackPanther OS Project - www.blackpanther.hu
-Credits: Harrison Amoatey (Qt4 version develompent)
+   Developing by blackPanther OS Project - www.blackpanther.hu    
+   Credits: Harrison Amoatey (Qt4 version develompent)
 
 ##  Python 3 IDE
 
@@ -45,7 +44,7 @@ Then perhaps:
 
 ### Latest version: 0.1.1 
 
-* is a alpha 1
+* is an alpha 1 (not released)
 
 ### Screenshots
-![Alt text](/Resources/screenshots/pycoder.png "1")
+![Alt text](/Resources/screenshots/pycoder.png "PyCoder running on blackPanther OS")
