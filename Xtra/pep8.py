@@ -52,6 +52,10 @@ import sys
 import re
 import time
 import inspect
+
+if not hasattr(inspect, 'getargspec'):
+    inspect.getargspec = inspect.getfullargspec
+
 import keyword
 import tokenize
 from optparse import OptionParser

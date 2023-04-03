@@ -1,20 +1,35 @@
-import _ast
-from _ast import *
+import ast
+import sys
+from ast import *  # noqa: F401,F403
 
 from rope.base import fscommands
 
+try:
+    from ast import _const_node_type_names
+except ImportError:
+    # backported from stdlib `ast`
+    assert sys.version_info < (3, 8)
+    _const_node_type_names = {
+        bool: "NameConstant",  # should be before int
+        type(None): "NameConstant",
+        int: "Num",
+        float: "Num",
+        complex: "Num",
+        str: "Str",
+        bytes: "Bytes",
+        type(...): "Ellipsis",
+    }
 
-def parse(source, filename='<string>'):
-    # NOTE: the raw string should be given to `compile` function
+
+def parse(source, filename="<string>", *args, **kwargs):  # type: ignore
     if isinstance(source, str):
         source = fscommands.unicode_to_file_data(source)
-    source = source.decode()
-    if '\r' in source:
-        source = source.replace('\r\n', '\n').replace('\r', '\n')
-    if not source.endswith('\n'):
-        source += '\n'
+    if b"\r" in source:
+        source = source.replace(b"\r\n", b"\n").replace(b"\r", b"\n")
+    if not source.endswith(b"\n"):
+        source += b"\n"
     try:
-        return compile(source.encode(), filename, 'exec', _ast.PyCF_ONLY_AST)
+        return ast.parse(source, filename=filename, *args, **kwargs)
     except (TypeError, ValueError) as e:
         error = SyntaxError()
         error.lineno = 1
@@ -23,46 +38,45 @@ def parse(source, filename='<string>'):
         raise error
 
 
-def walk(node, walker):
-    """Walk the syntax tree"""
-    method_name = '_' + node.__class__.__name__
-    method = getattr(walker, method_name, None)
-    if method is not None:
-        return method(node)
-    for child in get_child_nodes(node):
-        walk(child, walker)
+def call_for_nodes(node, callback):
+    """
+    Pre-order depth-first traversal of AST nodes, calling `callback(node)` for
+    each node visited.
 
+    When each node is visited, `callback(node)` will be called with the visited
+    `node`, then its children node will be visited.
 
-def get_child_nodes(node):
-    if isinstance(node, _ast.Module):
-        return node.body
-    result = []
-    if node._fields is not None:
-        for name in node._fields:
-            child = getattr(node, name)
-            if isinstance(child, list):
-                for entry in child:
-                    if isinstance(entry, _ast.AST):
-                        result.append(entry)
-            if isinstance(child, _ast.AST):
-                result.append(child)
-    return result
+    If `callback(node)` returns `True` for a node, then the descendants of that
+    node will not be visited.
 
-
-def call_for_nodes(node, callback, recursive=False):
-    """If callback returns `True` the child nodes are skipped"""
+    See _ResultChecker._find_node for an example.
+    """
     result = callback(node)
-    if recursive and not result:
-        for child in get_child_nodes(node):
-            call_for_nodes(child, callback, recursive)
+    if not result:
+        for child in ast.iter_child_nodes(node):
+            call_for_nodes(child, callback)
 
 
-def get_children(node):
-    result = []
-    if node._fields is not None:
-        for name in node._fields:
-            if name in ['lineno', 'col_offset']:
-                continue
-            child = getattr(node, name)
-            result.append(child)
-    return result
+class RopeNodeVisitor(ast.NodeVisitor):
+    def visit(self, node):
+        """Modified from ast.NodeVisitor to match rope's existing Visitor implementation"""
+        method = "_" + node.__class__.__name__
+        visitor = getattr(self, method, self.generic_visit)
+        return visitor(node)
+
+
+def get_const_subtype_name(node):
+    """Get pre-3.8 ast node name"""
+    # fmt: off
+    assert sys.version_info >= (3, 8), "This should only be called in Python 3.8 and above"
+    # fmt: on
+    assert isinstance(node, ast.Constant)
+    return _const_node_type_names[type(node.value)]
+
+
+def get_node_type_name(node):
+    return (
+        get_const_subtype_name(node)
+        if isinstance(node, ast.Constant)
+        else node.__class__.__name__
+    )

@@ -2,13 +2,14 @@ import datetime
 import difflib
 import os
 import time
-import warnings
+from typing import Union
 
 import rope.base.fscommands
-from rope.base import taskhandle, exceptions, utils
+from rope.base import exceptions, taskhandle, utils
+from rope.base.fscommands import FileContent
 
 
-class Change(object):
+class Change:
     """The base class for changes
 
     Rope refactorings return `Change` objects.  They can be previewed,
@@ -17,13 +18,13 @@ class Change(object):
 
     def do(self, job_set=None):
         """Perform the change
-        
+
         .. note:: Do use this directly.  Use `Project.do()` instead.
         """
 
     def undo(self, job_set=None):
         """Perform the change
-        
+
         .. note:: Do use this directly.  Use `History.undo()` instead.
         """
 
@@ -59,7 +60,7 @@ class ChangeSet(Change):
         self.description = description
         self.time = timestamp
 
-    def do(self, job_set=taskhandle.NullJobSet()):
+    def do(self, job_set=taskhandle.DEFAULT_JOB_SET):
         try:
             done = []
             for change in self.changes:
@@ -71,7 +72,7 @@ class ChangeSet(Change):
                 change.undo()
             raise
 
-    def undo(self, job_set=taskhandle.NullJobSet()):
+    def undo(self, job_set=taskhandle.DEFAULT_JOB_SET):
         try:
             done = []
             for change in reversed(self.changes):
@@ -86,26 +87,26 @@ class ChangeSet(Change):
         self.changes.append(change)
 
     def get_description(self):
-        result = [str(self) + ':\n\n\n']
+        result = [str(self) + ":\n\n\n"]
         for change in self.changes:
             result.append(change.get_description())
-            result.append('\n')
-        return ''.join(result)
+            result.append("\n")
+        return "".join(result)
 
     def __str__(self):
         if self.time is not None:
             date = datetime.datetime.fromtimestamp(self.time)
             if date.date() == datetime.date.today():
-                string_date = 'today'
+                string_date = "today"
             elif date.date() == (datetime.date.today() - datetime.timedelta(1)):
-                string_date = 'yesterday'
+                string_date = "yesterday"
             elif date.year == datetime.date.today().year:
-                string_date = date.strftime('%b %d')
+                string_date = date.strftime("%b %d")
             else:
-                string_date = date.strftime('%d %b, %Y')
-            string_time = date.strftime('%H:%M:%S')
-            string_time = '%s %s ' % (string_date, string_time)
-            return self.description + ' - ' + string_time
+                string_date = date.strftime("%d %b, %Y")
+            string_time = date.strftime("%H:%M:%S")
+            string_time = f"{string_date} {string_time} "
+            return self.description + " - " + string_time
         return self.description
 
     def get_changed_resources(self):
@@ -116,15 +117,17 @@ class ChangeSet(Change):
 
 
 def _handle_job_set(function):
-    """A decorator for handling `taskhandle.JobSet`\s
+    """A decorator for handling `taskhandle.JobSet`
 
-    A decorator for handling `taskhandle.JobSet`\s for `do` and `undo`
-    methods of `Change`\s.
+    A decorator for handling `taskhandle.JobSet` for `do` and `undo`
+    methods of `Change`.
     """
-    def call(self, job_set=taskhandle.NullJobSet()):
+
+    def call(self, job_set=taskhandle.DEFAULT_JOB_SET):
         job_set.started_job(str(self))
         function(self)
         job_set.finished_job()
+
     return call
 
 
@@ -152,12 +155,11 @@ class ChangeContents(Change):
     @_handle_job_set
     def undo(self):
         if self.old_contents is None:
-            raise exceptions.HistoryError(
-                'Undoing a change that is not performed yet!')
+            raise exceptions.HistoryError("Undoing a change that is not performed yet!")
         self._operations.write_file(self.resource, self.old_contents)
 
     def __str__(self):
-        return 'Change <%s>' % self.resource.path
+        return "Change <%s>" % self.resource.path
 
     def get_description(self):
         new = self.new_contents
@@ -166,11 +168,14 @@ class ChangeContents(Change):
             if self.resource.exists():
                 old = self.resource.read()
             else:
-                old = ''
+                old = ""
         result = difflib.unified_diff(
-            old.splitlines(True), new.splitlines(True),
-            'a/' + self.resource.path, 'b/' + self.resource.path)
-        return ''.join(list(result))
+            old.splitlines(True),
+            new.splitlines(True),
+            "a/" + self.resource.path,
+            "b/" + self.resource.path,
+        )
+        return "".join(list(result))
 
     def get_changed_resources(self):
         return [self.resource]
@@ -205,11 +210,13 @@ class MoveResource(Change):
         self._operations.move(self.new_resource, self.resource)
 
     def __str__(self):
-        return 'Move <%s>' % self.resource.path
+        return "Move <%s>" % self.resource.path
 
     def get_description(self):
-        return 'rename from %s\nrename to %s' % (self.resource.path,
-                                                 self.new_resource.path)
+        return "rename from {}\nrename to {}".format(
+            self.resource.path,
+            self.new_resource.path,
+        )
 
     def get_changed_resources(self):
         return [self.resource, self.new_resource]
@@ -235,19 +242,19 @@ class CreateResource(Change):
         self._operations.remove(self.resource)
 
     def __str__(self):
-        return 'Create Resource <%s>' % (self.resource.path)
+        return "Create Resource <%s>" % (self.resource.path)
 
     def get_description(self):
-        return 'new file %s' % (self.resource.path)
+        return "new file %s" % (self.resource.path)
 
     def get_changed_resources(self):
         return [self.resource]
 
     def _get_child_path(self, parent, name):
-        if parent.path == '':
+        if parent.path == "":
             return name
         else:
-            return parent.path + '/' + name
+            return parent.path + "/" + name
 
 
 class CreateFolder(CreateResource):
@@ -258,7 +265,7 @@ class CreateFolder(CreateResource):
 
     def __init__(self, parent, name):
         resource = parent.project.get_folder(self._get_child_path(parent, name))
-        super(CreateFolder, self).__init__(resource)
+        super().__init__(resource)
 
 
 class CreateFile(CreateResource):
@@ -269,7 +276,7 @@ class CreateFile(CreateResource):
 
     def __init__(self, parent, name):
         resource = parent.project.get_file(self._get_child_path(parent, name))
-        super(CreateFile, self).__init__(resource)
+        super().__init__(resource)
 
 
 class RemoveResource(Change):
@@ -290,11 +297,10 @@ class RemoveResource(Change):
     # TODO: Undoing remove operations
     @_handle_job_set
     def undo(self):
-        raise NotImplementedError(
-            'Undoing `RemoveResource` is not implemented yet.')
+        raise NotImplementedError("Undoing `RemoveResource` is not implemented yet.")
 
     def __str__(self):
-        return 'Remove <%s>' % (self.resource.path)
+        return "Remove <%s>" % (self.resource.path)
 
     def get_changed_resources(self):
         return [self.resource]
@@ -309,12 +315,12 @@ def count_changes(change):
         return result
     return 1
 
+
 def create_job_set(task_handle, change):
     return task_handle.create_jobset(str(change), count_changes(change))
 
 
-class _ResourceOperations(object):
-
+class _ResourceOperations:
     def __init__(self, project):
         self.project = project
         self.fscommands = project.fscommands
@@ -325,8 +331,15 @@ class _ResourceOperations(object):
             return self.direct_commands
         return self.fscommands
 
-    def write_file(self, resource, contents):
-        data = rope.base.fscommands.unicode_to_file_data(contents)
+    def write_file(self, resource, contents: Union[str, FileContent]):
+        data: FileContent
+        if not isinstance(contents, bytes):
+            data = rope.base.fscommands.unicode_to_file_data(
+                contents,
+                newlines=resource.newlines,
+            )
+        else:
+            data = contents
         fscommands = self._get_fscommands(resource)
         fscommands.write(resource.real_path, data)
         for observer in list(self.project.observers):
@@ -340,7 +353,7 @@ class _ResourceOperations(object):
 
     def create(self, resource):
         if resource.is_folder():
-            self._create_resource(resource.path, kind='folder')
+            self._create_resource(resource.path, kind="folder")
         else:
             self._create_resource(resource.path)
         for observer in list(self.project.observers):
@@ -352,42 +365,39 @@ class _ResourceOperations(object):
         for observer in list(self.project.observers):
             observer.resource_removed(resource)
 
-    def _create_resource(self, file_name, kind='file'):
+    def _create_resource(self, file_name, kind="file"):
         resource_path = self.project._get_resource_path(file_name)
         if os.path.exists(resource_path):
-            raise exceptions.RopeError('Resource <%s> already exists'
-                                       % resource_path)
+            raise exceptions.RopeError("Resource <%s> already exists" % resource_path)
         resource = self.project.get_file(file_name)
         if not resource.parent.exists():
             raise exceptions.ResourceNotFoundError(
-                'Parent folder of <%s> does not exist' % resource.path)
+                "Parent folder of <%s> does not exist" % resource.path
+            )
         fscommands = self._get_fscommands(resource)
         try:
-            if kind == 'file':
+            if kind == "file":
                 fscommands.create_file(resource_path)
             else:
                 fscommands.create_folder(resource_path)
-        except IOError as e:
+        except OSError as e:
             raise exceptions.RopeError(e)
 
 
 def _get_destination_for_move(resource, destination):
     dest_path = resource.project._get_resource_path(destination)
     if os.path.isdir(dest_path):
-        if destination != '':
-            return destination + '/' + resource.name
+        if destination != "":
+            return destination + "/" + resource.name
         else:
             return resource.name
     return destination
 
 
-class ChangeToData(object):
-
+class ChangeToData:
     def convertChangeSet(self, change):
         description = change.description
-        changes = []
-        for child in change.changes:
-            changes.append(self(child))
+        changes = [self(child) for child in change.changes]
         return (description, changes, change.time)
 
     def convertChangeContents(self, change):
@@ -406,12 +416,11 @@ class ChangeToData(object):
         change_type = type(change)
         if change_type in (CreateFolder, CreateFile):
             change_type = CreateResource
-        method = getattr(self, 'convert' + change_type.__name__)
+        method = getattr(self, "convert" + change_type.__name__)
         return (change_type.__name__, method(change))
 
 
-class DataToChange(object):
-
+class DataToChange:
     def __init__(self, project):
         self.project = project
 
@@ -444,5 +453,5 @@ class DataToChange(object):
         return RemoveResource(resource)
 
     def __call__(self, data):
-        method = getattr(self, 'make' + data[0])
+        method = getattr(self, "make" + data[0])
         return method(*data[1])

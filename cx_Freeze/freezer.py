@@ -1,802 +1,1213 @@
-"""
-Base class for freezing scripts into executables.
-"""
+"""The core class for freezing scripts into executables."""
 
-import datetime
-import distutils.sysconfig
-import imp
+from __future__ import annotations
+
 import marshal
 import os
 import shutil
-import socket
 import stat
 import struct
 import sys
+import sysconfig
 import time
-import zipfile
+from abc import abstractmethod
+from importlib.util import MAGIC_NUMBER
+from pathlib import Path
+from typing import Any
+from zipfile import ZIP_DEFLATED, ZIP_STORED, PyZipFile, ZipInfo
 
-import cx_Freeze
+from ._compat import IS_MACOS, IS_MINGW, IS_WINDOWS, cached_property
+from .common import (
+    IncludesList,
+    InternalIncludesList,
+    get_resource_file_path,
+    process_path_specs,
+)
+from .exception import ConfigError
+from .executable import Executable
+from .finder import ModuleFinder
+from .module import ConstantsModule, Module
+from .parser import ELFParser, Parser, PEParser
 
-__all__ = [ "ConfigError", "ConstantsModule", "Executable", "Freezer" ]
+if IS_WINDOWS or IS_MINGW:
+    from . import winmsvcr
+    from .winversioninfo import VersionInfo
 
-EXTENSION_LOADER_SOURCE = \
-"""
-def __bootstrap__():
-    import imp, os, sys
-    global __bootstrap__, __loader__
-    __loader__ = None; del __bootstrap__, __loader__
+    try:
+        from .util import AddIcon, GetSystemDir, GetWindowsDir, UpdateCheckSum
+    except ImportError:
+        pass
+elif IS_MACOS:
+    from .darwintools import DarwinFile, DarwinFileTracker, MachOReference
 
-    found = False
-    for p in sys.path:
-        if not os.path.isdir(p):
-            continue
-        f = os.path.join(p, "%s")
-        if not os.path.exists(f):
-            continue
-        m = imp.load_dynamic(__name__, f)
-        import sys
-        sys.modules[__name__] = m
-        found = True
-        break
-    if not found:
-        del sys.modules[__name__]
-        raise ImportError("No module named %%s" %% __name__)
-__bootstrap__()
-"""
+__all__ = ["ConfigError", "ConstantsModule", "Executable", "Freezer"]
 
 
-MSVCR_MANIFEST_TEMPLATE = """
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
-<noInheritable/>
-<assemblyIdentity
-    type="win32"
-    name="Microsoft.VC90.CRT"
-    version="9.0.21022.8"
-    processorArchitecture="{PROC_ARCH}"
-    publicKeyToken="1fc8b3b9a1e18e3b"/>
-<file name="MSVCR90.DLL"/>
-<file name="MSVCM90.DLL"/>
-<file name="MSVCP90.DLL"/>
-</assembly>
-"""
+class Freezer:
+    def __new__(cls, *args, **kwargs):
+        # create instance of appropriate sub-class, depending on the platform.
+        instance: Freezer
+        if IS_WINDOWS or IS_MINGW:
+            instance = super().__new__(WinFreezer)
+        elif IS_MACOS:
+            instance = super().__new__(DarwinFreezer)
+        else:  # assume any other platform would be handled by LinuxFreezer
+            instance = super().__new__(LinuxFreezer)
+        return instance
 
-def process_path_specs(specs):
-    """Prepare paths specified as config.
-    
-    The input is a list of either strings, or 2-tuples (source, target).
-    Where single strings are supplied, the basenames are used as targets.
-    Where targets are given explicitly, they must not be absolute paths.
-    
-    Returns a list of 2-tuples, or throws ConfigError if something is wrong
-    in the input.
-    """
-    processedSpecs = []
-    for spec in specs:
-        if not isinstance(spec, (list, tuple)):
-            source = spec
-            target = None
-        elif len(spec) != 2:
-            raise ConfigError("path spec must be a list or tuple of "
-                    "length two")
+    def __init__(
+        self,
+        executables: list[Executable],
+        constantsModule: ConstantsModule | None = None,
+        includes: list[str] | None = None,
+        excludes: list[str] | None = None,
+        packages: list[str] | None = None,
+        replacePaths: list[str] | None = None,
+        compress: bool = True,
+        optimizeFlag: int = 0,
+        path: list[str | Path] | None = None,
+        targetDir: str | Path | None = None,
+        binIncludes: list[str] | None = None,
+        binExcludes: list[str] | None = None,
+        binPathIncludes: list[str] | None = None,
+        binPathExcludes: list[str] | None = None,
+        includeFiles: IncludesList | None = None,
+        zipIncludes: IncludesList | None = None,
+        silent: bool | int = 0,
+        metadata: Any = None,
+        includeMSVCR: bool = False,
+        zipIncludePackages: list[str] | None = None,
+        zipExcludePackages: list[str] | None = None,
+    ):
+        self.executables: list[Executable] = list(executables)
+        if constantsModule is None:
+            constantsModule = ConstantsModule()
+        self.constants_module: ConstantsModule = constantsModule
+        self.includes: list[str] = list(includes or [])
+        self.excludes: list[str] = list(excludes or [])
+        self.packages: set[str] = set(packages or [])
+        self.replacePaths: list[str] = list(replacePaths or [])
+        self.compress = True if compress is None else compress
+        self.optimize_flag: int = optimizeFlag
+        self.path: list[str] | None = self._validate_path(path)
+        self.include_msvcr: bool = includeMSVCR
+        self.targetdir = targetDir
+        self.bin_includes: list[str] | None = binIncludes
+        self.bin_excludes: list[str] | None = binExcludes
+        self.bin_path_includes: list[str] | None = binPathIncludes
+        self.bin_path_excludes: list[str] | None = binPathExcludes
+        self.include_files: InternalIncludesList = process_path_specs(
+            includeFiles
+        )
+        self.zip_includes: InternalIncludesList = process_path_specs(
+            zipIncludes
+        )
+        if isinstance(silent, bool):
+            if silent:
+                self.silent = 1
+            else:
+                self.silent = 0
         else:
-            source, target = spec
-        source = os.path.normpath(source)
-        if not target:
-            target = os.path.basename(source)
-        elif os.path.isabs(target):
-            raise ConfigError("target path for include file may not be "
-                    "an absolute path")
-        processedSpecs.append((source, target))
-    return processedSpecs
+            self.silent = silent
+        self.metadata: Any = metadata
+        self.zipIncludePackages: list[str] | None = zipIncludePackages
+        self.zipExcludePackages: list[str] | None = zipExcludePackages
+        self._verify_configuration()
 
+    @property
+    def targetdir(self) -> Path:
+        return self._targetdir
 
-class Freezer(object):
+    @targetdir.setter
+    def targetdir(self, path: str | Path | None):
+        if path is None:
+            platform = sysconfig.get_platform()
+            python_version = sysconfig.get_python_version()
+            path = f"build/exe.{platform}-{python_version}"
+        path = Path(path).resolve()
+        if os.fspath(path) in self.path:
+            raise ConfigError(
+                "the build_exe directory cannot be used as search path"
+            )
+        if path.is_dir():
+            # starts in a clean directory
+            try:
+                shutil.rmtree(path)
+            except OSError:
+                raise ConfigError(
+                    "the build_exe directory cannot be cleaned"
+                ) from None
+        self._targetdir: Path = path
 
-    def __init__(self, executables, constantsModules = [], includes = [],
-            excludes = [], packages = [], replacePaths = [], compress = None,
-            optimizeFlag = 0, copyDependentFiles = None, initScript = None,
-            base = None, path = None, createLibraryZip = None,
-            appendScriptToExe = None, appendScriptToLibrary = None,
-            targetDir = None, binIncludes = [], binExcludes = [],
-            binPathIncludes = [], binPathExcludes = [], icon = None,
-            includeFiles = [], zipIncludes = [], silent = False,
-            namespacePackages = [], metadata = None,
-            includeMSVCR = False):
-        self.executables = list(executables)
-        self.constantsModules = list(constantsModules)
-        self.includes = list(includes)
-        self.excludes = list(excludes)
-        self.packages = list(packages)
-        self.namespacePackages = list(namespacePackages)
-        self.replacePaths = list(replacePaths)
-        self.compress = compress
-        self.optimizeFlag = optimizeFlag
-        self.copyDependentFiles = copyDependentFiles
-        self.initScript = initScript
-        self.base = base
-        self.path = path
-        self.createLibraryZip = createLibraryZip
-        self.includeMSVCR = includeMSVCR
-        self.appendScriptToExe = appendScriptToExe
-        self.appendScriptToLibrary = appendScriptToLibrary
-        self.targetDir = targetDir
-        self.binIncludes = [os.path.normcase(n) \
-                for n in self._GetDefaultBinIncludes() + binIncludes]
-        self.binExcludes = [os.path.normcase(n) \
-                for n in self._GetDefaultBinExcludes() + binExcludes]
-        self.binPathIncludes = [os.path.normcase(n) for n in binPathIncludes]
-        self.binPathExcludes = [os.path.normcase(n) \
-                for n in self._GetDefaultBinPathExcludes() + binPathExcludes]
-        self.icon = icon
-        self.includeFiles = process_path_specs(includeFiles)
-        self.zipIncludes = process_path_specs(zipIncludes)
-        self.silent = silent
-        self.metadata = metadata
-        self._VerifyConfiguration()
-
-    def _AddVersionResource(self, fileName):
-        try:
-            from win32verstamp import stamp
-        except:
-            print("*** WARNING *** unable to create version resource")
-            print("install pywin32 extensions first")
+    def _add_resources(self, exe: Executable) -> None:
+        """Add resources for an executable, platform dependent."""
+        # Copy icon into application. (Overridden on Windows)
+        if exe.icon is None:
             return
-        versionInfo = VersionInfo(self.metadata.version,
-                comments = self.metadata.long_description,
-                description = self.metadata.description,
-                company = self.metadata.author,
-                product = self.metadata.name)
-        stamp(fileName, versionInfo)
+        target_icon = self.targetdir / exe.icon.name
+        self._copy_file(exe.icon, target_icon, copy_dependent_files=False)
 
-    def _CopyFile(self, source, target, copyDependentFiles = False,
-            includeMode = False):
-        normalizedSource = os.path.normcase(os.path.normpath(source))
-        normalizedTarget = os.path.normcase(os.path.normpath(target))
-        if normalizedTarget in self.filesCopied:
+    def _copy_file(
+        self,
+        source: Path,
+        target: Path,
+        copy_dependent_files: bool,
+        include_mode: bool = False,
+    ):
+        if not self._should_copy_file(source):
             return
-        if normalizedSource == normalizedTarget:
+
+        # handle pre-copy tasks, normally on the target path
+        source, target = self._pre_copy_hook(source, target)
+
+        if target in self.files_copied:
             return
-        self._RemoveFile(target)
-        targetDir = os.path.dirname(target)
-        self._CreateDirectory(targetDir)
-        if not self.silent:
-            sys.stdout.write("copying %s -> %s\n" % (source, target))
+        if source == target:
+            return
+        self._create_directory(target.parent)
+        if self.silent < 1:
+            print(f"copying {source} -> {target}")
         shutil.copyfile(source, target)
         shutil.copystat(source, target)
-        if includeMode:
+        if include_mode:
             shutil.copymode(source, target)
-        self.filesCopied[normalizedTarget] = None
-        if copyDependentFiles:
-            for source in self._GetDependentFiles(source):
-                target = os.path.join(targetDir, os.path.basename(source))
-                self._CopyFile(source, target, copyDependentFiles)
+        self.files_copied.add(target)
 
-    def _CreateDirectory(self, path):
-        if not os.path.isdir(path):
-            if not self.silent:
-                sys.stdout.write("creating directory %s\n" % path)
-            os.makedirs(path)
+        # handle post-copy tasks, including copying dependencies
+        self._post_copy_hook(
+            source, target, copy_dependent_files, include_mode
+        )
 
-    def _FreezeExecutable(self, exe):
-        if self.createLibraryZip:
-            finder = self.finder
-        else:
-            finder = self._GetModuleFinder(exe)
-        if exe.script is None:
-            scriptModule = None
-        else:
-            scriptModule = finder.IncludeFile(exe.script, exe.moduleName)
+    def _copy_package_data(self, module: Module, target_dir: Path):
+        """Copy any non-Python files to the target directory."""
+        ignore_patterns = ("__pycache__", "*.py", "*.pyc", "*.pyo")
 
-        self._CopyFile(exe.base, exe.targetName, exe.copyDependentFiles,
-                includeMode = True)
-        if self.includeMSVCR:
-            self._IncludeMSVCR(exe)
-
-        # Copy icon
-        if exe.icon is not None:
-            if sys.platform == "win32":
-                import cx_Freeze.util
-                cx_Freeze.util.AddIcon(exe.targetName, exe.icon)
-            else:
-                targetName = os.path.join(os.path.dirname(exe.targetName),
-                        os.path.basename(exe.icon))
-                self._CopyFile(exe.icon, targetName,
-                        copyDependentFiles = False)
-
-        if not os.access(exe.targetName, os.W_OK):
-            mode = os.stat(exe.targetName).st_mode
-            os.chmod(exe.targetName, mode | stat.S_IWUSR)
-        if self.metadata is not None and sys.platform == "win32":
-            self._AddVersionResource(exe.targetName)
-
-        # Write the zip file of Python modules. If we're using a shared
-        # library.zip this is done by the Freeze method instead.
-        if not exe.appendScriptToLibrary:
-            if exe.appendScriptToExe:
-                fileName = exe.targetName
-            else:
-                baseFileName, ext = os.path.splitext(exe.targetName)
-                fileName = baseFileName + ".zip"
-                self._RemoveFile(fileName)
-            if not self.createLibraryZip and exe.copyDependentFiles:
-                scriptModule = None
-            self._WriteModules(fileName, exe.initScript, finder, exe.compress,
-                    exe.copyDependentFiles, scriptModule)
-
-    def _GetBaseFileName(self, argsSource = None):
-        if argsSource is None:
-            argsSource = self
-        name = argsSource.base
-        if name is None:
-            if argsSource.copyDependentFiles:
-                name = "Console"
-            else:
-                name = "ConsoleKeepPath"
-        ext = ".exe" if sys.platform == "win32" else ""
-        argsSource.base = self._GetFileName("bases", name, ext)
-        if argsSource.base is None:
-            raise ConfigError("no base named %s", name)
-
-    def _GetDefaultBinExcludes(self):
-        """Return the file names of libraries that need not be included because
-           they would normally be expected to be found on the target system or
-           because they are part of a package which requires independent
-           installation anyway."""
-        if sys.platform == "win32":
-            return ["comctl32.dll", "oci.dll", "cx_Logging.pyd"]
-        else:
-            return ["libclntsh.so", "libwtc9.so"]
-
-    def _GetDefaultBinIncludes(self):
-        """Return the file names of libraries which must be included for the
-           frozen executable to work."""
-        if sys.platform == "win32":
-            pythonDll = "python%s%s.dll" % sys.version_info[:2]
-            return [pythonDll, "gdiplus.dll", "mfc71.dll", "msvcp71.dll",
-                    "msvcr71.dll"]
-        else:
-            soName = distutils.sysconfig.get_config_var("INSTSONAME")
-            if soName is None:
-                return []
-            pythonSharedLib = self._RemoveVersionNumbers(soName)
-            return [pythonSharedLib]
-
-    def _GetDefaultBinPathExcludes(self):
-        """Return the paths of directories which contain files that should not
-           be included, generally because they contain standard system
-           libraries."""
-        if sys.platform == "win32":
-            import cx_Freeze.util
-            systemDir = cx_Freeze.util.GetSystemDir()
-            windowsDir = cx_Freeze.util.GetWindowsDir()
-            return [windowsDir, systemDir, os.path.join(windowsDir, "WinSxS")]
-        elif sys.platform == "darwin":
-            return ["/lib", "/usr/lib", "/System/Library/Frameworks"]
-        else:
-            return ["/lib", "/lib32", "/lib64", "/usr/lib", "/usr/lib32",
-                    "/usr/lib64"]
-
-    def _GetDependentFiles(self, path):
-        """Return the file's dependencies using platform-specific tools (the
-           imagehlp library on Windows, otool on Mac OS X and ldd on Linux);
-           limit this list by the exclusion lists as needed"""
-        dependentFiles = self.dependentFiles.get(path)
-        if dependentFiles is None:
-            if sys.platform == "win32":
-                origPath = os.environ["PATH"]
-                os.environ["PATH"] = origPath + os.pathsep + \
-                        os.pathsep.join(sys.path)
-                import cx_Freeze.util
-                try:
-                    dependentFiles = cx_Freeze.util.GetDependentFiles(path)
-                except cx_Freeze.util.BindError:
-                    # Sometimes this gets called when path is not actually a library
-                    # See issue 88
-                    dependentFiles = []
-                os.environ["PATH"] = origPath
-            else:
-                dependentFiles = []
-                if sys.platform == "darwin":
-                    command = 'otool -L "%s"' % path
-                    splitString = " (compatibility"
-                    dependentFileIndex = 0
+        def copy_tree(source_dir: Path, target_dir: Path, excludes: set[str]):
+            self._create_directory(target_dir)
+            for source in source_dir.iterdir():
+                if any(filter(source.match, ignore_patterns)):
+                    continue
+                source_name = source.name
+                if source_name in excludes:
+                    continue
+                target = target_dir / source_name
+                if source.is_dir():
+                    source_subdir = source_dir / source_name
+                    excludes_subdir = {
+                        ".".join(m.split(".")[1:])
+                        for m in excludes
+                        if m.split(".")[0] == source_name
+                    }
+                    copy_tree(source_subdir, target, excludes_subdir)
                 else:
-                    command = 'ldd "%s"' % path
-                    splitString = " => "
-                    dependentFileIndex = 1
-                for line in os.popen(command):
-                    parts = line.expandtabs().strip().split(splitString)
-                    if len(parts) != 2:
-                        continue
-                    dependentFile = parts[dependentFileIndex].strip()
-                    if dependentFile in ("not found", "(file not found)"):
-                        fileName = parts[0]
-                        if fileName not in self.linkerWarnings:
-                            self.linkerWarnings[fileName] = None
-                            message = "WARNING: cannot find %s\n" % fileName
-                            sys.stdout.write(message)
-                        continue
-                    if dependentFile.startswith("("):
-                        continue
-                    pos = dependentFile.find(" (")
-                    if pos >= 0:
-                        dependentFile = dependentFile[:pos].strip()
-                    if dependentFile:
-                        dependentFiles.append(dependentFile)
-                if sys.platform == "darwin":
-                    # Make library paths absolute. This is needed to use
-                    # cx_Freeze on OSX in e.g. a conda-based distribution.
-                    # Note that with @rpath we just assume Python's lib dir,
-                    # which should work in most cases.
-                    dirname = os.path.dirname(path)
-                    dependentFiles = [p.replace('@loader_path', dirname)
-                                      for p in dependentFiles]
-                    dependentFiles = [p.replace('@rpath', sys.prefix + '/lib')
-                                      for p in dependentFiles]
-            dependentFiles = self.dependentFiles[path] = \
-                    [f for f in dependentFiles if self._ShouldCopyFile(f)]
-        return dependentFiles
+                    self._copy_file(source, target, copy_dependent_files=True)
 
-    def _GetFileName(self, dirName, name, ext):
-        if os.path.isabs(name):
-            return name
-        name = os.path.normcase(name)
-        fullDir = os.path.join("Resources", "build", "32bit", dirName)
-        if os.path.isdir(fullDir):
-            for fileName in os.listdir(fullDir):
-                checkName, checkExt = \
-                        os.path.splitext(os.path.normcase(fileName))
-                if name == checkName and ext == checkExt:
-                    return os.path.join(fullDir, fileName)
+        source_dir = module.file.parent
+        module_name = module.name
+        if self.silent < 1:
+            print(f"copying data from package {module_name}...")
+        # do not copy the subfolders which belong to excluded modules
+        excludes = {
+            ".".join(m.split(".")[1:])
+            for m in self.finder.excludes.keys()
+            if m.split(".")[0] == module_name
+        }
+        copy_tree(source_dir, target_dir, excludes)
 
-    def _GetInitScriptFileName(self, argsSource = None):
-        if argsSource is None:
-            argsSource = self
-        name = argsSource.initScript
-        if name is None:
-            if argsSource.copyDependentFiles:
-                name = "Console"
-            else:
-                name = "ConsoleKeepPath"
-        argsSource.initScript = self._GetFileName("initscripts", name, ".py")
-        if argsSource.initScript is None:
-            raise ConfigError("no initscript named %s", name)
+    @abstractmethod
+    def _pre_copy_hook(self, source: Path, target: Path) -> tuple[Path, Path]:
+        """Prepare the source and target paths."""
 
-    def _GetModuleFinder(self, argsSource = None):
-        if argsSource is None:
-            argsSource = self
-        finder = cx_Freeze.ModuleFinder(self.includeFiles, argsSource.excludes,
-                argsSource.path, argsSource.replacePaths,
-                argsSource.copyDependentFiles, compress = argsSource.compress)
-        for name in argsSource.namespacePackages:
-            package = finder.IncludeModule(name, namespace = True)
-            package.ExtendPath()
-        for name in argsSource.includes:
-            finder.IncludeModule(name)
-        for name in argsSource.packages:
-            finder.IncludePackage(name)
+    @abstractmethod
+    def _post_copy_hook(
+        self,
+        source: Path,
+        target: Path,
+        copy_dependent_files: bool,
+        include_mode: bool = False,
+    ):
+        """Post-copy task."""
+
+    def _create_directory(self, path: str | Path):
+        if isinstance(path, str):
+            path = Path(path)
+        if not path.is_dir():
+            if self.silent < 1:
+                print(f"creating directory {path}")
+            path.mkdir(parents=True, exist_ok=True)
+
+    def _freeze_executable(self, exe: Executable) -> None:
+        finder: ModuleFinder = self.finder
+        finder.include_file_as_module(exe.main_script, exe.main_module_name)
+        finder.include_file_as_module(exe.init_script, exe.init_module_name)
+        finder.include_file_as_module(
+            get_resource_file_path("initscripts", "__startup__", ".py")
+        )
+
+        # Ensure the copy of default python libraries
+        dependent_files = self.get_dependent_files(exe.base)
+        if not dependent_files:
+            dependent_files = self.get_dependent_files(Path(sys.executable))
+        python_libs = self._default_bin_includes()
+        for path in self._default_bin_path_includes():
+            for file in python_libs:
+                dependent_file = Path(path, file)
+                if dependent_file.is_file():
+                    dependent_files.add(dependent_file)
+                    break
+        if not dependent_files:
+            if self.silent < 3:
+                print("WARNING: shared libraries not found:", python_libs)
+
+        # Search the C runtimes, using the directory of the python libraries
+        # and the directories of the base executable
+        self._platform_add_extra_dependencies(dependent_files)
+
+        for source in dependent_files:
+            # Store dynamic libraries in appropriate location for platform.
+            self._copy_top_dependency(source)
+            # Once copied, it should be deleted from the list to ensure
+            # it will not be copied again.
+            name = Path(source.name)
+            if name in self.bin_includes:
+                self.bin_includes.remove(name)
+                self.bin_excludes.append(name)
+
+        target_path = self.targetdir / exe.target_name
+        self._copy_file(
+            exe.base,
+            target_path,
+            copy_dependent_files=False,
+            include_mode=True,
+        )
+
+        # copy a file with a the cx_freeze license into frozen application
+        respath = get_resource_file_path(
+            "initscripts", "frozen_application_license", ".txt"
+        )
+        if respath is None:
+            raise Exception("Unable to find license for frozen application.")
+        self._copy_file(
+            respath.absolute(),
+            self.targetdir / "frozen_application_license.txt",
+            copy_dependent_files=False,
+            include_mode=False,
+        )
+
+        if not os.access(target_path, os.W_OK):
+            mode = target_path.stat().st_mode
+            target_path.chmod(mode | stat.S_IWUSR)
+
+        # Add resources like version metadata and icon
+        self._add_resources(exe)
+
+    def _platform_add_extra_dependencies(
+        self, dependent_files: set[Path]
+    ) -> None:
+        """Override with platform specific files to add runtime libraries to
+        the list of dependent_files calculated in _freeze_executable."""
+
+    @abstractmethod
+    def _copy_top_dependency(self, source: Path) -> None:
+        """Called for copying the top dependencies in _freeze_executable."""
+
+    def _default_bin_excludes(self) -> list[str]:
+        """Return the file names of libraries that need not be included because
+        they would normally be expected to be found on the target system or
+        because they are part of a package which requires independent
+        installation anyway.
+        (overridden on Windows)"""
+        return ["libclntsh.so", "libwtc9.so", "ldd"]
+
+    def _default_bin_includes(self) -> list[str]:
+        """Return the file names of libraries which must be included for the
+        frozen executable to work.
+        (overriden on Windows)"""
+        python_shared_libs = []
+        # Miniconda python 3.7-3.9 linux returns a static library to indicate
+        # the usage of libpython-static (a shared library is not used).
+        name = sysconfig.get_config_var("INSTSONAME")
+        if name and not name.endswith(".a"):
+            python_shared_libs.append(self._remove_version_numbers(name))
+        return python_shared_libs
+
+    @abstractmethod
+    def _default_bin_path_excludes(self) -> list[str]:
+        """Return the paths of directories which contain files that should not
+        be included, generally because they contain standard system
+        libraries."""
+
+    @abstractmethod
+    def _default_bin_path_includes(self) -> list[str]:
+        """Return the paths of directories which contain files that should
+        be included."""
+
+    def _get_module_finder(self) -> ModuleFinder:
+        finder = ModuleFinder(
+            self.include_files,
+            self.excludes,
+            self.path,
+            self.replacePaths,
+            self.zipIncludeAllPackages,
+            self.zipExcludePackages,
+            self.zipIncludePackages,
+            self.constants_module,
+            self.zip_includes,
+        )
+        finder.optimize_flag = self.optimize_flag
+        for name in self.includes:
+            finder.include_module(name)
+        for name in self.packages:
+            finder.include_package(name)
         return finder
 
-    def _IncludeMSVCR(self, exe):
-        msvcRuntimeDll = None
-        targetDir = os.path.dirname(exe.targetName)
-        for fullName in self.filesCopied:
-            path, name = os.path.split(os.path.normcase(fullName))
-            if name.startswith("msvcr") and name.endswith(".dll"):
-                msvcRuntimeDll = name
-                for otherName in [name.replace("r", c) for c in "mp"]:
-                    sourceName = os.path.join(self.msvcRuntimeDir, otherName)
-                    if not os.path.exists(sourceName):
-                        continue
-                    targetName = os.path.join(targetDir, otherName)
-                    self._CopyFile(sourceName, targetName)
-                break
+    def _post_freeze_hook(self) -> None:
+        """Platform-specific post-Freeze work."""
 
-        if msvcRuntimeDll is not None and msvcRuntimeDll == "msvcr90.dll":
-            if struct.calcsize("P") == 4:
-                arch = "x86"
-            else:
-                arch = "amd64"
-            manifest = MSVCR_MANIFEST_TEMPLATE.strip().replace("{PROC_ARCH}",
-                    arch)
-            fileName = os.path.join(targetDir, "Microsoft.VC90.CRT.manifest")
-            sys.stdout.write("creating %s\n" % fileName)
-            open(fileName, "w").write(manifest)
-
-    def _PrintReport(self, fileName, modules):
-        sys.stdout.write("writing zip file %s\n\n" % fileName)
-        sys.stdout.write("  %-25s %s\n" % ("Name", "File"))
-        sys.stdout.write("  %-25s %s\n" % ("----", "----"))
+    def _print_report(self, filename: Path, modules: list[Module]) -> None:
+        print(f"writing zip file {filename}\n")
+        print("  {:<25} {}".format("Name", "File"))
+        print("  {:<25} {}".format("----", "----"))
         for module in modules:
             if module.path:
-                sys.stdout.write("P")
+                print("P", end="")
             else:
-                sys.stdout.write("m")
-            sys.stdout.write(" %-25s %s\n" % (module.name, module.file or ""))
-        sys.stdout.write("\n")
+                print("m", end="")
+            print(f" {module.name:<25} {module.file or ''}")
 
-    
-
-    def _RemoveFile(self, path):
-        if os.path.exists(path):
-            os.chmod(path, stat.S_IWRITE)
-            os.remove(path)
-
-    def _RemoveVersionNumbers(self, libName):
+    @staticmethod
+    def _remove_version_numbers(filename: str) -> str:
         tweaked = False
-        parts = libName.split(".")
+        parts = filename.split(".")
         while parts:
             if not parts[-1].isdigit():
                 break
             parts.pop(-1)
             tweaked = True
         if tweaked:
-            libName = ".".join(parts)
-        return libName
+            filename = ".".join(parts)
+        return filename
 
-    def _ShouldCopyFile(self, path):
-        """Return true if the file should be copied to the target machine. This
-           is done by checking the binPathIncludes, binPathExcludes,
-           binIncludes and binExcludes configuration variables using first the
-           full file name, then just the base file name, then the file name
-           without any version numbers.
-           
-           Files are included unless specifically excluded but inclusions take
-           precedence over exclusions."""
+    def _should_copy_file(self, path: Path) -> bool:
+        """Return true if the file should be copied to the target machine.
+        This is done by checking the bin_path_includes, bin_path_excludes,
+        bin_includes and bin_excludes configuration variables using first
+        the full file name, then just the base file name, then the file name
+        without any version numbers.
 
-        # check for C runtime, if desired
-        path = os.path.normcase(path)
-        dirName, fileName = os.path.split(path)
-        if fileName.startswith("msvcr") and fileName.endswith(".dll"):
-            self.msvcRuntimeDir = dirName
-            return self.includeMSVCR
+        Files are included unless specifically excluded but inclusions take
+        precedence over exclusions."""
 
         # check the full path
-        if path in self.binIncludes:
+        if path in self.bin_includes:
             return True
-        if path in self.binExcludes:
+        if path in self.bin_excludes:
             return False
 
         # check the file name by itself (with any included version numbers)
-        if fileName in self.binIncludes:
+        filename = Path(path.name)
+        if filename in self.bin_includes:
             return True
-        if fileName in self.binExcludes:
+        if filename in self.bin_excludes:
             return False
 
         # check the file name by itself (version numbers removed)
-        name = self._RemoveVersionNumbers(fileName)
-        if name in self.binIncludes:
+        filename = Path(self._remove_version_numbers(path.name))
+        if filename in self.bin_includes:
             return True
-        if name in self.binExcludes:
+        if filename in self.bin_excludes:
             return False
 
         # check the path for inclusion/exclusion
-        for path in self.binPathIncludes:
-            if dirName.startswith(path):
+        dirname = path.parent
+        for binpath in self.bin_path_includes:
+            try:
+                dirname.relative_to(binpath)
+            except ValueError:
+                pass
+            else:
                 return True
-        for path in self.binPathExcludes:
-            if dirName.startswith(path):
+        for binpath in self.bin_path_excludes:
+            try:
+                dirname.relative_to(binpath)
+            except ValueError:
+                pass
+            else:
                 return False
 
         return True
 
-    def _VerifyCanAppendToLibrary(self):
-        if not self.createLibraryZip:
-            raise ConfigError("script cannot be appended to library zip if "
-                    "one is not being created")
+    @staticmethod
+    def _validate_path(path: list[str | Path] | None = None) -> list[str]:
+        """Returns valid search path for modules, and fix the path for built-in
+        modules when it differs from the running python built-in modules."""
+        path = list(map(os.fspath, path or sys.path))
+        dynload = get_resource_file_path("bases", "lib-dynload", "")
+        if dynload and dynload.is_dir():
+            # add bases/lib-dynload to the finder path
+            dest_shared = sysconfig.get_config_var("DESTSHARED")
+            if dest_shared:
+                try:
+                    index = path.index(dest_shared)
+                    path.pop(index)
+                except ValueError:
+                    index = 0
+                path.insert(index, os.fspath(dynload))
+        return path
 
-    def _VerifyConfiguration(self):
-        if self.compress is None:
-            self.compress = True
-        if self.copyDependentFiles is None:
-            self.copyDependentFiles = True
-        if self.createLibraryZip is None:
-            self.createLibraryZip = True
-        if self.appendScriptToExe is None:
-            self.appendScriptToExe = False
-        if self.appendScriptToLibrary is None:
-            self.appendScriptToLibrary = \
-                    self.createLibraryZip and not self.appendScriptToExe
-        if self.targetDir is None:
-            self.targetDir = os.path.abspath("dist")
-        self._GetInitScriptFileName()
-        self._GetBaseFileName()
-        if self.path is None:
-            self.path = sys.path
-        if self.appendScriptToLibrary:
-            self._VerifyCanAppendToLibrary()
+    def _verify_configuration(self) -> None:
+        """Verify and normalize names and paths. Raises ConfigError on
+        failure."""
+        filenames = list(self.bin_includes or [])
+        filenames += self._default_bin_includes()
+        self.bin_includes = [Path(name) for name in filenames]
 
-        for sourceFileName, targetFileName in \
-                self.includeFiles + self.zipIncludes:
-            if not os.path.exists(sourceFileName):
-                raise ConfigError("cannot find file/directory named %s",
-                        sourceFileName)
-            if os.path.isabs(targetFileName):
-                raise ConfigError("target file/directory cannot be absolute")
+        filenames = list(self.bin_excludes or [])
+        filenames += self._default_bin_excludes()
+        self.bin_excludes = [Path(name) for name in filenames]
 
-        for executable in self.executables:
-            executable._VerifyConfiguration(self)
+        paths = list(self.bin_path_includes or [])
+        paths += self._default_bin_path_includes()
+        self.bin_path_includes = [
+            name for name in paths if Path(name).is_dir()
+        ]
 
-    def _WriteModules(self, fileName, initScript, finder, compress,
-            copyDependentFiles, scriptModule = None):
-        initModule = finder.IncludeFile(initScript, "cx_Freeze__init__")
-        if scriptModule is None:
-            for module in self.constantsModules:
-                module.Create(finder)
-            modules = [m for m in finder.modules \
-                    if m.name not in self.excludeModules]
+        paths = list(self.bin_path_excludes or [])
+        paths += self._default_bin_path_excludes()
+        self.bin_path_excludes = [
+            name for name in paths if Path(name).is_dir()
+        ]
+
+        if self.zipIncludePackages is None and self.zipExcludePackages is None:
+            self.zipIncludePackages = []
+            self.zipExcludePackages = ["*"]
         else:
-            modules = [initModule, scriptModule]
-            self.excludeModules[initModule.name] = None
-            self.excludeModules[scriptModule.name] = None
-        modules.sort(key = lambda m: m.name)
-        if not self.silent:
-            self._PrintReport(fileName, modules)
-        if scriptModule is None:
-            finder.ReportMissingModules()
+            self.zipIncludePackages = list(self.zipIncludePackages or [])
+            self.zipExcludePackages = list(self.zipExcludePackages or [])
+        self.zipExcludeAllPackages = "*" in self.zipExcludePackages
+        self.zipIncludeAllPackages = "*" in self.zipIncludePackages
+        if self.zipExcludeAllPackages and self.zipIncludeAllPackages:
+            raise ConfigError(
+                "all packages cannot be included and excluded "
+                "from the zip file at the same time"
+            )
+        for name in self.zipIncludePackages:
+            if name in self.zipExcludePackages:
+                raise ConfigError(
+                    f"package {name!r} cannot be both included and "
+                    "excluded from zip file"
+                )
 
-        targetDir = os.path.dirname(fileName)
-        self._CreateDirectory(targetDir)
+    def _write_modules(self, filename: Path, finder: ModuleFinder):
+        finder.include_file_as_module(
+            *self.constants_module.create(finder.modules)
+        )
 
-        # Prepare zip file. This can be library.zip, or named after the
-        # executable, or even appended to the executable.
-        if os.path.exists(fileName):
-            mode = "a"
-        else:
-            mode = "w"
-        outFile = zipfile.PyZipFile(fileName, mode, zipfile.ZIP_DEFLATED)
+        modules = [m for m in finder.modules if m.name not in finder.excludes]
+        modules.sort(key=lambda m: m.name)
 
-        filesToCopy = []
-        for module in modules:
-            if module.code is None and module.file is not None:
-                # Extension module: save a Python loader in the zip file, and
-                # copy the actual file to the build directory, because pyd/so
-                # libraries can't be loaded from a zip file.
-                fileName = os.path.basename(module.file)
-                baseFileName, ext = os.path.splitext(fileName)
-                if baseFileName != module.name and module.name != "zlib":
-                    if "." in module.name:
-                        fileName = module.name + ext
-                    generatedFileName = "ExtensionLoader_%s.py" % \
-                            module.name.replace(".", "_")
-                    module.code = compile(EXTENSION_LOADER_SOURCE % fileName,
-                            generatedFileName, "exec")
-                target = os.path.join(targetDir, fileName)
-                filesToCopy.append((module, target))
+        if self.silent < 1:
+            self._print_report(filename, modules)
+        if self.silent < 2:
+            finder.report_missing_modules()
 
-            if module.code is None:
-                continue
+        target_lib_dir = filename.parent
+        self._create_directory(target_lib_dir)
 
-            fileName = "/".join(module.name.split("."))
-            if module.path:
-                fileName += "/__init__"
-            if module.file is not None and os.path.exists(module.file):
-                mtime = os.stat(module.file).st_mtime
-            else:
-                mtime = time.time()
-            zipTime = time.localtime(mtime)[:6]
-            # starting with Python 3.3 the pyc file format contains the source
-            # size; it is not actually used for anything except determining if
-            # the file is up to date so we can safely set this value to zero
-            if sys.version_info[:2] < (3, 3):
-                header = imp.get_magic() + struct.pack("<i", int(mtime))
-            else:
-                header = imp.get_magic() + struct.pack("<ii", int(mtime), 0)
-            data = header + marshal.dumps(module.code)
-            zinfo = zipfile.ZipInfo(fileName + ".pyc", zipTime)
-            if compress:
-                zinfo.compress_type = zipfile.ZIP_DEFLATED
-            outFile.writestr(zinfo, data)
+        # Prepare zip file
+        compress_type = ZIP_DEFLATED if self.compress else ZIP_STORED
+        with PyZipFile(filename, "w", compress_type) as outfile:
+            files_to_copy: list[tuple[Module, Path]] = []
 
-        for sourceFileName, targetFileName in self.zipIncludes:
-            outFile.write(sourceFileName, targetFileName)
+            for module in modules:
+                # determine if the module should be written to the file system;
+                # a number of packages make the assumption that files that they
+                # require will be found in a location relative to where they
+                # are located on disk; these packages will fail with strange
+                # errors when they are written to a zip file instead
+                include_in_file_system = module.in_file_system
+                mod_name = module.name
+                mod_name_parts = mod_name.split(".")
 
-        outFile.close()
+                # if the module refers to a package, check to see if this
+                # package should be written to the file system
+                if (
+                    include_in_file_system >= 1
+                    and module.path is not None
+                    and module.file is not None
+                ):
+                    parts = mod_name_parts
+                    target_package_dir = target_lib_dir.joinpath(*parts)
+                    if include_in_file_system == 2:
+                        # a few packages are optimized on the hooks,
+                        # so for now create the directory for this package
+                        self._create_directory(target_package_dir)
+
+                    elif not target_package_dir.exists():
+                        # whether the package and its data will be written to
+                        # the file system, any non-Python files are copied at
+                        # this point if the target directory does not already
+                        # exist
+                        self._copy_package_data(module, target_package_dir)
+
+                # if an extension module is found in a package that is to be
+                # included in a zip file, copy the actual file to the build
+                # directory because shared libraries cannot be loaded from a
+                # zip file
+                if (
+                    module.code is None
+                    and module.file is not None
+                    and include_in_file_system == 0
+                ):
+                    parts = mod_name_parts[:-1]
+                    parts.append(module.file.name)
+                    target = target_lib_dir / ".".join(parts)
+                    files_to_copy.append((module, target))
+
+                # starting with Python 3.3 the pyc file format contains the
+                # source size; it is not actually used for anything except
+                # determining if the file is up to date so we can safely set
+                # this value to zero
+                if module.code is not None:
+                    if module.file is not None and module.file.exists():
+                        st = module.file.stat()
+                        mtime = int(st.st_mtime)
+                        size = st.st_size & 0xFFFFFFFF
+                    else:
+                        mtime = int(time.time())
+                        size = 0
+                    header = MAGIC_NUMBER + struct.pack("<iii", 0, mtime, size)
+                    data = header + marshal.dumps(module.code)
+
+                # if the module should be written to the file system, do so
+                if include_in_file_system >= 1 and module.file is not None:
+                    parts = mod_name_parts.copy()
+                    if module.code is None:
+                        parts.pop()
+                        parts.append(module.file.name)
+                        target_name = target_lib_dir.joinpath(*parts)
+                        self._copy_file(
+                            module.file,
+                            target_name,
+                            copy_dependent_files=True,
+                        )
+                    else:
+                        if module.path is not None:
+                            parts.append("__init__")
+                        target_name = target_lib_dir.joinpath(*parts)
+                        target_name = target_name.with_suffix(".pyc")
+                        self._create_directory(target_name.parent)
+                        target_name.write_bytes(data)
+
+                # otherwise, write to the zip file
+                elif module.code is not None:
+                    zipTime = time.localtime(mtime)[:6]
+                    target_name = "/".join(mod_name_parts)
+                    if module.path:
+                        target_name += "/__init__"
+                    zinfo = ZipInfo(target_name + ".pyc", zipTime)
+                    zinfo.compress_type = compress_type
+                    outfile.writestr(zinfo, data)
+
+            # put the distribution files metadata in the zip file
+            dist_cachedir = None
+            for module in modules:
+                if module.distribution:
+                    dist_cachedir = module.distribution.locate_file(".")
+                    break
+            if dist_cachedir is not None:
+                pos = len(dist_cachedir.as_posix()) + 1
+                for name in dist_cachedir.rglob("*"):
+                    if name.is_dir():
+                        continue
+                    outfile.write(name, name.as_posix()[pos:])
+
+            # write any files to the zip file that were requested specially
+            for source_path, target_path in finder.zip_includes:
+                if source_path.is_dir():
+                    pos = len(source_path.as_posix()) + 1
+                    for source_filename in source_path.rglob("*"):
+                        if source_filename.is_dir():
+                            continue
+                        target = target_path / source_filename.as_posix()[pos:]
+                        outfile.write(source_filename, target)
+                else:
+                    outfile.write(source_path, target_path.as_posix())
 
         # Copy Python extension modules from the list built above.
         origPath = os.environ["PATH"]
-        for module, target in filesToCopy:
+        for module, target in files_to_copy:
             try:
                 if module.parent is not None:
-                    path = os.pathsep.join([origPath] + module.parent.path)
+                    path = os.pathsep.join(
+                        [origPath] + list(map(os.fspath, module.parent.path))
+                    )
                     os.environ["PATH"] = path
-                self._CopyFile(module.file, target, copyDependentFiles)
+                self._copy_file(module.file, target, copy_dependent_files=True)
             finally:
                 os.environ["PATH"] = origPath
 
     def Freeze(self):
-        self.finder = None
-        self.excludeModules = {}
-        self.dependentFiles = {}
-        self.filesCopied = {}
-        self.linkerWarnings = {}
-        self.msvcRuntimeDir = None
-        import cx_Freeze.util
-        cx_Freeze.util.SetOptimizeFlag(self.optimizeFlag)
+        self.files_copied: set[Path] = set()
 
-        if self.createLibraryZip:
-            self.finder = self._GetModuleFinder()
+        finder: ModuleFinder = self._get_module_finder()
+        self.finder: ModuleFinder = finder
+
+        # Add the executables to target
         for executable in self.executables:
-            self._FreezeExecutable(executable)
-        if self.createLibraryZip:
-            fileName = os.path.join(self.targetDir, "library.zip")
-            self._RemoveFile(fileName)
-            self._WriteModules(fileName, self.initScript, self.finder,
-                    self.compress, self.copyDependentFiles)
+            self._freeze_executable(executable)
 
-        for sourceFileName, targetFileName in self.includeFiles:
-            if os.path.isdir(sourceFileName):
+        # Write the modules
+        targetdir = self.targetdir
+        library_zip = targetdir / "lib" / "library.zip"
+        self._write_modules(library_zip, finder)
+
+        excluded_dependent_files = self.finder.excluded_dependent_files
+        for source_path, target_path in finder.included_files:
+            copy_dependent_files = source_path not in excluded_dependent_files
+            if source_path.is_dir():
                 # Copy directories by recursing into them.
-                # TODO: Can we use shutil.copytree here?
-                for path, dirNames, fileNames in os.walk(sourceFileName):
-                    shortPath = path[len(sourceFileName) + 1:]
-                    if ".svn" in dirNames:
-                        dirNames.remove(".svn")
-                    if "CVS" in dirNames:
-                        dirNames.remove("CVS")
-                    fullTargetDir = os.path.join(self.targetDir,
-                            targetFileName, shortPath)
-                    self._CreateDirectory(fullTargetDir)
-                    for fileName in fileNames:
-                        fullSourceName = os.path.join(path, fileName)
-                        fullTargetName = os.path.join(fullTargetDir, fileName)
-                        self._CopyFile(fullSourceName, fullTargetName,
-                                copyDependentFiles = False)
+                # Can't use shutil.copytree because we may need dependencies
+                target_base = targetdir / target_path
+                for name in source_path.rglob("*"):
+                    if name.is_dir():
+                        continue
+                    if ".svn" in name.parents:
+                        continue
+                    if "CVS" in name.parents:
+                        continue
+                    fulltarget = target_base / name.relative_to(source_path)
+                    self._create_directory(fulltarget.parent)
+                    self._copy_file(name, fulltarget, copy_dependent_files)
             else:
                 # Copy regular files.
-                fullName = os.path.join(self.targetDir, targetFileName)
-                self._CopyFile(sourceFileName, fullName,
-                        copyDependentFiles = False)
+                fulltarget = targetdir / target_path
+                self._copy_file(source_path, fulltarget, copy_dependent_files)
+
+        # do any platform-specific post-Freeze work
+        self._post_freeze_hook()
 
 
-class ConfigError(Exception):
+class WinFreezer(Freezer, PEParser):
+    def __init__(self, *args, **kwargs):
+        Freezer.__init__(self, *args, **kwargs)
+        PEParser.__init__(self, self.silent)
 
-    def __init__(self, format, *args):
-        self.what = format % args
+        # deal with C-runtime files
+        self.runtime_files: set[str] = set()
+        self._set_runtime_files()
 
-    def __str__(self):
-        return self.what
+    def _add_resources(self, exe: Executable) -> None:
+        target_path: Path = self.targetdir / exe.target_name
 
+        # Change the manifest
+        manifest: str | None = exe.manifest
+        if manifest is not None or exe.uac_admin:
+            if self.silent < 1:
+                print(f"writing manifest -> {target_path}")
+            try:
+                if exe.uac_admin:
+                    manifest = manifest or self.read_manifest(target_path)
+                    manifest = manifest.replace(
+                        "asInvoker", "requireAdministrator"
+                    )
+                self.write_manifest(target_path, manifest)
+            except FileNotFoundError as exc:
+                if self.silent < 3:
+                    print("WARNING:", exc)
+            except RuntimeError as exc:
+                if self.silent < 3:
+                    print(f"WARNING: error parsing {target_path}:", exc)
 
-class Executable(object):
+        # Add version resource
+        if self.metadata is not None:
+            warning_msg = "WARNING: unable to create version resource:"
+            if not self.metadata.version:
+                if self.silent < 3:
+                    print(warning_msg, "version must be specified")
+            else:
+                version = VersionInfo(
+                    self.metadata.version,
+                    comments=self.metadata.long_description,
+                    description=self.metadata.description,
+                    company=self.metadata.author,
+                    product=self.metadata.name,
+                    copyright=exe.copyright,
+                    trademarks=exe.trademarks,
+                    verbose=bool(self.silent < 1),
+                )
+                try:
+                    version.stamp(target_path)
+                except (FileNotFoundError, RuntimeError) as exc:
+                    if self.silent < 3:
+                        print(warning_msg, exc)
 
-    def __init__(self, script, initScript = None, base = None, path = None,
-            targetDir = None, targetName = None, includes = None,
-            excludes = None, packages = None, replacePaths = None,
-            compress = None, copyDependentFiles = None,
-            appendScriptToExe = None, appendScriptToLibrary = None,
-            icon = None, namespacePackages = None, shortcutName = None,
-            shortcutDir = None):
-        self.script = script
-        self.initScript = initScript
-        self.base = base
-        self.path = path
-        self.targetDir = targetDir
-        self.targetName = targetName
-        self.includes = includes
-        self.excludes = excludes
-        self.packages = packages
-        self.namespacePackages = namespacePackages
-        self.replacePaths = replacePaths
-        self.compress = compress
-        self.copyDependentFiles = copyDependentFiles
-        self.appendScriptToExe = appendScriptToExe
-        self.appendScriptToLibrary = appendScriptToLibrary
-        self.icon = icon
-        self.shortcutName = shortcutName
-        self.shortcutDir = shortcutDir
+        # Add icon
+        if exe.icon is not None:
+            try:
+                AddIcon(target_path, exe.icon)
+            except MemoryError:
+                if self.silent < 3:
+                    print("WARNING: MemoryError")
+            except RuntimeError as exc:
+                if self.silent < 3:
+                    print("WARNING:", exc)
+            except OSError as exc:
+                if "\\WindowsApps\\" in sys.base_prefix:
+                    if self.silent < 3:
+                        print("WARNING:", exc)
+                        print(
+                            "WARNING: Because of restrictions on Microsoft "
+                            "Store apps, Python scripts may not have full "
+                            "write access to built executable. "
+                            "You will need to install the full installer."
+                        )
+                else:
+                    raise
 
-    def __repr__(self):
-        return "<Executable script=%s>" % self.script
+        # Update the PE checksum (or fix it in case it is zero)
+        try:
+            UpdateCheckSum(target_path)
+        except MemoryError:
+            if self.silent < 3:
+                print("WARNING: MemoryError")
+        except (RuntimeError, OSError) as exc:
+            if self.silent < 3:
+                print("WARNING:", exc)
 
-    def _VerifyConfiguration(self, freezer):
-        if self.path is None:
-            self.path = freezer.path
-        if self.targetDir is None:
-            self.targetDir = freezer.targetDir
-        if self.includes is None:
-            self.includes = freezer.includes
-        if self.excludes is None:
-            self.excludes = freezer.excludes
-        if self.packages is None:
-            self.packages = freezer.packages
-        if self.namespacePackages is None:
-            self.namespacePackages = freezer.namespacePackages
-        if self.replacePaths is None:
-            self.replacePaths = freezer.replacePaths
-        if self.compress is None:
-            self.compress = freezer.compress
-        if self.copyDependentFiles is None:
-            self.copyDependentFiles = freezer.copyDependentFiles
-        if self.appendScriptToExe is None:
-            self.appendScriptToExe = freezer.appendScriptToExe
-        if self.appendScriptToLibrary is None:
-            self.appendScriptToLibrary = freezer.appendScriptToLibrary
-        if self.initScript is None:
-            self.initScript = freezer.initScript
+    def _copy_top_dependency(self, source: Path) -> None:
+        """Called for copying certain top dependencies in _freeze_executable.
+        We need this as a separate method so that it can be overridden on
+        Darwin and Windows."""
+        # top dependencies go into build root directory on windows
+        # MS VC runtimes are handled in _copy_file/_pre_copy_hook
+        # msys2 libpython depends on libgcc_s_seh and libwinpthread dlls
+        # conda-forge python3x.dll depends on zlib.dll
+        target_dir = self.targetdir
+        target = target_dir / source.name
+        self._copy_file(
+            source, target, copy_dependent_files=False, include_mode=True
+        )
+        for dependent_source in self.get_dependent_files(source):
+            if IS_MINGW:
+                if self._should_copy_file(dependent_source):
+                    self._copy_top_dependency(dependent_source)
+            else:
+                self._copy_file(
+                    source=dependent_source,
+                    target=target_dir / dependent_source.name,
+                    copy_dependent_files=True,
+                )
+
+    def _pre_copy_hook(self, source: Path, target: Path) -> tuple[Path, Path]:
+        """Prepare the source and target paths. Also, adjust the target of
+        C runtime libraries."""
+
+        # fix the target path for C runtime files
+        norm_target_name = target.name.lower()
+        if norm_target_name in self.runtime_files:
+            target = self.targetdir / norm_target_name
+        return source, target
+
+    def _post_copy_hook(
+        self,
+        source: Path,
+        target: Path,
+        copy_dependent_files: bool,
+        include_mode: bool = False,
+    ) -> None:
+        if (
+            copy_dependent_files
+            and source not in self.finder.excluded_dependent_files
+        ):
+            library_dir = self.targetdir / "lib"
+            source_dir = source.parent
+            target_dir = target.parent
+            platform_bin_path = self._platform_bin_path
+            for dependent_source in self.get_dependent_files(source):
+                if not self._should_copy_file(dependent_source):
+                    continue
+                # put the dependency in the target_dir (except C runtime)
+                dependent_srcdir = dependent_source.parent
+                dependent_name = dependent_source.name
+                try:
+                    # dependency located with source or in a subdirectory
+                    relative = dependent_source.relative_to(source_dir)
+                    dependent_target = target_dir / relative
+                except ValueError:
+                    # check if dependency is on default binaries path
+                    if dependent_srcdir in platform_bin_path:
+                        dependent_target = library_dir / dependent_name
+                    else:
+                        # check if dependency is located in a upper level
+                        try:
+                            relative = source_dir.relative_to(dependent_srcdir)
+                            # fix the target_dir - go to the previous level
+                            parts = target_dir.parts[: -len(relative.parts)]
+                            dependent_target = Path(*parts) / dependent_name
+                        except ValueError:
+                            dependent_target = target_dir / dependent_name
+                # check to make sure the dependency is in the correct place
+                # because it can be outside of the python subtree
+                try:
+                    dependent_target.relative_to(library_dir)
+                except ValueError:
+                    dependent_target = library_dir / dependent_name
+                else:
+                    _, dependent_target = self._pre_copy_hook(
+                        dependent_source, dependent_target
+                    )
+                    if dependent_target not in self.files_copied:
+                        for file in self.files_copied:
+                            if file.match(dependent_name):
+                                dependent_target = file
+                                break
+                self._copy_file(
+                    dependent_source, dependent_target, copy_dependent_files
+                )
+
+    def _default_bin_excludes(self) -> list[str]:
+        return ["comctl32.dll", "oci.dll"]
+
+    def _default_bin_includes(self) -> list[str]:
+        python_shared_libs: list[str] = []
+        if IS_MINGW:
+            name = sysconfig.get_config_var("INSTSONAME")
+            if name:
+                python_shared_libs.append(name.replace(".dll.a", ".dll"))
         else:
-            freezer._GetInitScriptFileName(self)
-        if self.base is None:
-            self.base = freezer.base
+            python_shared_libs += [
+                "python%s.dll" % sys.version_info[0],
+                "python%s%s.dll" % sys.version_info[:2],
+            ]
+        return python_shared_libs
+
+    def _default_bin_path_excludes(self) -> list[str]:
+        systemDir = GetSystemDir()
+        windowsDir = GetWindowsDir()
+        return [windowsDir, systemDir, os.path.join(windowsDir, "WinSxS")]
+
+    def _default_bin_path_includes(self) -> list[str]:
+        paths = {Path(path) for path in sys.path if path}
+        paths.update(self._platform_bin_path)
+        # return only valid paths
+        return [os.fspath(path) for path in paths if path.is_dir()]
+
+    @cached_property
+    def _platform_bin_path(self) -> list[Path]:
+        # try to find the paths (windows, conda-forge, msys2/mingw)
+        paths = set()
+        dest_shared = sysconfig.get_config_var("DESTSHARED")  # msys2
+        dest_relative = None
+        if dest_shared:
+            dest_shared = Path(dest_shared)
+            paths.add(dest_shared)
+            try:
+                dest_relative = dest_shared.relative_to(sys.prefix)
+            except ValueError:
+                pass
+        for prefix in [
+            sys.base_exec_prefix,
+            sys.base_prefix,
+            sys.exec_prefix,
+            sys.prefix,
+        ]:
+            prefix = Path(prefix)
+            paths.add(prefix / "bin")
+            paths.add(prefix / "DLLs")
+            paths.add(prefix / "Library/bin")
+            if dest_relative:
+                paths.add(prefix / dest_relative)
+        # return only valid paths
+        return [path for path in paths if path.is_dir()]
+
+    def _platform_add_extra_dependencies(
+        self, dependent_files: set[Path]
+    ) -> None:
+        search_dirs: set[Path] = set()
+        for filename in dependent_files:
+            search_dirs.add(filename.parent)
+        for filename in self.runtime_files:
+            for search_dir in search_dirs:
+                filepath = search_dir / filename
+                if filepath.exists():
+                    dependent_files.add(filepath)
+
+    def _post_freeze_hook(self) -> None:
+        target_lib = self.targetdir / "lib"
+        # Recursing into directories to search for load order files.
+        # Some libraries use delvewheel to patch them.
+        for loader_file in target_lib.rglob(".load-order-*"):
+            load_order = loader_file.read_text().split()
+            load_dir = loader_file.parent
+            new_order = [
+                f for f in load_order if load_dir.joinpath(f).is_file()
+            ]
+            if new_order != load_order:
+                loader_file.write_text("\n".join(new_order))
+
+    def _set_runtime_files(self) -> None:
+        if self.include_msvcr:
+            self.runtime_files.update(winmsvcr.FILES)
         else:
-            freezer._GetBaseFileName(self)
-        if self.appendScriptToLibrary:
-            freezer._VerifyCanAppendToLibrary()
-        if self.icon is None:
-            self.icon = freezer.icon
-        if self.targetName is None:
-            name, ext = os.path.splitext(os.path.basename(self.script))
-            baseName, ext = os.path.splitext(self.base)
-            self.targetName = name + ext
-        if self.appendScriptToLibrary:
-            name, ext = os.path.splitext(self.targetName)
-            self.moduleName = "%s__main__" % os.path.normcase(name)
+            # just put on the exclusion list
+            self.bin_excludes.extend([Path(name) for name in winmsvcr.FILES])
+
+
+class DarwinFreezer(Freezer, Parser):
+    def __init__(self, *args, **kwargs):
+        Freezer.__init__(self, *args, **kwargs)
+        Parser.__init__(self, self.silent)
+        self.darwin_tracker: DarwinFileTracker | None = None
+        self.darwin_tracker = DarwinFileTracker()
+
+    def _post_freeze_hook(self) -> None:
+        self.darwin_tracker.finalizeReferences()
+
+    def _pre_copy_hook(self, source: Path, target: Path) -> tuple[Path, Path]:
+        """Prepare the source and target paths."""
+        return source, target
+
+    def _post_copy_hook(
+        self,
+        source: Path,
+        target: Path,
+        copy_dependent_files: bool,
+        include_mode: bool = False,
+        reference: MachOReference | None = None,
+    ) -> None:
+        # The file was not previously copied, so need to create a
+        # DarwinFile file object to represent the file being copied.
+        if reference is not None:
+            referencing_file = reference.source_file
         else:
-            self.moduleName = "__main__"
-        self.targetName = os.path.join(self.targetDir, self.targetName)
+            referencing_file = None
+        darwin_file = DarwinFile(source, referencing_file)
+        darwin_file.setBuildPath(target)
+        if reference is not None:
+            reference.setTargetFile(darwin_file)
+
+        self.darwin_tracker.recordCopiedFile(target, darwin_file)
+        if (
+            copy_dependent_files
+            and source not in self.finder.excluded_dependent_files
+        ):
+            # Always copy dependent files on root directory
+            # to allow to set relative reference
+            targetdir = self.targetdir
+            for dependent in self.get_dependent_files(source, darwin_file):
+                target = targetdir / dependent.name
+                reference = darwin_file.getMachOReferenceForPath(dependent)
+                self._copy_file_recursion(
+                    dependent,
+                    target,
+                    copy_dependent_files=True,
+                    reference=reference,
+                )
+
+    def _copy_file_recursion(
+        self,
+        source: Path,
+        target: Path,
+        copy_dependent_files: bool,
+        include_mode: bool = False,
+        reference: MachOReference | None = None,
+    ) -> None:
+        """This is essentially the same as Freezer._copy_file, except that it
+        also takes a reference parameter. Used when recursing to dependencies
+        of a file on Darwin."""
+        if not self._should_copy_file(source):
+            return
+
+        # handle pre-copy tasks, normally on the target path
+        source, target = self._pre_copy_hook(source, target)
+
+        if target in self.files_copied:
+            if reference is not None:
+                # If file was already copied, and we are following a reference
+                # from a DarwinFile, then we need to tell the reference where
+                # the file was copied to (the reference can later be updated).
+                reference.setTargetFile(
+                    self.darwin_tracker.getDarwinFile(source, target)
+                )
+            return
+        if source == target:
+            return
+        self._create_directory(target.parent)
+        if self.silent < 1:
+            print(f"copying {source} -> {target}")
+        shutil.copyfile(source, target)
+        shutil.copystat(source, target)
+        if include_mode:
+            shutil.copymode(source, target)
+        self.files_copied.add(target)
+
+        # handle post-copy tasks, including copying dependencies
+        self._post_copy_hook(
+            source,
+            target,
+            copy_dependent_files=copy_dependent_files,
+            include_mode=include_mode,
+            reference=reference,
+        )
+
+    def _copy_top_dependency(self, source: Path) -> None:
+        """Called for copying certain top dependencies. We need this as a
+        separate function so that it can be overridden on Darwin
+        (to interact with the DarwinTools system)."""
+
+        target = self.targetdir / "lib" / source.name
+
+        # this recovers the cached MachOReference pointers to the files
+        # found by the get_dependent_files calls made previously (if any).
+        # If one is found, pass into _copy_file.
+        # We need to do this so the file knows what file referenced it,
+        # and can therefore calculate the appropriate rpath.
+        # (We only cache one reference.)
+        cachedReference = self.darwin_tracker.getCachedReferenceTo(source)
+        self._copy_file_recursion(
+            source,
+            target,
+            copy_dependent_files=True,
+            include_mode=True,
+            reference=cachedReference,
+        )
+
+    def _default_bin_path_excludes(self):
+        return ["/lib", "/usr/lib", "/System/Library/Frameworks"]
+
+    def _default_bin_path_includes(self) -> list[str]:
+        return [sysconfig.get_config_var("DESTSHARED")]
+
+    def get_dependent_files(
+        self, path: Path, darwinFile: DarwinFile | None = None
+    ) -> set[Path]:
+        try:
+            return self.dependent_files[path]
+        except KeyError:
+            pass
+
+        # if darwinFile is None (which means that get_dependent_files is
+        # being called outside of _copy_file -- e.g., one of the
+        # preliminary calls in _freeze_executable), create a temporary
+        # DarwinFile object for the path, just so we can read its
+        # dependencies
+        if darwinFile is None:
+            darwinFile = DarwinFile(path)
+        dependent_files = darwinFile.getDependentFilePaths()
+
+        # cache the MachOReferences to the dependencies, so they can be
+        # called up later in _copy_file if copying a dependency without
+        # an explicit reference provided (to assist in resolving @rpaths)
+        for reference in darwinFile.getMachOReferenceList():
+            if reference.isResolved():
+                self.darwin_tracker.cacheReferenceTo(
+                    reference.resolved_path, reference
+                )
+        self.dependent_files[path] = dependent_files
+        return dependent_files
 
 
-class ConstantsModule(object):
+class LinuxFreezer(Freezer, ELFParser):
+    def __init__(self, *args, **kwargs):
+        Freezer.__init__(self, *args, **kwargs)
+        ELFParser.__init__(self, self.silent)
+        self._symlinks: set[tuple[Path, str]] = set()
 
-    def __init__(self, releaseString = None, copyright = None,
-            moduleName = "BUILD_CONSTANTS", timeFormat = "%B %d, %Y %H:%M:%S"):
-        self.moduleName = moduleName
-        self.timeFormat = timeFormat
-        self.values = {}
-        self.values["BUILD_RELEASE_STRING"] = releaseString
-        self.values["BUILD_COPYRIGHT"] = copyright
+    def _pre_copy_hook(self, source: Path, target: Path) -> tuple[Path, Path]:
+        """Prepare the source and target paths. In addition, it ensures that
+        the source of a symbolic link is copied by deferring the creation of
+        the link."""
+        if source.is_symlink():
+            real_source = source.resolve()
+            symlink = real_source.name
+            real_target = target.with_name(symlink)
+            self._symlinks.add((target, symlink))
+            return real_source, real_target
+        return source, target
 
-    def Create(self, finder):
-        """Create the module which consists of declaration statements for each
-           of the values."""
-        today = datetime.datetime.today()
-        sourceTimestamp = 0
-        for module in finder.modules:
-            if module.file is None:
-                continue
-            if module.inZipFile:
-                continue
-            if not os.path.exists(module.file):
-                raise ConfigError("no file named %s (for module %s)",
-                        module.file, module.name)
-            timestamp = os.stat(module.file).st_mtime
-            sourceTimestamp = max(sourceTimestamp, timestamp)
-        sourceTimestamp = datetime.datetime.fromtimestamp(sourceTimestamp)
-        self.values["BUILD_TIMESTAMP"] = today.strftime(self.timeFormat)
-        self.values["BUILD_HOST"] = socket.gethostname().split(".")[0]
-        self.values["SOURCE_TIMESTAMP"] = \
-                sourceTimestamp.strftime(self.timeFormat)
-        module = finder._AddModule(self.moduleName)
-        sourceParts = []
-        names = list(self.values.keys())
-        names.sort()
-        for name in names:
-            value = self.values[name]
-            sourceParts.append("%s = %r" % (name, value))
-        source = "\n".join(sourceParts)
-        module.code = compile(source, "%s.py" % self.moduleName, "exec")
-        return module
+    def _post_copy_hook(
+        self,
+        source: Path,
+        target: Path,
+        copy_dependent_files: bool,
+        include_mode: bool = False,
+    ):
+        if (
+            copy_dependent_files
+            and source not in self.finder.excluded_dependent_files
+        ):
+            library_dir = self.targetdir / "lib"
+            source_dir = source.parent
+            target_dir = target.parent
+            fix_rpath = set()
+            for dependent_file in self.get_dependent_files(source):
+                if not self._should_copy_file(dependent_file):
+                    continue
+                try:
+                    relative = dependent_file.relative_to(source_dir)
+                except ValueError:
+                    # put it in the target_dir if not already copied
+                    dependent_filename = dependent_file.name
+                    dependent_target = target_dir / dependent_filename
+                    relative = Path(dependent_filename)
+                    if dependent_target not in self.files_copied:
+                        for file in self.files_copied:
+                            if file.name == dependent_filename:
+                                relative = file.relative_to(library_dir)
+                                dependent_target = library_dir / relative
+                                break
+                else:
+                    dependent_target = target_dir / relative
+                    dependent_target = dependent_target.resolve()
+                    try:
+                        dependent_target.relative_to(library_dir)
+                    except ValueError:
+                        parts = list(relative.parts)
+                        while parts[0] == os.pardir:
+                            parts.pop(0)
+                        relative = Path(*parts)
+                        dependent_target = library_dir / relative
+                dep_libs = os.fspath(relative.parent)
+                fix_rpath.add(dep_libs)
+                self._copy_file(
+                    dependent_file, dependent_target, copy_dependent_files
+                )
+            if fix_rpath:
+                has_rpath = self.get_rpath(target)
+                rpath = ":".join(f"$ORIGIN/{r}" for r in fix_rpath)
+                if has_rpath != rpath:
+                    self.set_rpath(target, rpath)
 
+    def _post_freeze_hook(self):
+        target: Path
+        symlink: str
+        for target, symlink in self._symlinks:
+            if self.silent < 1:
+                print(f"linking {target} -> {symlink}")
+            if not target.exists():
+                target.symlink_to(symlink)
 
-class VersionInfo(object):
+    def _copy_top_dependency(self, source: Path) -> None:
+        """Called for copying the top dependencies in _freeze_executable."""
+        target = self.targetdir / "lib" / source.name
+        self._copy_file(
+            source, target, copy_dependent_files=True, include_mode=True
+        )
 
-    def __init__(self, version, internalName = None, originalFileName = None,
-            comments = None, company = None, description = None,
-            copyright = None, trademarks = None, product = None, dll = False,
-            debug = False, verbose = True):
-        parts = version.split(".")
-        while len(parts) < 4:
-            parts.append("0")
-        self.version = ".".join(parts)
-        self.internal_name = internalName
-        self.original_filename = originalFileName
-        self.comments = comments
-        self.company = company
-        self.description = description
-        self.copyright = copyright
-        self.trademarks = trademarks
-        self.product = product
-        self.dll = dll
-        self.debug = debug
-        self.verbose = verbose
+    def _default_bin_path_excludes(self) -> list[str]:
+        return [
+            "/lib",
+            "/lib32",
+            "/lib64",
+            "/usr/lib",
+            "/usr/lib32",
+            "/usr/lib64",
+        ]
+
+    def _default_bin_path_includes(self) -> list[str]:
+        # add the stdlib/lib-dynload directory
+        destlib = sysconfig.get_config_var("DESTLIB")
+        if bool(destlib):
+            return [destlib]
+        return []

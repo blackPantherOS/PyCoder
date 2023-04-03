@@ -1,11 +1,11 @@
 import warnings
 
-from rope.base import change, taskhandle, builtins, ast, codeanalyze
+from rope.base import ast, builtins, change, codeanalyze, libutils, taskhandle
 from rope.refactor import patchedast, similarfinder, sourceutils
 from rope.refactor.importutils import module_imports
 
 
-class Restructure(object):
+class Restructure:
     """A class to perform python restructurings
 
     A restructuring transforms pieces of code matching `pattern` to
@@ -52,7 +52,6 @@ class Restructure(object):
        from rope.contrib import generate
 
       args
-       pycore: type=rope.base.pycore.PyCore
        project: type=rope.base.project.Project
 
     Example #4::
@@ -72,14 +71,13 @@ class Restructure(object):
 
     """
 
-    def __init__(self, project, pattern, goal, args=None,
-                 imports=None, wildcards=None):
+    def __init__(self, project, pattern, goal, args=None, imports=None, wildcards=None):
         """Construct a restructuring
 
         See class pydoc for more info about the arguments.
 
         """
-        self.pycore = project.pycore
+        self.project = project
         self.pattern = pattern
         self.goal = goal
         self.args = args
@@ -91,11 +89,16 @@ class Restructure(object):
         self.wildcards = wildcards
         self.template = similarfinder.CodeTemplate(self.goal)
 
-    def get_changes(self, checks=None, imports=None, resources=None,
-                    task_handle=taskhandle.NullTaskHandle()):
+    def get_changes(
+        self,
+        checks=None,
+        imports=None,
+        resources=None,
+        task_handle=taskhandle.DEFAULT_TASK_HANDLE,
+    ):
         """Get the changes needed by this restructuring
 
-        `resources` can be a list of `rope.base.resources.File`\s to
+        `resources` can be a list of `rope.base.resources.File` to
         apply the restructuring on.  If `None`, the restructuring will
         be applied to all python files.
 
@@ -117,62 +120,69 @@ class Restructure(object):
         """
         if checks is not None:
             warnings.warn(
-                'The use of checks parameter is deprecated; '
-                'use the args parameter of the constructor instead.',
-                DeprecationWarning, stacklevel=2)
+                "The use of checks parameter is deprecated; "
+                "use the args parameter of the constructor instead.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
             for name, value in checks.items():
                 self.args[name] = similarfinder._pydefined_to_str(value)
         if imports is not None:
             warnings.warn(
-                'The use of imports parameter is deprecated; '
-                'use imports parameter of the constructor, instead.',
-                DeprecationWarning, stacklevel=2)
+                "The use of imports parameter is deprecated; "
+                "use imports parameter of the constructor, instead.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
             self.imports = imports
-        changes = change.ChangeSet('Restructuring <%s> to <%s>' %
-                                   (self.pattern, self.goal))
+        changes = change.ChangeSet(f"Restructuring <{self.pattern}> to <{self.goal}>")
         if resources is not None:
-            files = [resource for resource in resources
-                     if self.pycore.is_python_file(resource)]
+            files = [
+                resource
+                for resource in resources
+                if libutils.is_python_file(self.project, resource)
+            ]
         else:
-            files = self.pycore.get_python_files()
-        job_set = task_handle.create_jobset('Collecting Changes', len(files))
+            files = self.project.get_python_files()
+        job_set = task_handle.create_jobset("Collecting Changes", len(files))
         for resource in files:
             job_set.started_job(resource.path)
-            pymodule = self.pycore.resource_to_pyobject(resource)
-            finder = similarfinder.SimilarFinder(pymodule,
-                                                 wildcards=self.wildcards)
+            pymodule = self.project.get_pymodule(resource)
+            finder = similarfinder.SimilarFinder(pymodule, wildcards=self.wildcards)
             matches = list(finder.get_matches(self.pattern, self.args))
             computer = self._compute_changes(matches, pymodule)
             result = computer.get_changed()
             if result is not None:
-                imported_source = self._add_imports(resource, result,
-                                                    self.imports)
-                changes.add_change(change.ChangeContents(resource,
-                                                         imported_source))
+                imported_source = self._add_imports(resource, result, self.imports)
+                changes.add_change(change.ChangeContents(resource, imported_source))
             job_set.finished_job()
         return changes
 
     def _compute_changes(self, matches, pymodule):
         return _ChangeComputer(
-            pymodule.source_code, pymodule.get_ast(),
-            pymodule.lines, self.template, matches)
+            pymodule.source_code,
+            pymodule.get_ast(),
+            pymodule.lines,
+            self.template,
+            matches,
+        )
 
     def _add_imports(self, resource, source, imports):
         if not imports:
             return source
         import_infos = self._get_import_infos(resource, imports)
-        pymodule = self.pycore.get_string_module(source, resource)
-        imports = module_imports.ModuleImports(self.pycore, pymodule)
+        pymodule = libutils.get_string_module(self.project, source, resource)
+        imports = module_imports.ModuleImports(self.project, pymodule)
         for import_info in import_infos:
             imports.add_import(import_info)
         return imports.get_changed_source()
 
     def _get_import_infos(self, resource, imports):
-        pymodule = self.pycore.get_string_module('\n'.join(imports),
-                                                 resource)
-        imports = module_imports.ModuleImports(self.pycore, pymodule)
-        return [imports.import_info
-                for imports in imports.imports]
+        pymodule = libutils.get_string_module(
+            self.project, "\n".join(imports), resource
+        )
+        imports = module_imports.ModuleImports(self.project, pymodule)
+        return [imports.import_info for imports in imports.imports]
 
     def make_checks(self, string_checks):
         """Convert str to str dicts to str to PyObject dicts
@@ -182,23 +192,24 @@ class Restructure(object):
         """
         checks = {}
         for key, value in string_checks.items():
-            is_pyname = not key.endswith('.object') and \
-                        not key.endswith('.type')
+            is_pyname = not key.endswith(".object") and not key.endswith(".type")
             evaluated = self._evaluate(value, is_pyname=is_pyname)
             if evaluated is not None:
                 checks[key] = evaluated
         return checks
 
     def _evaluate(self, code, is_pyname=True):
-        attributes = code.split('.')
+        attributes = code.split(".")
         pyname = None
-        if attributes[0] in ('__builtin__', '__builtins__'):
-            class _BuiltinsStub(object):
+        if attributes[0] in ("__builtin__", "__builtins__"):
+
+            class _BuiltinsStub:
                 def get_attribute(self, name):
                     return builtins.builtins[name]
+
             pyobject = _BuiltinsStub()
         else:
-            pyobject = self.pycore.get_module(attributes[0])
+            pyobject = self.project.get_module(attributes[0])
         for attribute in attributes[1:]:
             pyname = pyobject[attribute]
             if pyname is None:
@@ -221,8 +232,7 @@ def replace(code, pattern, goal):
     return result
 
 
-class _ChangeComputer(object):
-
+class _ChangeComputer:
     def __init__(self, code, ast, lines, goal, matches):
         self.source = code
         self.goal = goal
@@ -255,16 +265,16 @@ class _ChangeComputer(object):
             return collector.get_changed()
 
     def _is_expression(self):
-        return self.matches and isinstance(self.matches[0],
-                                           similarfinder.ExpressionMatch)
+        return self.matches and isinstance(
+            self.matches[0], similarfinder.ExpressionMatch
+        )
 
     def _get_matched_text(self, match):
         mapping = {}
         for name in self.goal.get_names():
             node = match.get_ast(name)
             if node is None:
-                raise similarfinder.BadNameInCheckError(
-                    'Unknown name <%s>' % name)
+                raise similarfinder.BadNameInCheckError("Unknown name <%s>" % name)
             force = self._is_expression() and match.ast == node
             mapping[name] = self._get_node_text(node, force)
         unindented = self.goal.substitute(mapping)
@@ -278,8 +288,9 @@ class _ChangeComputer(object):
         collector = codeanalyze.ChangeCollector(main_text)
         for node in self._get_nearest_roots(node):
             sub_start, sub_end = patchedast.node_region(node)
-            collector.add_change(sub_start - start, sub_end - start,
-                                 self._get_node_text(node))
+            collector.add_change(
+                sub_start - start, sub_end - start, self._get_node_text(node)
+            )
         result = collector.get_changed()
         if result is None:
             return main_text
@@ -291,14 +302,14 @@ class _ChangeComputer(object):
         result = []
         for index, line in enumerate(text.splitlines(True)):
             if index != 0 and line.strip():
-                result.append(' ' * indents)
+                result.append(" " * indents)
             result.append(line)
-        return ''.join(result)
+        return "".join(result)
 
     def _get_nearest_roots(self, node):
         if node not in self._nearest_roots:
             result = []
-            for child in ast.get_child_nodes(node):
+            for child in ast.iter_child_nodes(node):
                 if child in self.matched_asts:
                     result.append(child)
                 else:
