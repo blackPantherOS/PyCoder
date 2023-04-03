@@ -1,7 +1,4 @@
-from collections import UserDict, MutableMapping
-
-class ObjectDB(object):
-
+class ObjectDB:
     def __init__(self, db, validation):
         self.db = db
         self.validation = validation
@@ -29,7 +26,7 @@ class ObjectDB(object):
         self._file_added(newfile)
 
     def get_files(self):
-        return list(self.files.keys())
+        return self.files.keys()
 
     def get_returned(self, path, key, args):
         scope_info = self._get_scope_info(path, key, readonly=True)
@@ -92,12 +89,13 @@ class ObjectDB(object):
         scope_count = 0
         for file_dict in self.files.values():
             scope_count += len(file_dict)
-        return 'ObjectDB holds %s file and %s scope infos' % \
-               (len(self.files), scope_count)
+        return "ObjectDB holds {} file and {} scope infos".format(
+            len(self.files),
+            scope_count,
+        )
 
 
-class _NullScopeInfo(object):
-
+class _NullScopeInfo:
     def __init__(self, error_on_write=True):
         self.error_on_write = error_on_write
 
@@ -119,41 +117,20 @@ class _NullScopeInfo(object):
             raise NotImplementedError()
 
 
-class FileInfo(MutableMapping):
-
+class FileInfo(dict):
     def create_scope(self, key):
         pass
 
-    def __iter__(self):
-        for key in self.keys():
-            yield key
 
-    def __len__(self):
-        return len(self.keys())
-
-    def __setitem__(self, key, value):
-        self[key] = value
-
-class FileDict(MutableMapping):
-
+class FileDict(dict):
     def create(self, key):
         pass
 
     def rename(self, key, new_key):
         pass
 
-    def __iter__(self):
-        for key in self.keys():
-            yield key
 
-    def __len__(self):
-        return len(self.keys())
-
-    def __setitem__(self, key, value):
-        self[key] = value
-
-class ScopeInfo(object):
-
+class ScopeInfo:
     def get_per_name(self, name):
         pass
 
@@ -170,8 +147,7 @@ class ScopeInfo(object):
         pass
 
 
-class CallInfo(object):
-
+class CallInfo:
     def __init__(self, args, returned):
         self.args = args
         self.returned = returned
@@ -183,8 +159,7 @@ class CallInfo(object):
         return self.returned
 
 
-class FileListObserver(object):
-
+class FileListObserver:
     def added(self, path):
         pass
 

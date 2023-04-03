@@ -1,12 +1,12 @@
-"""Provides classes for persisting `PyObject`\s"""
+"""Provides classes for persisting `PyObject`"""
 import os
 import re
 
-import rope.base.builtins
+import rope.base.builtins  # Use full qualification for clarity.
 from rope.base import exceptions
 
 
-class PyObjectToTextual(object):
+class PyObjectToTextual:
     """For transforming `PyObject` to textual form
 
     This can be used for storing `PyObjects` in files.  Use
@@ -20,13 +20,13 @@ class PyObjectToTextual(object):
     def transform(self, pyobject):
         """Transform a `PyObject` to textual form"""
         if pyobject is None:
-            return ('none',)
+            return ("none",)
         object_type = type(pyobject)
         try:
-            method = getattr(self, object_type.__name__ + '_to_textual')
+            method = getattr(self, object_type.__name__ + "_to_textual")
             return method(pyobject)
         except AttributeError:
-            return ('unknown',)
+            return ("unknown",)
 
     def __call__(self, pyobject):
         return self.transform(pyobject)
@@ -34,10 +34,10 @@ class PyObjectToTextual(object):
     def PyObject_to_textual(self, pyobject):
         if isinstance(pyobject.get_type(), rope.base.pyobjects.AbstractClass):
             result = self.transform(pyobject.get_type())
-            if result[0] == 'defined':
-                return ('instance', result)
+            if result[0] == "defined":
+                return ("instance", result)
             return result
-        return ('unknown',)
+        return ("unknown",)
 
     def PyFunction_to_textual(self, pyobject):
         return self._defined_to_textual(pyobject)
@@ -50,44 +50,52 @@ class PyObjectToTextual(object):
         while pyobject.parent is not None:
             address.insert(0, pyobject.get_name())
             pyobject = pyobject.parent
-        return ('defined', self._get_pymodule_path(pyobject.get_module()),
-                '.'.join(address))
+        return (
+            "defined",
+            self._get_pymodule_path(pyobject.get_module()),
+            ".".join(address),
+        )
 
     def PyModule_to_textual(self, pyobject):
-        return ('defined', self._get_pymodule_path(pyobject))
+        return ("defined", self._get_pymodule_path(pyobject))
 
     def PyPackage_to_textual(self, pyobject):
-        return ('defined', self._get_pymodule_path(pyobject))
+        return ("defined", self._get_pymodule_path(pyobject))
 
     def List_to_textual(self, pyobject):
-        return ('builtin', 'list', self.transform(pyobject.holding))
+        return ("builtin", "list", self.transform(pyobject.holding))
 
     def Dict_to_textual(self, pyobject):
-        return ('builtin', 'dict', self.transform(pyobject.keys),
-                self.transform(pyobject.values))
+        return (
+            "builtin",
+            "dict",
+            self.transform(pyobject.keys),
+            self.transform(pyobject.values),
+        )
 
     def Tuple_to_textual(self, pyobject):
-        objects = [self.transform(holding)
-                   for holding in pyobject.get_holding_objects()]
-        return tuple(['builtin', 'tuple'] + objects)
+        objects = [
+            self.transform(holding) for holding in pyobject.get_holding_objects()
+        ]
+        return tuple(["builtin", "tuple"] + objects)
 
     def Set_to_textual(self, pyobject):
-        return ('builtin', 'set', self.transform(pyobject.holding))
+        return ("builtin", "set", self.transform(pyobject.holding))
 
     def Iterator_to_textual(self, pyobject):
-        return ('builtin', 'iter', self.transform(pyobject.holding))
+        return ("builtin", "iter", self.transform(pyobject.holding))
 
     def Generator_to_textual(self, pyobject):
-        return ('builtin', 'generator', self.transform(pyobject.holding))
+        return ("builtin", "generator", self.transform(pyobject.holding))
 
     def Str_to_textual(self, pyobject):
-        return ('builtin', 'str')
+        return ("builtin", "str")
 
     def File_to_textual(self, pyobject):
-        return ('builtin', 'file')
+        return ("builtin", "file")
 
     def BuiltinFunction_to_textual(self, pyobject):
-        return ('builtin', 'function', pyobject.get_name())
+        return ("builtin", "function", pyobject.get_name())
 
     def _get_pymodule_path(self, pymodule):
         return self.resource_to_path(pymodule.get_resource())
@@ -99,7 +107,7 @@ class PyObjectToTextual(object):
             return resource.real_path
 
 
-class TextualToPyObject(object):
+class TextualToPyObject:
     """For transforming textual form to `PyObject`"""
 
     def __init__(self, project, allow_in_project_absolutes=False):
@@ -114,14 +122,13 @@ class TextualToPyObject(object):
             return None
         type = textual[0]
         try:
-            method = getattr(self, type + '_to_pyobject')
+            method = getattr(self, type + "_to_pyobject")
             return method(textual)
         except AttributeError:
             return None
 
     def builtin_to_pyobject(self, textual):
-        name = textual[1]
-        method = getattr(self, 'builtin_%s_to_pyobject' % textual[1], None)
+        method = getattr(self, "builtin_%s_to_pyobject" % textual[1], None)
         if method is not None:
             return method(textual)
 
@@ -138,9 +145,7 @@ class TextualToPyObject(object):
         return rope.base.builtins.get_dict(keys, values)
 
     def builtin_tuple_to_pyobject(self, textual):
-        objects = []
-        for holding in textual[2:]:
-            objects.append(self.transform(holding))
+        objects = [self.transform(holding) for holding in textual[2:]]
         return rope.base.builtins.get_tuple(*objects)
 
     def builtin_set_to_pyobject(self, textual):
@@ -174,7 +179,7 @@ class TextualToPyObject(object):
 
     def _hierarchical_defined_to_pyobject(self, textual):
         path = textual[1]
-        names = textual[2].split('.')
+        names = textual[2].split(".")
         pymodule = self._get_pymodule(path)
         pyobject = pymodule
         for name in names:
@@ -190,7 +195,7 @@ class TextualToPyObject(object):
         return pyobject
 
     def defined_to_pyobject(self, textual):
-        if len(textual) == 2 or textual[2] == '':
+        if len(textual) == 2 or textual[2] == "":
             return self._module_to_pyobject(textual)
         else:
             return self._hierarchical_defined_to_pyobject(textual)
@@ -203,7 +208,7 @@ class TextualToPyObject(object):
     def _get_pymodule(self, path):
         resource = self.path_to_resource(path)
         if resource is not None:
-            return self.project.pycore.resource_to_pyobject(resource)
+            return self.project.get_pymodule(resource)
 
     def path_to_resource(self, path):
         try:
@@ -214,6 +219,7 @@ class TextualToPyObject(object):
                 # INFO: This is a project file; should not be absolute
                 return None
             import rope.base.project
+
             return rope.base.project.get_no_project().get_resource(path)
         except exceptions.ResourceNotFoundError:
             return None
@@ -221,7 +227,7 @@ class TextualToPyObject(object):
 
 class DOITextualToPyObject(TextualToPyObject):
     """For transforming textual form to `PyObject`
-    
+
     The textual form DOI uses is different from rope's standard
     textual form.  The reason is that we cannot find the needed
     information by analyzing live objects.  This class can be
@@ -249,8 +255,7 @@ class DOITextualToPyObject(TextualToPyObject):
         suspected = None
         if name in module_scope.get_names():
             suspected = module_scope[name].get_object()
-        if suspected is not None and \
-           isinstance(suspected, rope.base.pyobjects.PyClass):
+        if suspected is not None and isinstance(suspected, rope.base.pyobjects.PyClass):
             return suspected
         else:
             lineno = self._find_occurrence(name, pymodule.get_resource().read())
@@ -270,16 +275,16 @@ class DOITextualToPyObject(TextualToPyObject):
                 return result
 
     def _find_occurrence(self, name, source):
-        pattern = re.compile(r'^\s*class\s*' + name + r'\b')
-        lines = source.split('\n')
+        pattern = re.compile(r"^\s*class\s*" + name + r"\b")
+        lines = source.split("\n")
         for i in range(len(lines)):
             if pattern.match(lines[i]):
                 return i + 1
 
     def path_to_resource(self, path):
         import rope.base.libutils
-        root = self.project.address
-        relpath = rope.base.libutils.relative(root, path)
+
+        relpath = rope.base.libutils.path_relative_to_project_root(self.project, path)
         if relpath is not None:
             path = relpath
-        return super(DOITextualToPyObject, self).path_to_resource(path)
+        return super().path_to_resource(path)

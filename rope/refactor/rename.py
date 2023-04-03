@@ -1,11 +1,20 @@
 import warnings
 
-from rope.base import exceptions, pyobjects, pynames, taskhandle, evaluate, worder, codeanalyze
-from rope.base.change import ChangeSet, ChangeContents, MoveResource
-from rope.refactor import occurrences, sourceutils
+from rope.base import (
+    codeanalyze,
+    evaluate,
+    exceptions,
+    libutils,
+    pynames,
+    pyobjects,
+    taskhandle,
+    worder,
+)
+from rope.base.change import ChangeContents, ChangeSet, MoveResource
+from rope.refactor import occurrences
 
 
-class Rename(object):
+class Rename:
     """A class for performing rename refactoring
 
     It can rename everything: classes, functions, modules, packages,
@@ -16,24 +25,24 @@ class Rename(object):
     def __init__(self, project, resource, offset=None):
         """If `offset` is None, the `resource` itself will be renamed"""
         self.project = project
-        self.pycore = project.pycore
         self.resource = resource
         if offset is not None:
             self.old_name = worder.get_name_at(self.resource, offset)
-            this_pymodule = self.pycore.resource_to_pyobject(self.resource)
-            self.old_instance, self.old_pyname = \
-                evaluate.eval_location2(this_pymodule, offset)
+            this_pymodule = self.project.get_pymodule(self.resource)
+            self.old_instance, self.old_pyname = evaluate.eval_location2(
+                this_pymodule, offset
+            )
             if self.old_pyname is None:
                 raise exceptions.RefactoringError(
-                    'Rename refactoring should be performed'
-                    ' on resolvable python identifiers.')
+                    "Rename refactoring should be performed"
+                    " on resolvable python identifiers."
+                )
         else:
-            if not resource.is_folder() and resource.name == '__init__.py':
+            if not resource.is_folder() and resource.name == "__init__.py":
                 resource = resource.parent
-            dummy_pymodule = self.pycore.get_string_module('')
+            dummy_pymodule = libutils.get_string_module(self.project, "")
             self.old_instance = None
-            self.old_pyname = pynames.ImportedModule(dummy_pymodule,
-                                                     resource=resource)
+            self.old_pyname = pynames.ImportedModule(dummy_pymodule, resource=resource)
             if resource.is_folder():
                 self.old_name = resource.name
             else:
@@ -42,9 +51,16 @@ class Rename(object):
     def get_old_name(self):
         return self.old_name
 
-    def get_changes(self, new_name, in_file=None, in_hierarchy=False,
-                    unsure=None, docs=False, resources=None,
-                    task_handle=taskhandle.NullTaskHandle()):
+    def get_changes(
+        self,
+        new_name,
+        in_file=None,
+        in_hierarchy=False,
+        unsure=None,
+        docs=False,
+        resources=None,
+        task_handle=taskhandle.DEFAULT_TASK_HANDLE,
+    ):
         """Get the changes needed for this refactoring
 
         Parameters:
@@ -59,7 +75,7 @@ class Rename(object):
           called with an instance of `occurrence.Occurrence` as
           parameter.  If it returns `True`, the occurrence is
           considered to be a match.
-        - `resources` can be a list of `rope.base.resources.File`\s to
+        - `resources` can be a list of `rope.base.resources.File` to
           apply this refactoring on.  If `None`, the restructuring
           will be applied to all python files.
         - `in_file`: this argument has been deprecated; use
@@ -68,28 +84,38 @@ class Rename(object):
         """
         if unsure in (True, False):
             warnings.warn(
-                'unsure parameter should be a function that returns '
-                'True or False', DeprecationWarning, stacklevel=2)
+                "unsure parameter should be a function that returns " "True or False",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+
             def unsure_func(value=unsure):
                 return value
+
             unsure = unsure_func
         if in_file is not None:
             warnings.warn(
-                '`in_file` argument has been deprecated; use `resources` '
-                'instead. ', DeprecationWarning, stacklevel=2)
+                "`in_file` argument has been deprecated; use `resources` " "instead. ",
+                DeprecationWarning,
+                stacklevel=2,
+            )
             if in_file:
                 resources = [self.resource]
         if _is_local(self.old_pyname):
             resources = [self.resource]
         if resources is None:
-            resources = self.pycore.get_python_files()
-        changes = ChangeSet('Renaming <%s> to <%s>' %
-                            (self.old_name, new_name))
+            resources = self.project.get_python_files()
+        changes = ChangeSet(f"Renaming <{self.old_name}> to <{new_name}>")
         finder = occurrences.create_finder(
-            self.pycore, self.old_name, self.old_pyname, unsure=unsure,
-            docs=docs, instance=self.old_instance,
-            in_hierarchy=in_hierarchy and self.is_method())
-        job_set = task_handle.create_jobset('Collecting Changes', len(resources))
+            self.project,
+            self.old_name,
+            self.old_pyname,
+            unsure=unsure,
+            docs=docs,
+            instance=self.old_instance,
+            in_hierarchy=in_hierarchy and self.is_method(),
+        )
+        job_set = task_handle.create_jobset("Collecting Changes", len(resources))
         for file_ in resources:
             job_set.started_job(file_.path)
             new_content = rename_in_module(finder, new_name, resource=file_)
@@ -105,35 +131,35 @@ class Rename(object):
     def _is_allowed_to_move(self, resources, resource):
         if resource.is_folder():
             try:
-                return resource.get_child('__init__.py') in resources
+                return resource.get_child("__init__.py") in resources
             except exceptions.ResourceNotFoundError:
                 return False
         else:
             return resource in resources
 
     def _is_renaming_a_module(self):
-        if isinstance(self.old_pyname.get_object(), pyobjects.AbstractModule):
-            return True
-        return False
+        return isinstance(self.old_pyname.get_object(), pyobjects.AbstractModule)
 
     def is_method(self):
         pyname = self.old_pyname
-        return isinstance(pyname, pynames.DefinedName) and \
-               isinstance(pyname.get_object(), pyobjects.PyFunction) and \
-               isinstance(pyname.get_object().parent, pyobjects.PyClass)
+        return (
+            isinstance(pyname, pynames.DefinedName)
+            and isinstance(pyname.get_object(), pyobjects.PyFunction)
+            and isinstance(pyname.get_object().parent, pyobjects.PyClass)
+        )
 
     def _rename_module(self, resource, new_name, changes):
         if not resource.is_folder():
-            new_name = new_name + '.py'
+            new_name = new_name + ".py"
         parent_path = resource.parent.path
-        if parent_path == '':
+        if parent_path == "":
             new_location = new_name
         else:
-            new_location = parent_path + '/' + new_name
+            new_location = parent_path + "/" + new_name
         changes.add_change(MoveResource(resource, new_location))
 
 
-class ChangeOccurrences(object):
+class ChangeOccurrences:
     """A class for changing the occurrences of a name in a scope
 
     This class replaces the occurrences of a name.  Note that it only
@@ -147,11 +173,11 @@ class ChangeOccurrences(object):
     """
 
     def __init__(self, project, resource, offset):
-        self.pycore = project.pycore
+        self.project = project
         self.resource = resource
         self.offset = offset
         self.old_name = worder.get_name_at(resource, offset)
-        self.pymodule = self.pycore.resource_to_pyobject(self.resource)
+        self.pymodule = project.get_pymodule(self.resource)
         self.old_pyname = evaluate.eval_location(self.pymodule, offset)
 
     def get_old_name(self):
@@ -159,30 +185,43 @@ class ChangeOccurrences(object):
         return word_finder.get_primary_at(self.offset)
 
     def _get_scope_offset(self):
-        lines = self.pymodule.lines
-        scope = self.pymodule.get_scope().\
-                get_inner_scope_for_line(lines.get_line_number(self.offset))
-        start = lines.get_line_start(scope.get_start())
-        end = lines.get_line_end(scope.get_end())
-        return start, end
+        scope = self.pymodule.get_scope().get_inner_scope_for_offset(self.offset)
+        return scope.get_region()
 
     def get_changes(self, new_name, only_calls=False, reads=True, writes=True):
-        changes = ChangeSet('Changing <%s> occurrences to <%s>' %
-                            (self.old_name, new_name))
+        changes = ChangeSet(f"Changing <{self.old_name}> occurrences to <{new_name}>")
         scope_start, scope_end = self._get_scope_offset()
         finder = occurrences.create_finder(
-            self.pycore, self.old_name, self.old_pyname,
-            imports=False, only_calls=only_calls)
+            self.project,
+            self.old_name,
+            self.old_pyname,
+            imports=False,
+            only_calls=only_calls,
+        )
         new_contents = rename_in_module(
-            finder, new_name, pymodule=self.pymodule, replace_primary=True,
-            region=(scope_start, scope_end), reads=reads, writes=writes)
+            finder,
+            new_name,
+            pymodule=self.pymodule,
+            replace_primary=True,
+            region=(scope_start, scope_end),
+            reads=reads,
+            writes=writes,
+        )
         if new_contents is not None:
             changes.add_change(ChangeContents(self.resource, new_contents))
         return changes
 
 
-def rename_in_module(occurrences_finder, new_name, resource=None, pymodule=None,
-                     replace_primary=False, region=None, reads=True, writes=True):
+def rename_in_module(
+    occurrences_finder,
+    new_name,
+    resource=None,
+    pymodule=None,
+    replace_primary=False,
+    region=None,
+    reads=True,
+    writes=True,
+):
     """Returns the changed source or `None` if there is no changes"""
     if resource is not None:
         source_code = resource.read()
@@ -196,21 +235,27 @@ def rename_in_module(occurrences_finder, new_name, resource=None, pymodule=None,
             start, end = occurrence.get_primary_range()
         else:
             start, end = occurrence.get_word_range()
-        if (not reads and not occurrence.is_written()) or \
-           (not writes and occurrence.is_written()):
+        if (not reads and not occurrence.is_written()) or (
+            not writes and occurrence.is_written()
+        ):
             continue
         if region is None or region[0] <= start < region[1]:
             change_collector.add_change(start, end, new_name)
     return change_collector.get_changed()
+
 
 def _is_local(pyname):
     module, lineno = pyname.get_definition_location()
     if lineno is None:
         return False
     scope = module.get_scope().get_inner_scope_for_line(lineno)
-    if isinstance(pyname, pynames.DefinedName) and \
-       scope.get_kind() in ('Function', 'Class'):
+    if isinstance(pyname, pynames.DefinedName) and scope.get_kind() in (
+        "Function",
+        "Class",
+    ):
         scope = scope.parent
-    return scope.get_kind() == 'Function' and \
-           pyname in list(scope.get_names().values()) and \
-           isinstance(pyname, pynames.AssignedName)
+    return (
+        scope.get_kind() == "Function"
+        and pyname in scope.get_names().values()
+        and isinstance(pyname, pynames.AssignedName)
+    )
