@@ -1,7 +1,7 @@
 PyCoder - The LightWare Python IDE based on Qt5
 =====
    Developing by blackPanther OS Project - www.blackpanther.hu    
-   Credits: Harrison Amoatey (Qt4 version develompent)
+   Credits: Harrison Amoatey (Qt4 version development)
 
 ##  Python 3 IDE
 

@@ -6,10 +6,13 @@ import sys
 import sysconfig
 from pathlib import Path
 
-if sys.version_info >= (3, 10):
-    import importlib.metadata as importlib_metadata
-else:
-    from setuptools.extern import importlib_metadata
+try:
+    import importlib_metadata
+except:
+    try:
+        from importlib import metadata as importlib_metadata
+    except:
+        from setuptools.extern import importlib_metadata
 
 __all__ = ["cached_property", "importlib_metadata"]
 __all__ += ["PLATFORM", "IS_LINUX", "IS_MACOS", "IS_MINGW", "IS_WINDOWS"]
