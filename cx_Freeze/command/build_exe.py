@@ -8,7 +8,11 @@ import sys
 from sysconfig import get_platform, get_python_version
 
 from setuptools import Command
-from setuptools.errors import SetupError
+try:
+    from setuptools.errors import SetupError
+except:
+    class SetupError(Exception):
+        pass
 
 from ..common import normalize_to_list
 from ..freezer import Freezer

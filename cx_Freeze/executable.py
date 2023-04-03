@@ -9,7 +9,11 @@ from pathlib import Path
 from sysconfig import get_config_var, get_platform
 
 from setuptools import Distribution
-from setuptools.errors import SetupError
+try:
+    from setuptools.errors import SetupError
+except:    
+    class SetupError(Exception):
+        pass
 
 from ._compat import IS_MINGW, IS_WINDOWS
 from .common import get_resource_file_path, validate_args

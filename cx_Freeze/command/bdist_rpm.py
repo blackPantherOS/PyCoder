@@ -14,7 +14,30 @@ import sys
 from sysconfig import get_python_version
 
 from setuptools import Command
-from setuptools.errors import ExecError, FileError, OptionError, PlatformError
+
+try:
+    from setuptools.errors import ExecError
+except:    
+    class ExecError(Exception):
+        pass
+
+try:
+    from setuptools.errors import FileError
+except:    
+    class FileError(Exception):
+        pass
+
+try:
+    from setuptools.errors import OptionError
+except:    
+    class OptionError(Exception):
+        pass
+
+try:
+    from setuptools.errors import PlatformError
+except:    
+    class PlatformError(Exception):
+        pass
 
 # If DISTUTILS_DEBUG is anything other than the empty string, we run in
 # debug mode.
