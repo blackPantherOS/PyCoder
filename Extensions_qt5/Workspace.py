@@ -3,17 +3,21 @@ import os
 import zipfile
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class CreateWorkSpaceThread(QtCore.QThread):
 
     def run(self):
         self.errors = None
         try:
+            if not os.path.exists:
+                os.mkdir(self.path)
+        except:
+            self.errors = traceback.format_exc()
+        try:
             zip = zipfile.ZipFile(
                 os.path.join("Resources", "PyCoderProjects.zip"), 'r')
             zip.extractall(self.path)
-        except Exception as err:
-            self.errors = str(err)
+        except:
+            self.errors = traceback.format_exc()
 
     def createWorkspace(self, path):
         self.path = path
@@ -136,8 +140,8 @@ class WorkSpace(QtWidgets.QDialog):
 
     def accept(self):
         path = self.getPathLine.text()
-        if os.path.exists(path):
-            if self.choiceBox.currentIndex() == 0:
+        if self.choiceBox.currentIndex() == 0:
+            if os.path.exists(path):
                 if os.path.basename(path) == "PyCoderProjects":
                     self.path = path
                     self.created = True
@@ -147,17 +151,17 @@ class WorkSpace(QtWidgets.QDialog):
                         self, "Workspace", "The workspace is not valid!")
                     return
             else:
-                self.okButton.setDisabled(True)
-                self.cancelButton.setDisabled(True)
-                self.getPathLine.setDisabled(True)
-                self.choiceBox.setDisabled(True)
-                self.statusLabel.setText("Creating workspace...")
-                QtWidgets.QApplication.setOverrideCursor(QtCore.Qt.WaitCursor)
-
-                self.createWorkSpaceThread.createWorkspace(path)
+                message = QtWidgets.QMessageBox.warning(
+                    self, "Workspace", "Path does not exist.")
         else:
-            message = QtWidgets.QMessageBox.warning(
-                self, "Workspace", "Path does not exist.")
+            self.okButton.setDisabled(True)
+            self.cancelButton.setDisabled(True)
+            self.getPathLine.setDisabled(True)
+            self.choiceBox.setDisabled(True)
+            self.statusLabel.setText("Creating workspace...")
+            QtWidgets.QApplication.setOverrideCursor(QtCore.Qt.WaitCursor)
+
+            self.createWorkSpaceThread.createWorkspace(path)
 
     def cancel(self):
         self.created = False
