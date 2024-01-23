@@ -78,6 +78,8 @@ class FindInstalledPython(QtCore.QObject):
         super().__init__(parent)
 
     # Find all python executables
+    def __str__(self):
+        return f"FindInstalledPython instance with interpreters: {self.python_executables()}"
 
     def python_executables(self):
         try:
@@ -164,12 +166,23 @@ class FindInstalledPython(QtCore.QObject):
                 continue
 
             # Search for python executables
-            for fname in files:
-                if fname.startswith('python') and not fname.count('config'):
-                    found.append(os.path.join(searchpath, fname))
+            for fname in sorted(files):
+                full_path = os.path.join(searchpath, fname)
+                if os.path.islink(full_path):
+                    link_target = os.readlink(full_path)
+                    match = re.match(r'pythonOLD(\d.*)', fname)
+                    if match:
+                        found.append(full_path)
+                    elif fname.startswith('python3') and not fname.count('config') and not '-' in fname and not '_' in fname:
+                        found.append(full_path)
+
+        # Sort the list to ensure the correct order
+        # found.sort(key=lambda x: ('python3' in x, x))
         # Done
         return found
 
+    #def formatted_str(self):
+    #    return "Custom formatting for FindInstalledPython"
 
 class UseData(QtCore.QObject):
 
@@ -586,6 +599,7 @@ class UseData(QtCore.QObject):
 
     def getPythonExecutables(self):
         pythonExecutables = FindInstalledPython()
+        print(str(pythonExecutables))
         interpreters = pythonExecutables.python_executables()
 
         return interpreters
