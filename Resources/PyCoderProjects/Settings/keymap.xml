@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE keymap>
+<keymap>
+ <Editor>
+  <Next-Bookmark shortcut="" value="0"/>
+  <Paste shortcut="Ctrl+V" value="67108950"/>
+  <Move-Right-One-Word-Part shortcut="Ctrl+\" value="67108956"/>
+  <Move-Down-One-Page shortcut="PgDown" value="16777239"/>
+  <Move-Right-One-Word shortcut="Ctrl+Right" value="83886100"/>
+  <Extend-Selection-Up-One-Line shortcut="Shift+Up" value="50331667"/>
+  <Extend-Selection-To-Start-Of-Document-Line shortcut="" value="0"/>
+  <Extend-Rectangular-Selection-Up-One-Line shortcut="Alt+Shift+Up" value="184549395"/>
+  <Scroll-Vertically-To-Centre-Current-Line shortcut="" value="0"/>
+  <Extend-Rectangular-Selection-Down-One-Page shortcut="Alt+Shift+PgDown" value="184549399"/>
+  <Extend-Selection-Up-One-Paragraph shortcut="Ctrl+Shift+[" value="100663387"/>
+  <Extend-Selection-Down-One-Paragraph shortcut="Ctrl+Shift+]" value="100663389"/>
+  <Comment shortcut="Ctrl+E" value="0"/>
+  <Move-Selected-Lines-Down-One-Line shortcut="" value="0"/>
+  <Delete-Current-Line shortcut="Ctrl+Shift+L" value="100663372"/>
+  <Toggle-Breakpoint shortcut="Alt+B" value="0"/>
+  <Extend-Selection-To-End-Of-Previous-Word shortcut="" value="0"/>
+  <Uncomment shortcut="Alt+E" value="0"/>
+  <Extend-Rectangular-Selection-Up-One-Page shortcut="Alt+Shift+PgUp" value="184549398"/>
+  <Move-To-End-Of-Next-Word shortcut="" value="0"/>
+  <Move-Left-One-Character shortcut="Left" value="16777234"/>
+  <Extend-Rectangular-Selection-To-Start-Of-Document-Line shortcut="" value="0"/>
+  <Extend-Selection-Down-One-Line shortcut="Shift+Down" value="50331669"/>
+  <Delete-Line-To-Left shortcut="Ctrl+Shift+Backspace" value="117440515"/>
+  <Scroll-View-Up-One-Line shortcut="Ctrl+Up" value="83886099"/>
+  <Extend-Rectangular-Selection-Right-One-Character shortcut="Alt+Shift+Right" value="184549396"/>
+  <Extend-Selection-Down-One-Page shortcut="Shift+PgDown" value="50331671"/>
+  <Redo-Last-Command shortcut="Ctrl+Y" value="67108953"/>
+  <Show-Completion shortcut="Ctrl+Space" value="0"/>
+  <Cut-Current-Line shortcut="Ctrl+L" value="67108940"/>
+  <Transpose-Current-And-Previous-Lines shortcut="Ctrl+T" value="67108948"/>
+  <De-indent-One-Level shortcut="Shift+Tab" value="50331649"/>
+  <Scroll-View-Down-One-Line shortcut="Ctrl+Down" value="83886101"/>
+  <Move-Down-One-Line shortcut="Down" value="16777237"/>
+  <Move-Left-One-Word-Part shortcut="Ctrl+/" value="67108911"/>
+  <Move-Right-One-Character shortcut="Right" value="16777236"/>
+  <Move-To-Start-Of-Display-Or-Document-Line shortcut="" value="0"/>
+  <Move-To-Start-Of-Document shortcut="Ctrl+Home" value="83886096"/>
+  <Fold-Code shortcut="" value="0"/>
+  <Extend-Rectangular-Selection-Left-One-Character shortcut="Alt+Shift+Left" value="184549394"/>
+  <Stuttered-Move-Up-One-Page shortcut="" value="0"/>
+  <Extend-Selection-Right-One-Word shortcut="Ctrl+Shift+Right" value="117440532"/>
+  <Formfeed shortcut="" value="0"/>
+  <Extend-Selection-Left-One-Word shortcut="Ctrl+Shift+Left" value="117440530"/>
+  <Delete-Previous-Character-If-Not-At-Start-Of-Line shortcut="" value="0"/>
+  <Extend-Selection-To-First-Visible-Character-In-Display-Or-Document-Line shortcut="" value="0"/>
+  <Extend-Selection-Right-One-Word-Part shortcut="Ctrl+Shift+\" value="100663388"/>
+  <Move-Up-One-Line shortcut="Up" value="16777235"/>
+  <Duplicate-The-Current-Line shortcut="" value="0"/>
+  <Delete-Line-To-Right shortcut="Ctrl+Shift+Del" value="117440519"/>
+  <Insert-Newline shortcut="Return" value="16777220"/>
+  <Scroll-To-End-Of-Document shortcut="" value="0"/>
+  <Extend-Rectangular-Selection-To-End-Of-Document-Line shortcut="Alt+Shift+End" value="184549393"/>
+  <Extend-Selection-To-End-Of-Document shortcut="Ctrl+Shift+End" value="117440529"/>
+  <Stuttered-Extend-Selection-Down-One-Page shortcut="" value="0"/>
+  <Extend-Selection-Left-One-Character shortcut="Shift+Left" value="50331666"/>
+  <Move-To-First-Visible-Character-Of-Display-In-Document-Line shortcut="" value="0"/>
+  <Previous-Bookmark shortcut="" value="0"/>
+  <Move-To-End-Of-Document-Line shortcut="End" value="16777233"/>
+  <Cut-Selection shortcut="Ctrl+X" value="67108952"/>
+  <Extend-Selection-To-Start-Of-Display-Or-Document-Line shortcut="" value="0"/>
+  <Zoom-In shortcut="Ctrl++" value="67108907"/>
+  <Extend-Selection-To-Start-Of-Display-Line shortcut="" value="0"/>
+  <Move-Up-One-Paragraph shortcut="Ctrl+[" value="67108955"/>
+  <Move-To-Start-Of-Document-Line shortcut="" value="0"/>
+  <Select-to-Matching-Brace shortcut="" value="0"/>
+  <Move-To-First-Visible-Character-In-Document-Line shortcut="Home" value="16777232"/>
+  <Extend-Selection-To-Start-Of-Document shortcut="Ctrl+Shift+Home" value="117440528"/>
+  <Select-All shortcut="Ctrl+A" value="67108929"/>
+  <Extend-Selection-Left-One-Word-Part shortcut="Ctrl+Shift+/" value="100663343"/>
+  <Toggle-Indentation-Guide shortcut="Alt+I" value="0"/>
+  <Move-Selected-Lines-Up-One-Line shortcut="" value="0"/>
+  <Move-To-End-Of-Previous-Word shortcut="" value="0"/>
+  <Stuttered-Extend-Selection-Up-One-Page shortcut="" value="0"/>
+  <Extend-Selection-To-End-Of-Next-Word shortcut="" value="0"/>
+  <Extend-Selection-Right-One-Character shortcut="Shift+Right" value="50331668"/>
+  <Extend-Selection-Up-One-Page shortcut="Shift+PgUp" value="50331670"/>
+  <Extend-Rectangular-Selection-To-First-Visible-Character-In-Document-Line shortcut="Alt+Shift+Home" value="184549392"/>
+  <Copy-Current-Line shortcut="Ctrl+Shift+T" value="100663380"/>
+  <Duplicate-Selection shortcut="Ctrl+D" value="67108932"/>
+  <Move-Down-One-Paragraph shortcut="Ctrl+]" value="67108957"/>
+  <Move-To-End-Of-Document shortcut="Ctrl+End" value="83886097"/>
+  <Move-Up-One-Page shortcut="PgUp" value="16777238"/>
+  <Extend-Rectangular-Selection-Down-One-Line shortcut="Alt+Shift+Down" value="184549397"/>
+  <Move-Left-One-Word shortcut="Ctrl+Left" value="83886098"/>
+  <Delete-Word-To-Right shortcut="Ctrl+Del" value="83886087"/>
+  <Delete-Previous-Character shortcut="Backspace" value="16777219"/>
+  <Delete-Right-To-End-Of-Next-Word shortcut="" value="0"/>
+  <Stuttered-Move-Down-One-Page shortcut="" value="0"/>
+  <Cancel shortcut="Esc" value="16777216"/>
+  <Move-To-Start-Of-Display-Line shortcut="Alt+Home" value="150994960"/>
+  <Move-To-End-Of-Display-Or-Document-Line shortcut="" value="0"/>
+  <Delete-Current-Character shortcut="Del" value="16777223"/>
+  <Convert-Selection-To-Lower-Case shortcut="Ctrl+U" value="67108949"/>
+  <Extend-Selection-To-First-Visible-Character-In-Document-Line shortcut="Shift+Home" value="50331664"/>
+  <Zoom-Out shortcut="Ctrl+-" value="67108909"/>
+  <Undo-Last-Command shortcut="Ctrl+Z" value="67108954"/>
+  <Convert-Selection-To-Upper-Case shortcut="Ctrl+Shift+U" value="100663381"/>
+  <Extend-Selection-To-End-Of-Document-Line shortcut="Shift+End" value="50331665"/>
+  <Extend-Selection-To-End-Of-Display-Line shortcut="" value="50331665"/>
+  <Indent-One-Level shortcut="Tab" value="16777217"/>
+  <Delete-Word-To-Left shortcut="Ctrl+Backspace" value="83886083"/>
+  <Extend-Selection-To-End-Of-Display-Or-Document-Line shortcut="" value="0"/>
+  <Scroll-To-Start-Of-Document shortcut="" value="0"/>
+  <Copy-Selection shortcut="Ctrl+C" value="67108931"/>
+  <Move-To-End-Of-Display-Line shortcut="Alt+End" value="150994961"/>
+  <Snippets shortcut="Ctrl+K" value="0"/>
+  <Toggle-Insert-or-Overtype shortcut="Ins" value="16777222"/>
+ </Editor>
+ <Ide>
+  <Next-Bookmark shortcut=""/>
+  <Save-All shortcut="Ctrl+Shift+S"/>
+  <Open-File shortcut="Ctrl+O"/>
+  <Show-Completion shortcut="Ctrl+Space"/>
+  <Change-Tab shortcut="F12"/>
+  <Go-to-Line shortcut="Alt+G"/>
+  <Fold-Code shortcut=""/>
+  <Stop-Execution shortcut="F6"/>
+  <Run-File shortcut="F4"/>
+  <Split-Vertical shortcut="F9"/>
+  <Snippets shortcut="Ctrl+K"/>
+  <Reload-File shortcut="F7"/>
+  <Find shortcut="Ctrl+F"/>
+  <Select-to-Matching-Brace shortcut=""/>
+  <Run-Project shortcut="F5"/>
+  <Change-Tab-Reverse shortcut="Ctrl+Tab"/>
+  <Comment shortcut="Ctrl+E"/>
+  <Previous-Bookmark shortcut=""/>
+  <Fullscreen shortcut="F8"/>
+  <Toggle-Breakpoint shortcut="Alt+B"/>
+  <Find-Next shortcut="Ctrl+G"/>
+  <Replace shortcut="Ctrl+H"/>
+  <Toggle-Indentation-Guide shortcut="Alt+I"/>
+  <Build shortcut="Ctrl+Shift+B"/>
+  <Change-Split-Focus shortcut="Ctrl+M"/>
+  <Save-File shortcut="Ctrl+S"/>
+  <Uncomment shortcut="Alt+E"/>
+  <Split-Horizontal shortcut="F10"/>
+  <Find-Previous shortcut="Shift+F3"/>
+  <New-File shortcut="Ctrl+N"/>
+  <Python-Manuals shortcut="F1"/>
+  <Remove-Split shortcut="F11"/>
+  <Help shortcut="F2"/>
+  <Print shortcut="Ctrl+P"/>
+ </Ide>
+</keymap>

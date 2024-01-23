@@ -24,6 +24,38 @@ class ErrorCheckerThread(QtCore.QThread):
                 messages.append((lineno, message % (args), args))
             self.newAlerts.emit(messages, False)
         except Exception as err:
+            if hasattr(err, 'msg'):
+                msg = err.msg.capitalize() + '.'
+            else:
+                msg = str(err).capitalize() + '.'
+    
+            # Módosítás: Az 'AttributeError' típusú kivételt külön kezeljük
+            if isinstance(err, AttributeError):
+                line = -1  # vagy bármilyen más jelző érték
+            else:
+                line = getattr(err, 'lineno', -1)
+
+            # Módosítás: Az 'args' tuple hosszának ellenőrzése
+                args_tuple = getattr(err, 'args', [None, None, None])
+            offset = args_tuple[1] if len(args_tuple) > 1 and args_tuple[1] is not None else -1
+
+            messages.append((1, line, msg, None, offset))
+            self.newAlerts.emit(messages, True)
+
+
+    def run_old(self):
+        messages = []
+        try:
+            warnings = flakeChecker(ast.parse(self.source))
+            warnings.messages.sort(key=lambda a: a.lineno)
+            for warning in warnings.messages:
+                fname = warning.filename
+                lineno = warning.lineno
+                message = warning.message
+                args = warning.message_args
+                messages.append((lineno, message % (args), args))
+            self.newAlerts.emit(messages, False)
+        except Exception as err:
             error_text = err.args[1][3]
             msg = err.msg.capitalize() + '.'
             line = err.lineno

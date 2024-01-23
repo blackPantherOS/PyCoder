@@ -10,8 +10,8 @@ class WritePad(QtWidgets.QMainWindow):
         self.resize(600, 300)
         screen = QtWidgets.QDesktopWidget().screenGeometry()
         size = self.geometry()
-        self.move((screen.width() - size.width()) / 2,
-                 (screen.height() - size.height()) / 2)
+        self.move(int((screen.width() - size.width()) / 2),
+                 int((screen.height() - size.height()) / 2))
 
         self.path = path
         self.setObjectName("writePad")
@@ -22,7 +22,7 @@ class WritePad(QtWidgets.QMainWindow):
 
         self.writePad = QtWidgets.QPlainTextEdit()
         self.writePad.setLineWrapMode(QtWidgets.QPlainTextEdit.NoWrap)
-        self.writePad.setFont(QtGui.QFont("Ms Reference Sans Serif", 10.9))
+        #vector self.writePad.setFont(QtGui.QFont("Ms Reference Sans Serif", 10.9))
         self.setCentralWidget(self.writePad)
 
         # load notes

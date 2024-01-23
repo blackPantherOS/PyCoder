@@ -1,5 +1,4 @@
 """Implements the 'install_exe' command."""
-
 from __future__ import annotations
 
 import sys
@@ -10,7 +9,6 @@ from setuptools import Command
 __all__ = ["InstallEXE"]
 
 
-# pylint: disable=attribute-defined-outside-init,missing-function-docstring
 class InstallEXE(Command):
     """Install executables built from Python scripts."""
 

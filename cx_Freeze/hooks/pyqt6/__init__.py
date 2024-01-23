@@ -1,14 +1,16 @@
 """A collection of functions which are triggered automatically by finder when
-PyQt6 package is included."""
-
+PyQt6 package is included.
+"""
 from __future__ import annotations
 
-import os
 import sys
+from textwrap import dedent
 
-from ...common import get_resource_file_path
-from ...finder import ModuleFinder
-from ...module import Module
+from cx_Freeze._compat import IS_CONDA, IS_MACOS, IS_MINGW
+from cx_Freeze.common import get_resource_file_path
+from cx_Freeze.finder import ModuleFinder
+from cx_Freeze.module import Module
+
 from .._qthooks import copy_qt_files
 from .._qthooks import load_qt_qaxcontainer as load_pyqt6_qaxcontainer
 from .._qthooks import load_qt_qt as load_pyqt6_qt
@@ -49,8 +51,8 @@ from .._qthooks import load_qt_qtwidgets as load_pyqt6_qtwidgets_base
 
 def load_pyqt6(finder: ModuleFinder, module: Module) -> None:
     """Inject code in PyQt6 __init__ to locate and load plugins and
-    resources."""
-
+    resources.
+    """
     # Include QtCore module and sip module needed by all modules
     finder.include_module("PyQt6.QtCore")
     finder.include_module("PyQt6.sip")
@@ -63,17 +65,46 @@ def load_pyqt6(finder: ModuleFinder, module: Module) -> None:
     qt_debug = get_resource_file_path("hooks/pyqt6", "debug", ".py")
     finder.include_file_as_module(qt_debug, "PyQt6._cx_freeze_qt_debug")
 
-    # Include a copy of qt.conf (used by webengine)
+    # Include a qt.conf in the module path (Prefix = lib/PyQt6/Qt6) for macos
+    if IS_MACOS:
+        finder.include_files(
+            get_resource_file_path("hooks/pyqt6", "qt_macos", ".conf"),
+            "qt.conf",
+        )
+        # bdist_mac (.app) uses a different Prefix in qt.conf
+        finder.include_files(
+            get_resource_file_path("hooks/pyqt6", "qt_bdist_mac", ".conf"),
+            "qt_bdist_mac.conf",
+        )
+    # Include a qt.conf in the module path (Prefix = lib/PyQt6) for msys2
+    if IS_MINGW:
+        qt_conf = get_resource_file_path("hooks/pyqt6", "qt_msys2", ".conf")
+        finder.include_files(qt_conf, "qt.conf")
+
+    # Include a copy of qt.conf (used by QtWebEngine)
     copy_qt_files(finder, "PyQt6", "LibraryExecutablesPath", "qt.conf")
 
     # Inject code to init
-    code_string = module.file.read_text()
-    code_string += """
-# cx_Freeze patch start
-import PyQt6._cx_freeze_qt_debug
-# cx_Freeze patch end
-"""
-    module.code = compile(code_string, os.fspath(module.file), "exec")
+    code_string = module.file.read_text(encoding="utf_8")
+    code_string += dedent(
+        f"""
+        # cx_Freeze patch start
+        if {IS_MACOS} and not {IS_CONDA}:  # conda does not support pyqt6
+            import os, sys
+            # Support for QtWebEngine (bdist_mac differs from build_exe)
+            helpers = os.path.join(os.path.dirname(sys.frozen_dir), "Helpers")
+            if not os.path.isdir(helpers):
+                helpers = os.path.join(sys.frozen_dir, "share")
+            os.environ["QTWEBENGINEPROCESS_PATH"] = os.path.join(
+                helpers,
+                "QtWebEngineProcess.app/Contents/MacOS/QtWebEngineProcess"
+            )
+            os.environ["QTWEBENGINE_CHROMIUM_FLAGS"] = "--single-process"
+        import PyQt6._cx_freeze_qt_debug
+        # cx_Freeze patch end
+        """
+    )
+    module.code = compile(code_string, module.file.as_posix(), "exec")
 
 
 def load_pyqt6_qtwidgets(finder: ModuleFinder, module: Module) -> None:

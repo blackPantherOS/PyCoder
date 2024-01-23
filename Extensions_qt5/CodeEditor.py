@@ -502,10 +502,11 @@ class CodeEditor(BaseScintilla):
             self.startDocTimer()
 
         # resize view if middle mouse button is held down
+
         if self.middleMousePressed:
             pos = event.pos()
             delta = pos - self.mousePosition
-
+            
             x = delta.x()
             y = delta.y()
             if x > 0:
@@ -516,10 +517,9 @@ class CodeEditor(BaseScintilla):
                 y = 1
             elif y < 0:
                 y = -1
-
             self.editorTabWidget.resizeView(x, y)
-
-        self.mousePosition = event.posF()
+        
+        self.mousePosition = event.pos()  # Módosítás: posF() helyett pos()
         super(CodeEditor, self).mouseMoveEvent(event)
 
     def createActions(self):

@@ -1,5 +1,6 @@
 """Create standalone executables from Python scripts, with the same performance
-and is cross-platform."""
+and is cross-platform.
+"""
 # pylint: disable=invalid-name
 
 from __future__ import annotations
@@ -11,7 +12,6 @@ import setuptools
 from .command.build_exe import BuildEXE as build_exe
 from .command.install import Install as install
 from .command.install_exe import InstallEXE as install_exe
-from .exception import ConfigError
 from .finder import Module, ModuleFinder
 from .freezer import ConstantsModule, Executable, Freezer
 
@@ -20,7 +20,6 @@ __all__ = [
     "install",
     "install_exe",
     "setup",
-    "ConfigError",
     "ConstantsModule",
     "Executable",
     "Freezer",
@@ -43,10 +42,10 @@ else:
 
     __all__.append(bdist_rpm.__name__)
 
-__version__ = "6.14.8"
+__version__ = "6.15.12"
 
 
-def setup(**attrs):  # pylint: disable=missing-function-docstring
+def setup(**attrs):  # noqa: D103
     cmdclass = attrs.setdefault("cmdclass", {})
     if sys.platform == "win32":
         cmdclass.setdefault("bdist_msi", bdist_msi)
@@ -67,7 +66,6 @@ setup.__doc__ = setuptools.setup.__doc__
 
 def plugin_install(dist: setuptools.Distribution) -> None:
     """Use a setuptools extension to customize Distribution options."""
-
     if getattr(dist, "executables", None) is None:
         return
 

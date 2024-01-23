@@ -47,26 +47,26 @@ class ModuleFinder:
 
     def __init__(
         self,
-        include_files: IncludesList | None = None,
+        constants_module: ConstantsModule | None = None,
         excludes: list[str] | None = None,
+        include_files: IncludesList | None = None,
         path: list[str | Path] | None = None,
         replace_paths: list[tuple[str, str]] | None = None,
+        zip_exclude_packages: Sequence[str] | None = None,
+        zip_include_packages: Sequence[str] | None = None,
         zip_include_all_packages: bool = False,
-        zip_exclude_packages: list[str] | None = None,
-        zip_include_packages: list[str] | None = None,
-        constants_module: ConstantsModule | None = None,
         zip_includes: IncludesList | None = None,
     ):
         self.included_files: InternalIncludesList = process_path_specs(
             include_files
         )
         self.excludes: dict[str, Any] = dict.fromkeys(excludes or [])
-        self.optimize_flag = 0
+        self.optimize = 0
         self.path: list[str] = list(map(os.fspath, path or sys.path))
         self.replace_paths = replace_paths or []
         self.zip_include_all_packages = zip_include_all_packages
-        self.zip_exclude_packages = zip_exclude_packages or []
-        self.zip_include_packages = zip_include_packages or []
+        self.zip_exclude_packages: set = zip_exclude_packages or set()
+        self.zip_include_packages: set = zip_include_packages or set()
         self.constants_module = constants_module
         self.zip_includes: InternalIncludesList = process_path_specs(
             zip_includes
@@ -78,44 +78,21 @@ class ModuleFinder:
         self._bad_modules = {}
         for name in self._base_hooks.exclude.MODULES:
             self.exclude_module(name)
-        self._add_base_modules()
-
-    def _add_base_modules(self) -> None:
-        """
-        Add the base modules to the finder. These are the modules that
-        Python imports itself during initialization and, if not found,
-        can result in behavior that differs from running from source;
-        also include modules used within the bootstrap code.
-
-        When cx_Freeze is built, these modules (and modules they load) are
-        included in the startup zip file.
-        """
-        self.include_module("traceback")
-        self.include_module("warnings")
-        self.include_module("unicodedata")
-        self.include_package("encodings")
-        self.include_module("io")
-        self.include_module("os")
-        self.include_module("sys")
-        self.include_module("zlib")
-        self.include_module("collections.abc")
-        self.include_module("importlib.abc")
 
     def _add_module(
         self,
         name: str,
         path: Sequence[Path | str] | None = None,
-        file_name: Path | str | None = None,
+        filename: Path | None = None,
         parent: Module | None = None,
     ) -> Module:
-        """
-        Add a module to the list of modules but if one is already found,
+        """Add a module to the list of modules but if one is already found,
         then return it instead; this is done so that packages can be
         handled properly.
         """
         module = self._modules.get(name)
         if module is None:
-            module = Module(name, path, file_name, parent)
+            module = Module(name, path, filename, parent)
             self._modules[name] = module
             self.modules.append(module)
             if name in self._bad_modules:
@@ -130,9 +107,9 @@ class ModuleFinder:
             ):
                 module.in_file_system = 0
         if module.path is None and path is not None:
-            module.path = [Path(p) for p in path]
-        if module.file is None and file_name is not None:
-            module.file = file_name
+            module.path = list(map(Path, path))
+        if module.file is None and filename is not None:
+            module.file = filename
         return module
 
     def _determine_parent(self, caller: Module | None) -> Module | None:
@@ -146,7 +123,8 @@ class ModuleFinder:
     @cached_property
     def _base_hooks(self):
         """Load the hooks dynamically to avoid cyclic errors, because hooks
-        have references to finder."""
+        have references to finder.
+        """
         hooks = get_resource_file_path("hooks", "__init__", ".py")
         fromlist = []
         # add python files (modules)
@@ -175,8 +153,7 @@ class ModuleFinder:
         from_list: list[str],
         deferred_imports: DeferredList,
     ) -> None:
-        """
-        Ensure that the from list is satisfied. This is only necessary for
+        """Ensure that the from list is satisfied. This is only necessary for
         package modules. If the package module has not been completely
         imported yet, defer the import until it has been completely imported
         in order to avoid spurious errors about missing modules.
@@ -274,11 +251,9 @@ class ModuleFinder:
         caller: Module | None = None,
         relative_import_index: int = 0,
     ):
-        """
-        Attempt to find the named module and return it or None if no module
+        """Attempt to find the named module and return it or None if no module
         by that name could be found.
         """
-
         # absolute import (available in Python 2.5 and up)
         # the name given is the only name that will be searched
         if relative_import_index == 0:
@@ -332,8 +307,7 @@ class ModuleFinder:
     def _internal_import_module(
         self, name: str, deferred_imports: DeferredList
     ) -> Module | None:
-        """
-        Internal method used for importing a module which assumes that the
+        """Internal method used for importing a module which assumes that the
         name given is an absolute name. None is returned if the module
         cannot be found.
         """
@@ -360,10 +334,7 @@ class ModuleFinder:
             if parent_module is None:
                 return None
             path = parent_module.path
-            if path is None:
-                path = self.path
-            else:
-                path = list(map(os.fspath, path))
+            path = self.path if path is None else list(map(os.fspath, path))
 
         if name in self.aliases:
             actual_name = self.aliases[name]
@@ -411,7 +382,7 @@ class ModuleFinder:
                     parent=parent,
                 )
                 logging.debug("Adding module [%s] [PACKAGE]", name)
-                module.file = Path(path[0], "__init__.py")
+                module.file = Path(path[0]) / "__init__.py"
                 module.source_is_string = True
 
         if spec:
@@ -434,10 +405,10 @@ class ModuleFinder:
                     module.source_is_string = True
                 else:
                     logging.debug("Adding module [%s] [PACKAGE]", name)
-                    module.file = spec.origin  # path of __init__.py
+                    module.file = Path(spec.origin)  # path of __init__.py
             else:
                 module = self._add_module(
-                    name, file_name=spec.origin, parent=parent
+                    name, filename=Path(spec.origin), parent=parent
                 )
 
         if module is not None:
@@ -459,7 +430,7 @@ class ModuleFinder:
             source_bytes = loader.get_data(path)
             try:
                 module.code = loader.source_to_code(
-                    source_bytes, path, _optimize=self.optimize_flag
+                    source_bytes, path, _optimize=self.optimize
                 )
             except SyntaxError:
                 logging.debug("Invalid syntax in [%s]", name)
@@ -503,31 +474,30 @@ class ModuleFinder:
 
         ext = filename.suffix
         path = os.fspath(filename)
-        if ext == "" or ext in importlib.machinery.SOURCE_SUFFIXES:
+        if not ext or ext in importlib.machinery.SOURCE_SUFFIXES:
             loader = importlib.machinery.SourceFileLoader(name, path)
         elif ext in importlib.machinery.BYTECODE_SUFFIXES:
             loader = importlib.machinery.SourcelessFileLoader(name, path)
         elif ext in importlib.machinery.EXTENSION_SUFFIXES:
             loader = importlib.machinery.ExtensionFileLoader(name, path)
 
-        module = self._add_module(name, file_name=filename)
+        module = self._add_module(name, filename=filename)
         self._load_module_code(module, loader, deferred_imports)
         return module
 
     @staticmethod
     def _replace_package_in_code(module: Module) -> CodeType:
-        """
-        Replace the value of __package__ directly in the code,
+        """Replace the value of __package__ directly in the code,
         when the module is in a package and will be stored in library.zip.
         """
         code = module.code
         # Check if module is in a package and will be stored in library.zip
         # and is not defined in the module, like 'six' do
         if (
-            module.parent is None
-            or module.in_file_system >= 1
+            code is None
+            or module.parent is None
             or "__package__" in module.global_names
-            or code is None
+            or module.in_file_system >= 1
         ):
             return code
         # Only if the code references it.
@@ -552,8 +522,7 @@ class ModuleFinder:
     def _replace_paths_in_code(
         self, module: Module, code: CodeType | None = None
     ) -> CodeType:
-        """
-        Replace paths in the code as directed, returning a new code object
+        """Replace paths in the code as directed, returning a new code object
         with the modified paths in place.
         """
         top_level_module = module  # type: Module
@@ -597,7 +566,7 @@ class ModuleFinder:
         For functions present in hooks.__init__:
         package aiofiles -> load_aiofiles function
         For functions in a separated module (lowercased):
-        package PyQt5, module QtCore -> pyqt5.load_pyqt5_qtcore
+        package PyQt5, module QtCore -> pyqt5.load_pyqt5_qtcore.
         """
         base_hooks = self._base_hooks
         normalized_name = module_name.replace(".", "_")
@@ -620,7 +589,8 @@ class ModuleFinder:
     ):
         """Scan code, looking for imported modules and keeping track of the
         constants that have been created in order to better tell which
-        modules are truly missing."""
+        modules are truly missing.
+        """
         arguments = []
         imported_module = None
         co_code = code.co_code
@@ -644,7 +614,6 @@ class ModuleFinder:
             if opc == IMPORT_NAME:
                 name = code.co_names[arg]
                 if len(arguments) >= 2:
-                    # pylint: disable-next=W0632
                     relative_import_index, from_list = arguments[-2:]
                 else:
                     relative_import_index = -1
@@ -653,18 +622,17 @@ class ModuleFinder:
                     imported_module = self._import_module(
                         name, deferred_imports, module, relative_import_index
                     )
-                    if imported_module is not None:
-                        if (
-                            from_list
-                            and from_list != ("*",)
-                            and imported_module.path is not None
-                        ):
-                            self._ensure_from_list(
-                                module,
-                                imported_module,
-                                from_list,
-                                deferred_imports,
-                            )
+                    if imported_module is not None and (
+                        from_list
+                        and from_list != ("*",)
+                        and imported_module.path is not None
+                    ):
+                        self._ensure_from_list(
+                            module,
+                            imported_module,
+                            from_list,
+                            deferred_imports,
+                        )
 
             # import * statement: copy all global names
             elif (
@@ -696,21 +664,44 @@ class ModuleFinder:
         """
         self.aliases[name] = alias_for
 
+    def add_base_modules(self) -> None:
+        """Add the base modules to the finder. These are the modules that
+        Python imports itself during initialization and, if not found,
+        can result in behavior that differs from running from source;
+        also include modules used within the bootstrap code.
+
+        When cx_Freeze is built, these modules (and modules they load) are
+        included in the startup zip file.
+        """
+        self.include_package("collections")
+        self.include_package("encodings")
+        self.include_package("importlib")
+        self.include_module("io")
+        self.include_module("os")
+        self.include_module("sys")
+        self.include_module("traceback")
+        self.include_module("unicodedata")
+        self.include_module("warnings")
+        self.include_module("zlib")
+
     def add_constant(self, name: str, value: str) -> None:
         """Makes available a constant in the module BUILD_CONSTANTS which is
-        used in the initscripts."""
+        used in the initscripts.
+        """
         self.constants_module.values[name] = value
 
     def exclude_dependent_files(self, filename: Path | str) -> None:
         """Exclude the dependent files of the named file from the resulting
-        frozen executable."""
+        frozen executable.
+        """
         if not isinstance(filename, Path):
             filename = Path(filename)
         self.excluded_dependent_files.add(filename)
 
     def exclude_module(self, name: str) -> None:
         """Exclude the named module and its submodules from the resulting
-        frozen executable."""
+        frozen executable.
+        """
         modules_to_exclude = [name] + [
             mod for mod in self._modules if mod.startswith(f"{name}.")
         ]
@@ -752,10 +743,9 @@ class ModuleFinder:
     def include_module(self, name: str) -> Module:
         """Include the named module in the frozen executable."""
         # includes has priority over excludes
-        if name in self.excludes and name in self._modules:
-            if self._modules[name] is None:
-                self.excludes.pop(name)
-                self._modules.pop(name)
+        if name in self.excludes and self._modules.get(name) is None:
+            self.excludes.pop(name)
+            self._modules.pop(name, None)
         # include module
         deferred_imports: DeferredList = []
         module = self._import_module(name, deferred_imports)
@@ -764,7 +754,8 @@ class ModuleFinder:
 
     def include_package(self, name: str) -> Module:
         """Include the named package and any submodules in the frozen
-        executable."""
+        executable.
+        """
         deferred_imports: DeferredList = []
         module = self._import_module(name, deferred_imports)
         if module.path:
@@ -786,16 +777,17 @@ class ModuleFinder:
             print("may not be needed on this platform.\n")
 
     @property
-    def optimize_flag(self) -> int:
+    def optimize(self) -> int:
         """The value of optimize flag propagated according to the user's
-        choice."""
+        choice.
+        """
         return self._optimize_flag
 
-    @optimize_flag.setter
-    def optimize_flag(self, value: int):
-        # The value of optimize_flag is checked in dist.py or main,py. This
-        # value is unlikely to be wrong, yet we check and ignore any divergent
-        # value.
+    @optimize.setter
+    def optimize(self, value: int):
+        # The value of optimize is checked in '.command.build_exe' or '.cli'.
+        # This value is unlikely to be wrong, yet we check and ignore any
+        # divergent value.
         if -1 <= value <= 2:
             self._optimize_flag = value
 

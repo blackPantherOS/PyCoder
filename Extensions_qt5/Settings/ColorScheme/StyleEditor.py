@@ -215,21 +215,28 @@ class StyleEditor(QtWidgets.QWidget):
             self.paperCustomButton.setChecked(True)
 
     def fontChanged(self):
-        currentfont = QtGui.QFont(self.currentPropertyAttrib[
-                                  2], self.currentPropertyAttrib[3])
+        #currentfont = QtGui.QFont(self.currentPropertyAttrib[
+        #                          2], self.currentPropertyAttrib[3])
+        #currentfont.setBold(self.currentPropertyAttrib[4])
+        #currentfont.setItalic(self.currentPropertyAttrib[5])
+        #font = QtWidgets.QFontDialog().getFont(currentfont, self)
+        currentfont = QtGui.QFont(self.currentPropertyAttrib[2], self.currentPropertyAttrib[3])
         currentfont.setBold(self.currentPropertyAttrib[4])
         currentfont.setItalic(self.currentPropertyAttrib[5])
-        font = QtWidgets.QFontDialog().getFont(currentfont, self)
-        if font[1]:
-            font = font[0]
-            name = font.rawName()
-            size = font.pointSize()
-            bold = font.bold()
-            italic = font.italic()
-            self.currentPropertyAttrib[2] = name
-            self.currentPropertyAttrib[3] = size
-            self.currentPropertyAttrib[4] = bold
-            self.currentPropertyAttrib[5] = italic
+
+        font, accepted = QtWidgets.QFontDialog().getFont(currentfont, self)
+
+        #if font[1]:
+        #if accepted:
+        #    font = font[0]
+        #    name = font.rawName()
+        #    size = font.pointSize()
+        #    bold = font.bold()
+        #    italic = font.italic()
+        #    self.currentPropertyAttrib[2] = name
+        #    self.currentPropertyAttrib[3] = size
+        #    self.currentPropertyAttrib[4] = bold
+        #    self.currentPropertyAttrib[5] = italic
 
     def applyChanges(self, viewWidget, properties=None):
         if properties == None:

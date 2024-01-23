@@ -46,8 +46,9 @@ class PyCoder(QtWidgets.QWidget):
         screen = QtWidgets.QDesktopWidget().screenGeometry()
         self.resize(screen.width() - 200, screen.height() - 200)
         size = self.geometry()
-        self.move(QPoint((screen.width() - size.width()) / 2, (
-            screen.height() - size.height()) / 2))
+        #self.move(QPoint((screen.width() - size.width()) / 2, (
+        #    screen.height() - size.height()) / 2))
+        self.move(QPoint(int((screen.width() - size.width()) / 2), int((screen.height() - size.height()) / 2)))
         self.lastWindowGeometry = self.geometry()
 
         mainLayout = QtWidgets.QVBoxLayout()

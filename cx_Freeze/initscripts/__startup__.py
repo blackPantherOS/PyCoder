@@ -1,7 +1,5 @@
-"""
-This is the first script that is run when cx_Freeze starts up. It
-determines the name of the initscript that is to be executed after
-a basic initialization.
+"""First script that is run when cx_Freeze starts up. It determines the name of
+the initscript that is to be executed after a basic initialization.
 """
 
 from __future__ import annotations
@@ -15,24 +13,20 @@ from importlib.machinery import (
     ModuleSpec,
     PathFinder,
 )
-from sysconfig import get_platform
 
 import BUILD_CONSTANTS
 
 STRINGREPLACE = list(
     string.whitespace + string.punctuation.replace(".", "").replace("_", "")
 )
-IS_MINGW = get_platform().startswith("mingw")
-IS_WINDOWS = get_platform().startswith("win")
 
 
 class ExtensionFinder(PathFinder):
     """A Finder for extension modules of packages in zip files."""
 
     @classmethod
-    def find_spec(cls, fullname, path=None, target=None):
-        """
-        This finder is only for extension modules found within packages that
+    def find_spec(cls, fullname, path=None, target=None):  # noqa: ARG003
+        """Finder only for extension modules found within packages that
         are included in the zip file (instead of as files on disk);
         extension modules cannot be found within zip files but are stored in
         the lib subdirectory; if the extension module is found in a package,
@@ -54,15 +48,13 @@ class ExtensionFinder(PathFinder):
 
 def init():
     """Basic initialization of the startup script."""
-
-    # update sys module
+    # to avoid bugs (especially in MSYS2) use normpath after any change
     sys.executable = os.path.normpath(sys.executable)
     sys.frozen_dir = frozen_dir = os.path.dirname(sys.executable)
     sys.meta_path.append(ExtensionFinder)
 
-    if IS_MINGW:
-        sys.path = [os.path.normpath(entry) for entry in sys.path]
-    if IS_WINDOWS or IS_MINGW:
+    sys.path = list(map(os.path.normpath, sys.path))
+    if sys.platform.startswith("win"):
         # for python >= 3.8, the search for dlls is sandboxed
         search_path: list[str] = [
             entry for entry in sys.path if os.path.isdir(entry)
@@ -70,25 +62,19 @@ def init():
         add_to_path = os.path.join(frozen_dir, "lib")
         if add_to_path not in search_path:
             search_path.insert(0, add_to_path)
-        # add numpy+mkl to the PATH
-        if hasattr(BUILD_CONSTANTS, "MKL_PATH"):
-            add_to_path = os.path.join(frozen_dir, BUILD_CONSTANTS.MKL_PATH)
-            search_path.append(os.path.normpath(add_to_path))
         # add to dll search path (or to path)
-        env_path = os.environ["PATH"].split(os.pathsep)
-        if IS_MINGW:
-            env_path = [os.path.normpath(entry) for entry in env_path]
+        env_path = os.environ.get("PATH", "").split(os.pathsep)
+        env_path = list(map(os.path.normpath, env_path))
         for directory in search_path:
             try:
                 os.add_dll_directory(directory)
             except OSError:
                 pass
             except AttributeError:
-                # add to path only when python < 3.8
+                # XXX: we need to add to path only when python < 3.8
                 if directory not in env_path:
                     env_path.insert(0, directory)
-        if IS_MINGW:
-            env_path = [entry.replace(os.sep, os.altsep) for entry in env_path]
+        env_path = [entry.replace(os.sep, "\\") for entry in env_path]
         os.environ["PATH"] = os.pathsep.join(env_path)
 
     # set environment variables
@@ -99,7 +85,7 @@ def init():
         "PYTHONTZPATH",
     ):
         try:
-            value = getattr(BUILD_CONSTANTS, name)
+            value = os.path.normpath(getattr(BUILD_CONSTANTS, name))
         except AttributeError:
             pass
         else:
@@ -108,12 +94,11 @@ def init():
 
 def run():
     """Determines the name of the initscript and execute it."""
-
     # get the real name of __init__ script
     # basically, the basename of executable plus __init__
     # but can be renamed when only one executable exists
     name = os.path.normcase(os.path.basename(sys.executable))
-    if IS_WINDOWS or IS_MINGW:
+    if sys.platform.startswith("win"):
         name, _ = os.path.splitext(name)
     name = name.partition(".")[0]
     if not name.isidentifier():
@@ -122,18 +107,18 @@ def run():
     try:
         module_init = __import__(name + "__init__")
     except ModuleNotFoundError:
-        files = []
-        for k in __loader__._files:  # pylint: disable=W0212
-            if k.endswith("__init__.pyc"):
-                k = k.rpartition("__init__")[0]
-                if k.isidentifier():
-                    files.append(k)
-        if len(files) != 1:
+        names = [
+            f.rpartition("__init__")[0]
+            for f in __loader__._files
+            if f.endswith("__init__.pyc")
+            and f.rpartition("__init__")[0].isidentifier()
+        ]
+        if len(names) != 1:
             raise RuntimeError(
                 "Apparently, the original executable has been renamed to "
                 f"{name!r}. When multiple executables are generated, "
                 "renaming is not allowed."
             ) from None
-        name = files[0]
+        name = names[0]
         module_init = __import__(name + "__init__")
     module_init.run(name + "__main__")

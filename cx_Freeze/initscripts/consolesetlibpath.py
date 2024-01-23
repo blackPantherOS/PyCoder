@@ -1,5 +1,4 @@
-"""
-Initialization script for cx_Freeze which manipulates the path so that the
+"""Initialization script for cx_Freeze which manipulates the path so that the
 directory in which the executable is found is searched for extensions but
 no other directory is searched. The environment variable LD_LIBRARY_PATH is
 manipulated first, however, to ensure that shared libraries found in the
@@ -28,8 +27,7 @@ sys.path = sys.path[:4]
 
 def run(name):
     """Execute the main script of the frozen application."""
-
     code = __loader__.get_code(name)
     module_main = __import__("__main__")
     module_main.__dict__["__file__"] = code.co_filename
-    exec(code, module_main.__dict__)  # pylint: disable=exec-used
+    exec(code, module_main.__dict__)

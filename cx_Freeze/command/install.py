@@ -1,5 +1,4 @@
 """Extends setuptools 'install' command."""
-
 from __future__ import annotations
 
 import contextlib
@@ -12,19 +11,19 @@ __all__ = ["Install"]
 
 
 @contextlib.contextmanager
-def suppress_known_deprecation():  # pylint: disable=missing-function-docstring
+def suppress_known_deprecation():
     with warnings.catch_warnings():
         warnings.filterwarnings("ignore", "setup.py install is deprecated")
         yield
 
 
-# pylint: disable=attribute-defined-outside-init
 class Install(_install):
     """Install everything from build directory."""
 
     command_name = "install"
-    user_options = _install.user_options + [
-        ("install-exe=", None, "installation directory for executables")
+    user_options = [
+        *_install.user_options,
+        ("install-exe=", None, "installation directory for executables"),
     ]
 
     def expand_dirs(self):
@@ -69,6 +68,6 @@ class Install(_install):
                 dir_name = f"{metadata.name}-{metadata.version}"
                 self.install_exe = f"$base/lib/{dir_name}"
 
-    def run(self):  # pylint: disable=useless-parent-delegation
+    def run(self):
         # setuptools used inspect.currentframe(), this method needs to exist.
         super().run()

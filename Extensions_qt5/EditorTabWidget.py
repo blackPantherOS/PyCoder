@@ -920,7 +920,11 @@ class EditorTabWidget(QtWidgets.QTabWidget):
             tabIndex = self.currentIndex()
         else:
             pass
-        data = self.widget(tabIndex).widget(0).DATA[attrib]
+        # vector
+        try:
+            data = self.widget(tabIndex).widget(0).DATA[attrib]
+        except:
+            data = ''
         return data
 
     def updateEditorData(self, attrib, value, tabIndex=None):

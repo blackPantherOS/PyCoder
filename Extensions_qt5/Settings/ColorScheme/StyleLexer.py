@@ -204,10 +204,15 @@ class StyleLexer(QtWidgets.QWidget):
     def fontChanged(self):
         currentfont = QtGui.QFont(self.currentPropertyAttrib[
                                   0], self.currentPropertyAttrib[2])
-        currentfont.setBold(self.currentPropertyAttrib[3])
-        currentfont.setItalic(self.currentPropertyAttrib[4])
-        font = QtWidgets.QFontDialog().getFont(currentfont, self)
-        if font[1]:
+
+        print("CurrentFont:", currentfont)
+        #currentfont.setBold(self.currentPropertyAttrib[3])
+        #currentfont.setItalic(self.currentPropertyAttrib[4])
+        #font = QtWidgets.QFontDialog().getFont(currentfont, self)
+        font, accepted = QtWidgets.QFontDialog().getFont(currentfont, self)
+
+        #if font[1]:
+        if accepted:
             font = font[0]
             name = font.rawName()
             size = font.pointSize()

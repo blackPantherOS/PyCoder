@@ -1,5 +1,4 @@
 """Extends setuptools to build Windows installer packages."""
-
 from __future__ import annotations
 
 import importlib
@@ -10,13 +9,10 @@ import re
 import shutil
 from sysconfig import get_platform
 
-from setuptools.errors import OptionError
-
-# pylint: disable-next=no-name-in-module
-from setuptools.extern.packaging import version as packaging_version
-
-from ._bdist_msi import bdist_msi
-from ._pydialog import PyDialog
+from cx_Freeze._compat import packaging
+from cx_Freeze.command._bdist_msi import bdist_msi as _bdist_msi
+from cx_Freeze.command._pydialog import PyDialog
+from cx_Freeze.exception import OptionError
 
 __all__ = ["BdistMSI"]
 
@@ -29,9 +25,7 @@ for index, info in enumerate(sequence):
         sequence[index] = (info[0], info[1], 1450)
 
 
-# pylint: disable=attribute-defined-outside-init,missing-function-docstring
-# pylint: disable=too-many-lines
-class BdistMSI(bdist_msi):
+class BdistMSI(_bdist_msi):
     """Create a Microsoft Installer (.msi) binary distribution."""
 
     description = __doc__
@@ -202,13 +196,15 @@ class BdistMSI(bdist_msi):
                         )
                     ],
                 )
-        for table_name, data in self.data.items():
+        for table_name, table_data in self.data.items():
             col = self._binary_columns.get(table_name)
             if col is not None:
                 data = [
                     (*row[:col], msilib.Binary(row[col]), *row[col + 1 :])
-                    for row in data
+                    for row in table_data
                 ]
+            else:
+                data = table_data
             msilib.add_data(self.db, table_name, data)
 
         # If provided, add data to MSI's summary information stream
@@ -1017,11 +1013,10 @@ class BdistMSI(bdist_msi):
         msi_name: str
         if os.path.splitext(self.target_name)[1].lower() == ".msi":
             msi_name = self.target_name
+        elif self.target_version:
+            msi_name = f"{self.fullname}-{platform}.msi"
         else:
-            if self.target_version:
-                msi_name = f"{self.fullname}-{platform}.msi"
-            else:
-                msi_name = f"{self.target_name}-{platform}.msi"
+            msi_name = f"{self.target_name}-{platform}.msi"
         installer_name = os.path.join(self.dist_dir, msi_name)
         installer_name = os.path.abspath(installer_name)
         if os.path.exists(installer_name):
@@ -1030,7 +1025,7 @@ class BdistMSI(bdist_msi):
         author = self.distribution.metadata.get_contact() or "UNKNOWN"
         version = self.target_version or self.distribution.get_version()
         # ProductVersion must be strictly numeric
-        base_version = packaging_version.Version(version).base_version
+        base_version = packaging.version.Version(version).base_version
 
         # msilib is reloaded in order to reset the "_directories" global member
         # in that module.  That member is used by msilib to prevent any two

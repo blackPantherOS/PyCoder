@@ -46,6 +46,7 @@ class ModuleCompletion(QtWidgets.QTreeWidget):
 
     def contextMenuEvent(self, event):
         selected = self.selectedItems()
+        print("Selected...")
         self.selectedItem = selected[0]
         self.selectedParent = self.selectedItem.parent()
 

@@ -1,13 +1,17 @@
 """A collection of functions which are triggered automatically by finder when
-PyQt5 package is included."""
-
+PyQt5 package is included.
+"""
 from __future__ import annotations
 
-import os
+from contextlib import suppress
+from textwrap import dedent
 
-from ...common import get_resource_file_path
-from ...finder import ModuleFinder
-from ...module import Module
+from cx_Freeze._compat import IS_CONDA, IS_MACOS
+from cx_Freeze.common import get_resource_file_path
+from cx_Freeze.finder import ModuleFinder
+from cx_Freeze.module import Module
+
+from .._qthooks import copy_qt_files
 from .._qthooks import load_qt_qt as load_pyqt5_qt
 from .._qthooks import load_qt_qtcharts as load_pyqt5_qtcharts
 from .._qthooks import (
@@ -21,6 +25,7 @@ from .._qthooks import load_qt_qtmultimedia as load_pyqt5_qtmultimedia
 from .._qthooks import (
     load_qt_qtmultimediawidgets as load_pyqt5_qtmultimediawidgets,
 )
+from .._qthooks import load_qt_qtnetwork as load_pyqt5_qtnetwork
 from .._qthooks import load_qt_qtopengl as load_pyqt5_qtopengl
 from .._qthooks import load_qt_qtpositioning as load_pyqt5_qtpositioning
 from .._qthooks import load_qt_qtprintsupport as load_pyqt5_qtprintsupport
@@ -31,7 +36,7 @@ from .._qthooks import load_qt_qtsvg as load_pyqt5_qtsvg
 from .._qthooks import load_qt_qttest as load_pyqt5_qttest
 from .._qthooks import load_qt_qtuitools as load_pyqt5_qtuitools
 from .._qthooks import load_qt_qtwebengine as load_pyqt5_qtwebengine
-from .._qthooks import load_qt_qtwebenginecore as load_pyqt5_qtwebenginecore
+from .._qthooks import load_qt_qtwebenginecore as _load_qt_qtwebenginecore
 from .._qthooks import (
     load_qt_qtwebenginewidgets as load_pyqt5_qtwebenginewidgets,
 )
@@ -44,8 +49,8 @@ from .._qthooks import load_qt_uic as load_pyqt5_uic
 
 def load_pyqt5(finder: ModuleFinder, module: Module) -> None:
     """Inject code in PyQt5 __init__ to locate and load plugins and
-    resources. Also, this fixes issues with conda-forge versions."""
-
+    resources. Also, this fixes issues with conda-forge versions.
+    """
     # Include QtCore module needed by all modules
     finder.include_module("PyQt5.QtCore")
 
@@ -53,38 +58,79 @@ def load_pyqt5(finder: ModuleFinder, module: Module) -> None:
     if module.in_file_system == 0:
         module.in_file_system = 2
 
-    # With PyQt5 5.15.4, if the folder name contains non-ascii characters, the
-    # libraryPaths returns empty. Prior to this version, this doesn't happen.
-    qt_patch = get_resource_file_path("hooks/pyqt5", "add_library", ".py")
-    finder.include_file_as_module(qt_patch, "PyQt5._cx_freeze_add_library")
+    # Include a module that fix an issue
+    qt_debug = get_resource_file_path("hooks/pyqt5", "_append_to_init", ".py")
+    finder.include_file_as_module(qt_debug, "PyQt5._cx_freeze_append_to_init")
 
-    # Include modules that inject an optional debug code
+    # Include a module that inject an optional debug code
     qt_debug = get_resource_file_path("hooks/pyqt5", "debug", ".py")
-    finder.include_file_as_module(qt_debug, "PyQt5._cx_freeze_qt_debug")
+    finder.include_file_as_module(qt_debug, "PyQt5._cx_freeze_debug")
 
-    # Inject code to init
-    code_string = module.file.read_text()
-    code_string += """
-# cx_Freeze patch start
-import PyQt5._cx_freeze_add_library
-import PyQt5._cx_freeze_qt_debug
-# cx_Freeze patch end
-"""
-    module.code = compile(code_string, os.fspath(module.file), "exec")
+    # Include a resource with qt.conf (Prefix = lib/PyQt5) for conda-forge
+    if IS_CONDA:
+        resource = get_resource_file_path("hooks/pyqt5", "resource", ".py")
+        finder.include_file_as_module(resource, "PyQt5._cx_freeze_resource")
+
+    # Include an optional qt.conf to be used by QtWebEngine (Prefix = ..)
+    copy_qt_files(finder, "PyQt5", "LibraryExecutablesPath", "qt.conf")
+
+    # Inject code to the end of init
+    code_string = module.file.read_text(encoding="utf_8")
+    code_string += dedent(
+        f"""
+        # cx_Freeze patch start
+        import os, sys
+        if {IS_CONDA}:  # conda-forge linux, macos and windows
+            import PyQt5._cx_freeze_resource
+        elif {IS_MACOS}:  # macos using 'pip install pyqt5'
+            # Support for QtWebEngine (bdist_mac differs from build_exe)
+            helpers = os.path.join(os.path.dirname(sys.frozen_dir), "Helpers")
+            if not os.path.isdir(helpers):
+                helpers = os.path.join(sys.frozen_dir, "share")
+            os.environ["QTWEBENGINEPROCESS_PATH"] = os.path.join(
+                helpers,
+                "QtWebEngineProcess.app/Contents/MacOS/QtWebEngineProcess"
+            )
+            os.environ["QTWEBENGINE_CHROMIUM_FLAGS"] = "--single-process"
+        else:
+            # Support for QtWebEngine (linux and windows using pip)
+            os.environ["QTWEBENGINE_DISABLE_SANDBOX"] = "1"
+        import PyQt5._cx_freeze_append_to_init
+        import PyQt5._cx_freeze_debug
+        # cx_Freeze patch end
+        """
+    )
+    module.code = compile(code_string, module.file.as_posix(), "exec")
 
 
-# pylint: disable-next=unused-argument
-def load_pyqt5_qtcore(finder: ModuleFinder, module: Module) -> None:
+def load_pyqt5_qtcore(
+    finder: ModuleFinder, module: Module  # noqa: ARG001
+) -> None:
     """The PyQt5.QtCore module implicitly imports the sip module and,
-    depending on configuration, the PyQt5._qt module."""
+    depending on configuration, the PyQt5._qt module.
+    """
     try:
         finder.include_module("PyQt5.sip")  # PyQt5 >= 5.11
     except ImportError:
         finder.include_module("sip")
-    try:
+    with suppress(ImportError):
         finder.include_module("PyQt5._qt")
-    except ImportError:
-        pass
+
+
+def load_pyqt5_qtwebenginecore(finder: ModuleFinder, module: Module) -> None:
+    """Include module dependency and QtWebEngineProcess files."""
+    _load_qt_qtwebenginecore(finder, module)
+    if IS_MACOS and not IS_CONDA:
+        # duplicate resource files
+        for source, target in finder.included_files[:]:
+            if any(
+                filter(source.match, ("Resources/*.pak", "Resources/*.dat"))
+            ):
+                finder.include_files(
+                    source,
+                    target.parent.parent / target.name,
+                    copy_dependent_files=False,
+                )
 
 
 __all__ = [
@@ -99,6 +145,7 @@ __all__ = [
     "load_pyqt5_qtlocation",
     "load_pyqt5_qtmultimedia",
     "load_pyqt5_qtmultimediawidgets",
+    "load_pyqt5_qtnetwork",
     "load_pyqt5_qtopengl",
     "load_pyqt5_qtpositioning",
     "load_pyqt5_qtprintsupport",

@@ -72,6 +72,7 @@ class MiniMap(QsciScintilla):
         self.viewport().setCursor(QtCore.Qt.PointingHandCursor)
         self.setMarginWidth(1, 0)
         font = QtGui.QFont()
+        print("FontMiniMap:", font)
         font.setPointSize(1)
         self.setFont(font)
         self.setDocument(self.editor.document())

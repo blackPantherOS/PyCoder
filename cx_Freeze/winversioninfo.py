@@ -8,8 +8,7 @@ import os
 from pathlib import Path
 from struct import calcsize, pack
 
-# pylint: disable-next=no-name-in-module
-from setuptools.extern.packaging import version as packaging_version
+from ._compat import packaging
 
 try:
     from win32verstamp import stamp as version_stamp
@@ -22,6 +21,10 @@ except ImportError:
     util = None
 
 __all__ = ["Version", "VersionInfo"]
+
+# constants
+RT_VERSION = 16
+ID_VERSION = 1
 
 # types
 CHAR = "c"
@@ -48,14 +51,15 @@ else:
     CX_FREEZE_STAMP = "internal"
 
 
-class Version(packaging_version.Version):
+class Version(packaging.version.Version):
     """A valid PEP440 version."""
 
 
 class Structure:
     """Abstract base class for structures in native byte order. Concrete
     structure and union types must be created by subclassing one of these
-    types, and at least define a _fields class variable."""
+    types, and at least define a _fields class variable.
+    """
 
     def __init__(self, *args):
         if not hasattr(self, "_fields"):
@@ -152,18 +156,13 @@ class String(Structure):
             value_type = 0
             fields.append(("Value", type(value)))
 
+        # pylint: disable=invalid-name
         self._fields = fields
-        # pylint: disable-next=invalid-name
         self.wValueLength = value_len
-        # pylint: disable-next=invalid-name
         self.wType = value_type
-        # pylint: disable-next=invalid-name
         self.szKey = key
-        # pylint: disable-next=invalid-name
         self.Padding = b"\0" * pad_len
-        # pylint: disable-next=invalid-name
         self.Value = value
-        # pylint: disable-next=invalid-name
         self.wLength = (
             calcsize(WORD) * 3 + key_len + pad_len + value_size * value_len
         )
@@ -195,7 +194,7 @@ class VersionInfo:
         comments: str | None = None,
         company: str | None = None,
         description: str | None = None,
-        copyright: str | None = None,  # pylint: disable=W0622
+        copyright: str | None = None,  # noqa: A002
         trademarks: str | None = None,
         product: str | None = None,
         dll: bool | None = None,
@@ -227,7 +226,7 @@ class VersionInfo:
                 raise RuntimeError("install pywin32 extensions first")
 
             options = self
-            setattr(options, "version", str(self.version))
+            setattr(options, "version", str(self.version))  # noqa: B010
             version_stamp(os.fspath(path), options)
             return
 
@@ -237,7 +236,9 @@ class VersionInfo:
             if util is None:
                 raise RuntimeError("cx_Freeze.util extensions not found")
             handle = util.BeginUpdateResource(path, 0)
-            util.UpdateResource(handle, 16, 1, string_version_info.to_buffer())
+            util.UpdateResource(
+                handle, RT_VERSION, ID_VERSION, string_version_info.to_buffer()
+            )
             util.EndUpdateResource(handle, 0)
 
         if self.verbose:

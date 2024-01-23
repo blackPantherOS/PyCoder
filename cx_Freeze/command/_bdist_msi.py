@@ -1,10 +1,9 @@
-# Copyright (C) 2005, 2006 Martin von Löwis
-# Licensed to PSF under a Contributor Agreement.
-"""
-Implements the bdist_msi command.
+"""Implements the bdist_msi command.
 
 Borrowed from distutils.command.bdist_msi of Python 3.8
 """
+# Copyright (C) 2005, 2006 Martin von Löwis
+# Licensed to PSF under a Contributor Agreement.
 
 from __future__ import annotations
 
@@ -30,16 +29,13 @@ from msilib import (  # pylint: disable=deprecated-module
 from sysconfig import get_platform, get_python_version
 
 from setuptools import Command
-from setuptools.errors import OptionError
 
-# pylint: disable-next=no-name-in-module
-from setuptools.extern.packaging import version as packaging_version
-
+from .._compat import packaging
+from ..exception import OptionError
 from ._pydialog import PyDialog
 
 
-# pylint: disable=attribute-defined-outside-init,missing-function-docstring
-# pylint: disable=too-many-lines,invalid-name
+# pylint: disable=invalid-name
 class bdist_msi(Command):
     """Create a Microsoft Installer (.msi) binary distribution."""
 
@@ -224,7 +220,7 @@ class bdist_msi(Command):
         version = metadata.get_version()
         # ProductVersion must be strictly numeric
         # XXX need to deal with prerelease versions
-        base_version = packaging_version.Version(version).base_version
+        base_version = packaging.version.Version(version).base_version
         # Prefix ProductName with Python x.y, so that
         # it sorts together with the other Python packages
         # in Add-Remove-Programs (APR)
@@ -281,7 +277,7 @@ class bdist_msi(Command):
         )
 
         items = [(feat, root, "")]
-        for version in self.versions + [self.other_version]:
+        for version in [*self.versions, self.other_version]:
             target = "TARGETDIR" + version
             name = default = "Python" + version
             desc = "Everything"
@@ -297,8 +293,8 @@ class bdist_msi(Command):
         db.Commit()
 
         seen = {}
-        for feature, directory, version in items:
-            todo = [directory]
+        for feature, base_directory, version in items:
+            todo = [base_directory]
             while todo:
                 directory = todo.pop()
                 for file in os.listdir(directory.absolute):
@@ -342,7 +338,7 @@ class bdist_msi(Command):
         cab.commit(db)
 
     def add_find_python(self):
-        """Adds code to the installer to compute the location of Python.
+        r"""Adds code to the installer to compute the location of Python.
 
         Properties PYTHON.MACHINE.X.Y and PYTHON.USER.X.Y will be set from the
         registry for each version of Python.
@@ -350,8 +346,8 @@ class bdist_msi(Command):
         Properties TARGETDIRX.Y will be set from PYTHON.USER.X.Y if defined,
         else from PYTHON.MACHINE.X.Y.
 
-        Properties PYTHONX.Y will be set to TARGETDIRX.Y\\python.exe"""
-
+        Properties PYTHONX.Y will be set to TARGETDIRX.Y\python.exe
+        """
         start = 402
         for ver in self.versions:
             install_path = rf"SOFTWARE\Python\PythonCore\{ver}\InstallPath"
@@ -364,11 +360,8 @@ class bdist_msi(Command):
             exe_action = f"PythonExe{ver}"
             target_dir_prop = f"TARGETDIR{ver}"
             exe_prop = f"PYTHON{ver}"
-            if Win64:
-                # type_: msidbLocatorTypeRawValue + msidbLocatorType64bit
-                type_ = 2 + 16
-            else:
-                type_ = 2
+            # type_: msidbLocatorTypeRawValue [ + msidbLocatorType64bit ]
+            type_ = 2 + 16 if Win64 else 2
             add_data(
                 self.db,
                 "RegLocator",
@@ -435,7 +428,7 @@ class bdist_msi(Command):
     def add_scripts(self):
         if self.install_script:
             start = 6800
-            for ver in self.versions + [self.other_version]:
+            for ver in [*self.versions, self.other_version]:
                 install_action = f"install_script.{ver}"
                 exe_prop = f"PYTHON{ver}"
                 add_data(
@@ -876,7 +869,7 @@ class bdist_msi(Command):
         c = seldlg.nextbutton("Next >", "Cancel")
         order = 1
         c.event("[TARGETDIR]", "[SourceDir]", ordering=order)
-        for version in self.versions + [self.other_version]:
+        for version in [*self.versions, self.other_version]:
             order += 1
             c.event(
                 "[TARGETDIR]",
@@ -1194,5 +1187,4 @@ class bdist_msi(Command):
             )
         else:
             base_name = f"{fullname}.{self.plat_name}.msi"
-        installer_name = os.path.join(self.dist_dir, base_name)
-        return installer_name
+        return os.path.join(self.dist_dir, base_name)

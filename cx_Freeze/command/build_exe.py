@@ -1,5 +1,4 @@
 """Implements the 'build_exe' command."""
-
 from __future__ import annotations
 
 import logging
@@ -8,20 +7,15 @@ import sys
 from sysconfig import get_platform, get_python_version
 
 from setuptools import Command
-try:
-    from setuptools.errors import SetupError
-except:
-    class SetupError(Exception):
-        pass
 
-from ..common import normalize_to_list
-from ..freezer import Freezer
-from ..module import ConstantsModule
+from cx_Freeze.common import normalize_to_list
+from cx_Freeze.exception import SetupError
+from cx_Freeze.freezer import Freezer
+from cx_Freeze.module import ConstantsModule
 
 __all__ = ["BuildEXE"]
 
 
-# pylint: disable=attribute-defined-outside-init,missing-function-docstring
 class BuildEXE(Command):
     """Build executables from Python scripts."""
 
@@ -52,7 +46,12 @@ class BuildEXE(Command):
             "comma-separated list of paths to replace in included modules, "
             "using the form <search>=<replace>",
         ),
-        ("path=", None, "comma-separated list of paths to search for modules"),
+        (
+            "path=",
+            None,
+            "comma-separated list of paths to search for modules; the default "
+            "value is sys.path (use only if you know what you are doing)",
+        ),
         ("no-compress", None, "create a zipfile with no compression"),
         ("constants=", None, "comma-separated list of constants to include"),
         (
@@ -119,12 +118,12 @@ class BuildEXE(Command):
             " level 3: suppress all warning messages",
         ),
         (
-            "include-msvcr=",
+            "include-msvcr",
             None,
             "include the Microsoft Visual C runtime files",
         ),
     ]
-    boolean_options = ["no-compress", "include_msvcr", "silent"]
+    boolean_options = ["no-compress", "include-msvcr", "silent"]
 
     def add_to_path(self, name):
         source_dir = getattr(self, name.lower())
@@ -151,7 +150,7 @@ class BuildEXE(Command):
         modules = [m for m in ext_modules if m.name == module_name]
         if not modules:
             raise SetupError(
-                "no module named '{module_name}' in '{source_dir}'"
+                f"no module named '{module_name}' in '{source_dir}'"
             )
         command = distribution.get_command_obj("build_ext")
         command.ensure_finalized()
@@ -212,6 +211,10 @@ class BuildEXE(Command):
                     "Use build_exe command with 'build-exe' option instead."
                 )
                 self.build_exe = build_exe
+        if self.build_exe == self.build_base:
+            raise SetupError(
+                "build_exe option cannot be the same as build_base directory"
+            )
         if self.build_exe is None:
             dir_name = f"exe.{get_platform()}-{get_python_version()}"
             self.build_exe = os.path.join(self.build_base, dir_name)
@@ -240,6 +243,10 @@ class BuildEXE(Command):
         else:
             self.silent_setting = 1
 
+        #
+        if self.include_msvcr is None:
+            self.include_msvcr = False
+
         # Make sure all options of multiple values are lists
         for option in self.list_options:
             setattr(self, option, normalize_to_list(getattr(self, option)))
@@ -261,22 +268,20 @@ class BuildEXE(Command):
             self.optimize,
             self.path,
             self.build_exe,
-            binIncludes=self.bin_includes,
-            binExcludes=self.bin_excludes,
-            binPathIncludes=self.bin_path_includes,
-            binPathExcludes=self.bin_path_excludes,
-            includeFiles=self.include_files,
-            zipIncludes=self.zip_includes,
-            zipIncludePackages=self.zip_include_packages,
-            zipExcludePackages=self.zip_exclude_packages,
+            bin_includes=self.bin_includes,
+            bin_excludes=self.bin_excludes,
+            bin_path_includes=self.bin_path_includes,
+            bin_path_excludes=self.bin_path_excludes,
+            include_files=self.include_files,
+            zip_includes=self.zip_includes,
+            zip_include_packages=self.zip_include_packages,
+            zip_exclude_packages=self.zip_exclude_packages,
             silent=self.silent_setting,
             metadata=metadata,
-            includeMSVCR=self.include_msvcr,
+            include_msvcr=self.include_msvcr,
         )
 
-        # keep freezer around so that its data case be used in bdist_mac phase
-        self.freezer = freezer
-        freezer.Freeze()
+        freezer.freeze()
 
     def set_source_location(self, name, *pathParts):
         env_name = f"{name.upper()}_BASE"

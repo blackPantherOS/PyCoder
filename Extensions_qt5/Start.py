@@ -70,7 +70,7 @@ class Start(QtWidgets.QLabel):
         centralLayout.addLayout(hbox)
 
         label = QtWidgets.QLabel("Getting started...")
-        label.setFont(QtGui.QFont("Consolas", 20))
+        # vector label.setFont(QtGui.QFont("Consolas", 20))
         hbox.addWidget(label)
 
         hbox.addStretch(1)
@@ -95,7 +95,7 @@ class Start(QtWidgets.QLabel):
             "context of a project. Start editing your files by first "
             "creating a project or opening an existing one.")
         label.setWordWrap(True)
-        label.setFont(QtGui.QFont("Consolas", 10))
+        #vector label.setFont(QtGui.QFont("Consolas", 10))
         centralLayout.addWidget(label)
 
         centralLayout.addStretch(1)

@@ -1,9 +1,7 @@
-
-from _ast import PyCF_ONLY_AST
-from sys import version_info
+import ast
 
 from pyflakes import messages as m, checker
-from pyflakes.test.harness import TestCase, skipIf
+from pyflakes.test.harness import TestCase, skip
 
 
 class Test(TestCase):
@@ -13,14 +11,187 @@ class Test(TestCase):
     def test_definedInListComp(self):
         self.flakes('[a for a in range(10) if a]')
 
-    @skipIf(version_info < (3,),
-            'in Python 2 list comprehensions execute in the same scope')
     def test_undefinedInListComp(self):
         self.flakes('''
         [a for a in range(10)]
         a
         ''',
                     m.UndefinedName)
+
+    def test_undefinedExceptionName(self):
+        """Exception names can't be used after the except: block.
+
+        The exc variable is unused inside the exception handler."""
+        self.flakes('''
+        try:
+            raise ValueError('ve')
+        except ValueError as exc:
+            pass
+        exc
+        ''', m.UndefinedName, m.UnusedVariable)
+
+    def test_namesDeclaredInExceptBlocks(self):
+        """Locals declared in except: blocks can be used after the block.
+
+        This shows the example in test_undefinedExceptionName is
+        different."""
+        self.flakes('''
+        try:
+            raise ValueError('ve')
+        except ValueError as exc:
+            e = exc
+        e
+        ''')
+
+    @skip('error reporting disabled due to false positives below')
+    def test_undefinedExceptionNameObscuringLocalVariable(self):
+        """Exception names obscure locals, can't be used after.
+
+        Last line will raise UnboundLocalError on Python 3 after exiting
+        the except: block. Note next two examples for false positives to
+        watch out for."""
+        self.flakes('''
+        exc = 'Original value'
+        try:
+            raise ValueError('ve')
+        except ValueError as exc:
+            pass
+        exc
+        ''',
+                    m.UndefinedName)
+
+    def test_undefinedExceptionNameObscuringLocalVariable2(self):
+        """Exception names are unbound after the `except:` block.
+
+        Last line will raise UnboundLocalError.
+        The exc variable is unused inside the exception handler.
+        """
+        self.flakes('''
+        try:
+            raise ValueError('ve')
+        except ValueError as exc:
+            pass
+        print(exc)
+        exc = 'Original value'
+        ''', m.UndefinedName, m.UnusedVariable)
+
+    def test_undefinedExceptionNameObscuringLocalVariableFalsePositive1(self):
+        """Exception names obscure locals, can't be used after. Unless.
+
+        Last line will never raise UnboundLocalError because it's only
+        entered if no exception was raised."""
+        self.flakes('''
+        exc = 'Original value'
+        try:
+            raise ValueError('ve')
+        except ValueError as exc:
+            print('exception logged')
+            raise
+        exc
+        ''', m.UnusedVariable)
+
+    def test_delExceptionInExcept(self):
+        """The exception name can be deleted in the except: block."""
+        self.flakes('''
+        try:
+            pass
+        except Exception as exc:
+            del exc
+        ''')
+
+    def test_undefinedExceptionNameObscuringLocalVariableFalsePositive2(self):
+        """Exception names obscure locals, can't be used after. Unless.
+
+        Last line will never raise UnboundLocalError because `error` is
+        only falsy if the `except:` block has not been entered."""
+        self.flakes('''
+        exc = 'Original value'
+        error = None
+        try:
+            raise ValueError('ve')
+        except ValueError as exc:
+            error = 'exception logged'
+        if error:
+            print(error)
+        else:
+            exc
+        ''', m.UnusedVariable)
+
+    @skip('error reporting disabled due to false positives below')
+    def test_undefinedExceptionNameObscuringGlobalVariable(self):
+        """Exception names obscure globals, can't be used after.
+
+        Last line will raise UnboundLocalError because the existence of that
+        exception name creates a local scope placeholder for it, obscuring any
+        globals, etc."""
+        self.flakes('''
+        exc = 'Original value'
+        def func():
+            try:
+                pass  # nothing is raised
+            except ValueError as exc:
+                pass  # block never entered, exc stays unbound
+            exc
+        ''',
+                    m.UndefinedLocal)
+
+    @skip('error reporting disabled due to false positives below')
+    def test_undefinedExceptionNameObscuringGlobalVariable2(self):
+        """Exception names obscure globals, can't be used after.
+
+        Last line will raise NameError on Python 3 because the name is
+        locally unbound after the `except:` block, even if it's
+        nonlocal. We should issue an error in this case because code
+        only working correctly if an exception isn't raised, is invalid.
+        Unless it's explicitly silenced, see false positives below."""
+        self.flakes('''
+        exc = 'Original value'
+        def func():
+            global exc
+            try:
+                raise ValueError('ve')
+            except ValueError as exc:
+                pass  # block never entered, exc stays unbound
+            exc
+        ''',
+                    m.UndefinedLocal)
+
+    def test_undefinedExceptionNameObscuringGlobalVariableFalsePositive1(self):
+        """Exception names obscure globals, can't be used after. Unless.
+
+        Last line will never raise NameError because it's only entered
+        if no exception was raised."""
+        self.flakes('''
+        exc = 'Original value'
+        def func():
+            global exc
+            try:
+                raise ValueError('ve')
+            except ValueError as exc:
+                print('exception logged')
+                raise
+            exc
+        ''', m.UnusedVariable)
+
+    def test_undefinedExceptionNameObscuringGlobalVariableFalsePositive2(self):
+        """Exception names obscure globals, can't be used after. Unless.
+
+        Last line will never raise NameError because `error` is only
+        falsy if the `except:` block has not been entered."""
+        self.flakes('''
+        exc = 'Original value'
+        def func():
+            global exc
+            error = None
+            try:
+                raise ValueError('ve')
+            except ValueError as exc:
+                error = 'exception logged'
+            if error:
+                print(error)
+            else:
+                exc
+        ''', m.UnusedVariable)
 
     def test_functionsNeedGlobalScope(self):
         self.flakes('''
@@ -39,6 +210,13 @@ class Test(TestCase):
         for using it.
         """
         self.flakes('WindowsError')
+
+    def test_moduleAnnotations(self):
+        """
+        Use of the C{__annotations__} in module scope should not emit
+        an undefined name warning when version is greater than or equal to 3.6.
+        """
+        self.flakes('__annotations__')
 
     def test_magicGlobalsFile(self):
         """
@@ -69,28 +247,42 @@ class Test(TestCase):
         self.flakes('__path__', m.UndefinedName)
         self.flakes('__path__', filename='package/__init__.py')
 
+    def test_magicModuleInClassScope(self):
+        """
+        Use of the C{__module__} magic builtin should not emit an undefined
+        name warning if used in class scope.
+        """
+        self.flakes('__module__', m.UndefinedName)
+        self.flakes('''
+        class Foo:
+            __module__
+        ''')
+        self.flakes('''
+        class Foo:
+            def bar(self):
+                __module__
+        ''', m.UndefinedName)
+
+    def test_magicQualnameInClassScope(self):
+        """
+        Use of the C{__qualname__} magic builtin should not emit an undefined
+        name warning if used in class scope.
+        """
+        self.flakes('__qualname__', m.UndefinedName)
+        self.flakes('''
+        class Foo:
+            __qualname__
+        ''')
+        self.flakes('''
+        class Foo:
+            def bar(self):
+                __qualname__
+        ''', m.UndefinedName)
+
     def test_globalImportStar(self):
         """Can't find undefined names with import *."""
-        self.flakes('from fu import *; bar', m.ImportStarUsed)
-
-    def test_localImportStar(self):
-        """
-        A local import * still allows undefined names to be found
-        in upper scopes.
-        """
-        self.flakes('''
-        def a():
-            from fu import *
-        bar
-        ''', m.ImportStarUsed, m.UndefinedName)
-
-    @skipIf(version_info >= (3,), 'obsolete syntax')
-    def test_unpackedParameter(self):
-        """Unpacked function parameters create bindings."""
-        self.flakes('''
-        def a((bar, baz)):
-            bar; baz
-        ''')
+        self.flakes('from fu import *; bar',
+                    m.ImportStarUsed, m.ImportStarUsage)
 
     def test_definedByGlobal(self):
         """
@@ -123,6 +315,29 @@ class Test(TestCase):
         global x
         def foo():
             print(x)
+        ''', m.UndefinedName)
+
+    def test_global_reset_name_only(self):
+        """A global statement does not prevent other names being undefined."""
+        # Only different undefined names are reported.
+        # See following test that fails where the same name is used.
+        self.flakes('''
+        def f1():
+            s
+
+        def f2():
+            global m
+        ''', m.UndefinedName)
+
+    @skip("todo")
+    def test_unused_global(self):
+        """An unused global statement does not define the name."""
+        self.flakes('''
+        def f1():
+            m
+
+        def f2():
+            global m
         ''', m.UndefinedName)
 
     def test_del(self):
@@ -286,7 +501,11 @@ class Test(TestCase):
                     return x
                 return x
         ''', m.UndefinedLocal).messages[0]
-        self.assertEqual(exc.message_args, ('x', 5))
+
+        # _DoctestMixin.flakes adds two lines preceding the code above.
+        expected_line_num = 7 if self.withDoctest else 5
+
+        self.assertEqual(exc.message_args, ('x', expected_line_num))
 
     def test_laterRedefinedGlobalFromNestedScope3(self):
         """
@@ -352,7 +571,6 @@ class Test(TestCase):
             print(a, b, c)
         ''')
 
-    @skipIf(version_info < (3,), 'new in Python 3')
     def test_definedAsStarUnpack(self):
         """Star names in unpack are defined."""
         self.flakes('''
@@ -368,7 +586,6 @@ class Test(TestCase):
         print(a, b, c)
         ''')
 
-    @skipIf(version_info < (3,), 'new in Python 3')
     def test_usedAsStarUnpack(self):
         """
         Star names in unpack are used if RHS is not a tuple/list literal.
@@ -386,7 +603,6 @@ class Test(TestCase):
             [a, *b, c] = range(10)
         ''')
 
-    @skipIf(version_info < (3,), 'new in Python 3')
     def test_unusedAsStarUnpack(self):
         """
         Star names in unpack are unused if RHS is a tuple/list literal.
@@ -404,7 +620,6 @@ class Test(TestCase):
             [a, *b, c] = 9, 8, 7, 6, 5, 4
         ''', m.UnusedVariable, m.UnusedVariable, m.UnusedVariable)
 
-    @skipIf(version_info < (3,), 'new in Python 3')
     def test_keywordOnlyArgs(self):
         """Keyword-only arg names are defined."""
         self.flakes('''
@@ -418,7 +633,6 @@ class Test(TestCase):
             print(a, b)
         ''')
 
-    @skipIf(version_info < (3,), 'new in Python 3')
     def test_keywordOnlyArgsUndefined(self):
         """Typo in kwonly name."""
         self.flakes('''
@@ -426,7 +640,6 @@ class Test(TestCase):
             print(a, b)
         ''', m.UndefinedName)
 
-    @skipIf(version_info < (3,), 'new in Python 3')
     def test_annotationUndefined(self):
         """Undefined annotations."""
         self.flakes('''
@@ -441,7 +654,6 @@ class Test(TestCase):
             def func(a: {1, d}) -> (lambda c: e): pass
         ''')
 
-    @skipIf(version_info < (3,), 'new in Python 3')
     def test_metaClassUndefined(self):
         self.flakes('''
         from abc import ABCMeta
@@ -453,8 +665,20 @@ class Test(TestCase):
         Using the loop variable of a generator expression results in no
         warnings.
         """
-        self.flakes('(a for a in %srange(10) if a)' %
-                    ('x' if version_info < (3,) else ''))
+        self.flakes('(a for a in [1, 2, 3] if a)')
+
+        self.flakes('(b for b in (a for a in [1, 2, 3] if a) if b)')
+
+    def test_undefinedInGenExpNested(self):
+        """
+        The loop variables of generator expressions nested together are
+        not defined in the other generator.
+        """
+        self.flakes('(b for b in (a for a in [1, 2, 3] if b) if b)',
+                    m.UndefinedName)
+
+        self.flakes('(b for b in (a for a in [1, 2, 3] if a) if a)',
+                    m.UndefinedName)
 
     def test_undefinedWithErrorHandler(self):
         """
@@ -500,14 +724,22 @@ class Test(TestCase):
             B = dict((i, str(i)) for i in T)
         ''')
 
-        if version_info >= (2, 7):
-            self.flakes('''
-            class A:
-                T = range(10)
+        self.flakes('''
+        class A:
+            T = range(10)
 
-                X = {x for x in T}
-                Y = {x:x for x in T}
-            ''')
+            X = {x for x in T}
+            Y = {x:x for x in T}
+        ''')
+
+    def test_definedInClassNested(self):
+        """Defined name for nested generator expressions in a class."""
+        self.flakes('''
+        class A:
+            T = range(10)
+
+            Z = (x for x in (a for a in T))
+        ''')
 
     def test_undefinedInLoop(self):
         """
@@ -524,7 +756,6 @@ class Test(TestCase):
         (42 for i in range(i))
         ''', m.UndefinedName)
 
-    @skipIf(version_info < (2, 7), 'Dictionary comprehensions do not exist')
     def test_definedFromLambdaInDictionaryComprehension(self):
         """
         Defined name referenced from a lambda function within a dict/set
@@ -543,7 +774,6 @@ class Test(TestCase):
         any(lambda: id(x) for x in range(10))
         ''')
 
-    @skipIf(version_info < (2, 7), 'Dictionary comprehensions do not exist')
     def test_undefinedFromLambdaInDictionaryComprehension(self):
         """
         Undefined name referenced from a lambda function within a dict/set
@@ -562,6 +792,17 @@ class Test(TestCase):
         any(lambda: id(y) for x in range(10))
         ''', m.UndefinedName)
 
+    def test_dunderClass(self):
+        code = '''
+        class Test(object):
+            def __init__(self):
+                print(__class__.__name__)
+                self.x = 1
+
+        t = Test()
+        '''
+        self.flakes(code)
+
 
 class NameTests(TestCase):
     """
@@ -572,7 +813,7 @@ class NameTests(TestCase):
         A Name node with an unrecognized context results in a RuntimeError being
         raised.
         """
-        tree = compile("x = 10", "<test>", "exec", PyCF_ONLY_AST)
+        tree = ast.parse("x = 10")
         # Make it into something unrecognizable.
         tree.body[0].targets[0].ctx = object()
         self.assertRaises(RuntimeError, checker.Checker, tree)

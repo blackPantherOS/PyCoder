@@ -1,15 +1,16 @@
 """A collection of functions which are triggered automatically by finder when
-matplotlib package is included."""
+matplotlib package is included.
+"""
 
 from __future__ import annotations
 
 from contextlib import suppress
 from pathlib import Path
-from types import CodeType
 
 from ..common import code_object_replace_function
 from ..finder import ModuleFinder
 from ..module import Module
+from ._libs import replace_delvewheel_patch
 
 
 def load_matplotlib(finder: ModuleFinder, module: Module) -> None:
@@ -32,10 +33,10 @@ def load_matplotlib(finder: ModuleFinder, module: Module) -> None:
     source_dir = module_path.parent / module_libs_name
     if source_dir.exists():
         finder.include_files(source_dir, f"lib/{module_libs_name}")
-    _remove_delvewheel(module)
+    replace_delvewheel_patch(module)
     with suppress(ImportError):
         mpl_toolkits = finder.include_module("mpl_toolkits")
-        _remove_delvewheel(mpl_toolkits)
+        replace_delvewheel_patch(mpl_toolkits)
 
 
 def _patch_data_path(module: Module, data_path: Path) -> None:
@@ -53,23 +54,3 @@ def _patch_data_path(module: Module, data_path: Path) -> None:
         # patch if the name (_get_data_path and/or get_data_path) is found
         code = code_object_replace_function(code, name, source)
     module.code = code
-
-
-def _remove_delvewheel(module: Module) -> None:
-    # remove delvewheel injections of code to not find for .libs directory
-    code = module.code
-    if code is None:
-        return None
-    delvewheel_func = "_delvewheel_init_patch_"
-    consts = list(code.co_consts)
-    for constant in consts:
-        if isinstance(constant, CodeType):
-            name = constant.co_name
-            if name.startswith(delvewheel_func):
-                source = f"""\
-                def {name}():
-                    return
-                """
-                code = code_object_replace_function(code, name, source)
-                break
-    return code

@@ -13,7 +13,7 @@ from types import CodeType
 
 from ._compat import importlib_metadata
 from .common import TemporaryPath
-from .exception import ConfigError
+from .exception import OptionError
 
 __all__ = ["ConstantsModule", "Module"]
 
@@ -49,7 +49,7 @@ class DistributionCache(importlib_metadata.PathDistribution):
         source_path = getattr(distribution, "_path", None)
         if source_path is None:
             mask = f"{normalized_name}-{distribution.version}*-info"
-            source_path = list(distribution.locate_file("").glob(mask))[0]
+            source_path = next(iter(distribution.locate_file("").glob(mask)))
         if not source_path.exists():
             raise importlib_metadata.PackageNotFoundError(name)
 
@@ -89,7 +89,7 @@ class DistributionCache(importlib_metadata.PathDistribution):
 
     @staticmethod
     def _write_wheel_distinfo(target_path: Path, purelib: bool):
-        """Create a WHEEL file if it doesn't exist"""
+        """Create a WHEEL file if it doesn't exist."""
         target = target_path / "WHEEL"
         if not target.exists():
             project = Path(__file__).parent.name
@@ -106,7 +106,7 @@ class DistributionCache(importlib_metadata.PathDistribution):
 
     @staticmethod
     def _write_record_distinfo(target_path: Path):
-        """Recreate a minimal RECORD file"""
+        """Recreate a minimal RECORD file."""
         target_name = target_path.name
         record = []
         for file in target_path.iterdir():
@@ -118,22 +118,18 @@ class DistributionCache(importlib_metadata.PathDistribution):
 
 
 class Module:
-    """
-    The Module class.
-    """
+    """The Module class."""
 
     def __init__(
         self,
         name: str,
         path: Sequence[Path | str] | None = None,
-        file_name: Path | str | None = None,
+        filename: Path | str | None = None,
         parent: Module | None = None,
     ):
         self.name: str = name
-        self.path: list[Path] | None = None
-        if path:
-            self.path = [Path(p) for p in path]
-        self.file = file_name
+        self.path: list[Path] | None = list(map(Path, path)) if path else None
+        self._file: Path | None = Path(filename) if filename else None
         self.parent: Module | None = parent
         self.code: CodeType | None = None
         self.distribution: DistributionCache | None = None
@@ -143,18 +139,44 @@ class Module:
         self.in_import: bool = True
         self.source_is_string: bool = False
         self.source_is_zip_file: bool = False
-        self.in_file_system = 1
+        self._in_file_system: int = 1
         # cache the dist-info files (metadata)
         self.update_distribution(name)
 
+    def __repr__(self) -> str:
+        parts = [f"name={self.name!r}"]
+        if self.file is not None:
+            parts.append(f"file={self.file!r}")
+        if self.path is not None:
+            parts.append(f"path={self.path!r}")
+        join_parts = ", ".join(parts)
+        return f"<Module {join_parts}>"
+
     @property
     def file(self) -> Path | None:
-        """Module filename"""
+        """Module filename."""
         return self._file
 
     @file.setter
-    def file(self, file_name: Path | str | None):
-        self._file: Path | None = Path(file_name) if file_name else None
+    def file(self, filename: Path | str | None):
+        self._file = Path(filename) if filename else None
+
+    @property
+    def in_file_system(self) -> int:
+        """Returns a value indicating where the module/package will be stored:
+        0. in a zip file (not directly in the file system)
+        1. in the file system, package with modules and data
+        2. in the file system, only detected modules.
+        """
+        if self.parent is not None:
+            return self.parent.in_file_system
+        if self.path is None or self.file is None:
+            return 0
+        return self._in_file_system
+
+    @in_file_system.setter
+    def in_file_system(self, value: int) -> None:
+        self._in_file_system: int = value
 
     def update_distribution(self, name: str) -> None:
         """Update the distribution cache based on its name.
@@ -179,36 +201,9 @@ class Module:
                 DistributionCache.from_name(req_name)
         self.distribution = distribution
 
-    def __repr__(self) -> str:
-        parts = [f"name={self.name!r}"]
-        if self.file is not None:
-            parts.append(f"file={self.file!r}")
-        if self.path is not None:
-            parts.append(f"path={self.path!r}")
-        join_parts = ", ".join(parts)
-        return f"<Module {join_parts}>"
-
-    @property
-    def in_file_system(self) -> int:
-        """Returns a value indicating where the module/package will be stored:
-        0. in a zip file (not directly in the file system)
-        1. in the file system, package with modules and data
-        2. in the file system, only detected modules."""
-        if self.parent is not None:
-            return self.parent.in_file_system
-        if self.path is None or self.file is None:
-            return 0
-        return self._in_file_system
-
-    @in_file_system.setter
-    def in_file_system(self, value: int) -> None:
-        self._in_file_system: int = value
-
 
 class ConstantsModule:
-    """
-    Base ConstantsModule class.
-    """
+    """Base ConstantsModule class."""
 
     def __init__(
         self,
@@ -233,15 +228,14 @@ class ConstantsModule:
                     name, string_value = parts
                     value = ast.literal_eval(string_value)
                 if (not name.isidentifier()) or iskeyword(name):
-                    raise ConfigError(
+                    raise OptionError(
                         f"Invalid constant name in ConstantsModule ({name!r})"
                     )
                 self.values[name] = value
         self.module_path: TemporaryPath = TemporaryPath("constants.py")
 
     def create(self, modules: list[Module]) -> tuple[Path, str]:
-        """
-        Create the module which consists of declaration statements for each
+        """Create the module which consists of declaration statements for each
         of the values.
         """
         today = datetime.datetime.today()
@@ -252,7 +246,7 @@ class ConstantsModule:
             if module.source_is_zip_file:
                 continue
             if not module.file.exists():
-                raise ConfigError(
+                raise OptionError(
                     f"No file named {module.file!s} (for module {module.name})"
                 )
             timestamp = module.file.stat().st_mtime

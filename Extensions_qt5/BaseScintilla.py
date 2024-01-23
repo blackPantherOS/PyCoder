@@ -11,7 +11,7 @@ class FindOccurenceThread(QtCore.QThread):
         word = re.escape(self.word)
         if self.wholeWord:
             word = "\\b{0}\\b".format(word)
-        flags = re.UNICODE | re.LOCALE
+        flags = re.UNICODE
         search = re.compile(word, flags)
 
         lineno = 0

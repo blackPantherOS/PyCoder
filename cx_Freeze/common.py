@@ -2,9 +2,7 @@
 
 from __future__ import annotations
 
-import contextlib
 import shutil
-import warnings
 from contextlib import suppress
 from pathlib import Path, PurePath
 from tempfile import TemporaryDirectory
@@ -12,7 +10,7 @@ from textwrap import dedent
 from types import CodeType
 from typing import List, Optional, Tuple, Union
 
-from .exception import ConfigError
+from .exception import OptionError
 
 IncludesList = List[
     Union[str, Path, Tuple[Union[str, Path], Optional[Union[str, Path]]]]
@@ -24,15 +22,16 @@ InternalIncludesList = List[Tuple[Path, PurePath]]
 class FilePath(Path):
     """Subclass of concrete Path to be used in TemporaryPath."""
 
-    _flavour = type(Path())._flavour  # pylint: disable=E1101,W0212
+    _flavour = type(Path())._flavour
 
     def replace(self, target):
         """Rename this path to the target path, overwriting if that path
-        exists. Extended to support move between file systems."""
-        with contextlib.suppress(OSError):
+        exists. Extended to support move between file systems.
+        """
+        with suppress(OSError):
             return super().replace(target)
         shutil.copyfile(self, target)
-        with contextlib.suppress(FileNotFoundError):
+        with suppress(FileNotFoundError):
             self.unlink()
         return self.__class__(target)
 
@@ -41,8 +40,8 @@ class TemporaryPath(TemporaryDirectory):
     """Create and return a Path-like temporary directory."""
 
     def __init__(
-        self, filename=None, suffix=None, prefix=None, dir=None
-    ):  # pylint: disable=redefined-builtin
+        self, filename=None, suffix=None, prefix=None, dir=None  # noqa: A002
+    ):
         super().__init__(suffix, prefix or "cxfreeze-", dir)
         if filename:
             if Path(filename).parent.name:
@@ -58,8 +57,7 @@ class TemporaryPath(TemporaryDirectory):
 def get_resource_file_path(
     dirname: str | Path, name: str | Path, ext: str
 ) -> Path | None:
-    """
-    Return the path to a resource file shipped with cx_Freeze.
+    """Return the path to a resource file shipped with cx_Freeze.
 
     This is used to find our base executables and initscripts when they are
     just specified by name.
@@ -80,29 +78,24 @@ def get_resource_file_path(
 def normalize_to_list(
     value: str | list[str] | tuple[str, ...] | None
 ) -> list[str]:
-    """
-    Takes the different formats of options containing multiple values and
+    """Takes the different formats of options containing multiple values and
     returns the value as a list object.
     """
     if value is None:
-        normalized_value = []
-    elif isinstance(value, str):
-        normalized_value = value.split(",")
-    else:
-        normalized_value = list(value)
-
-    return normalized_value
+        return []
+    if isinstance(value, str):
+        return value.split(",")
+    return list(value)
 
 
 def process_path_specs(specs: IncludesList | None) -> InternalIncludesList:
-    """
-    Prepare paths specified as config.
+    """Prepare paths specified as config.
 
     The input is a list of either strings, or 2-tuples (source, target).
     Where single strings are supplied, the basenames are used as targets.
     Where targets are given explicitly, they must not be absolute paths.
 
-    Returns a list of 2-tuples, or throws ConfigError if something is wrong
+    Returns a list of 2-tuples, or throws OptionError if something is wrong
     in the input.
     """
     if specs is None:
@@ -114,16 +107,16 @@ def process_path_specs(specs: IncludesList | None) -> InternalIncludesList:
             target = None
         elif len(spec) != 2:
             error = "path spec must be a list or tuple of length two"
-            raise ConfigError(error)
+            raise OptionError(error)
         else:
             source, target = spec
         source = Path(source)
         if not source.exists():
-            raise ConfigError(f"cannot find file/directory named {source!s}")
+            raise OptionError(f"cannot find file/directory named {source!s}")
         target = PurePath(target or source.name)
         if target.is_absolute():
             error = f"target path named {target!s} cannot be absolute"
-            raise ConfigError(error)
+            raise OptionError(error)
         processed_specs.append((source, target))
     return processed_specs
 
@@ -155,25 +148,6 @@ def code_object_replace(code: CodeType, **kwargs) -> CodeType:
         kwargs.get("co_cellvars", code.co_cellvars),
     ]
     return CodeType(*params)
-
-
-def validate_args(arg, snake_value, camel_value):
-    """
-    Validate arguments from two exclusive sources.
-    This is a temporary function to be used while transitioning from using
-    camelCase parameters to snake_case.
-    """
-    if isinstance(snake_value, str):
-        if isinstance(camel_value, str):
-            raise ConfigError(
-                f"May not pass {arg!r} as snake_case and camelCase"
-            )
-    elif isinstance(camel_value, str):
-        warnings.warn(
-            "camelCase values is obsolete and will be removed in the "
-            f"next major version -> use the new name {arg!r}"
-        )
-    return snake_value or camel_value
 
 
 def code_object_replace_function(

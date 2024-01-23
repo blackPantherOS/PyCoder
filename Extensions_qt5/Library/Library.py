@@ -594,13 +594,12 @@ class Library(QtWidgets.QMainWindow):
 
     def export(self):
         options = QtWidgets.QFileDialog.Options()
-        fileName = QtWidgets.QFileDialog.getSaveFileName(self,
-                                                     "Export Library",
-                                                     os.path.join(
-                                                         self.useData.getLastOpenedDir(
-                                                         ),
-                                                         "PyCoder_Library"'_' + QtCore.QDateTime().currentDateTime().toString().replace(' ', '_').replace(':', '-') + '.pcdlib'),
-                                                     "PyCoder Library (*.pcdlib);", options)[0]
+        fileName, _ = QtWidgets.QFileDialog.getSaveFileName(self,
+                                                         "Export Library",
+                                                         os.path.join(
+                                                             self.useData.getLastOpenedDir(),
+                                                             "PyCoder_Library" + '_' + QtCore.QDateTime().currentDateTime().toString().replace(' ', '_').replace(':', '-') + '.pcdlib'),
+                                                         "PyCoder Library (*.pcdlib);", options=options)
         if fileName:
             self.useData.saveLastOpenedDir(os.path.split(fileName)[0])
             try:
@@ -612,10 +611,11 @@ class Library(QtWidgets.QMainWindow):
                 mess = str(err.args[1])
                 QtWidgets.QApplication.restoreOverrideCursor()
                 message = QtWidgets.QMessageBox.critical(self,
-                                                     "Export Library", mess)
+                                                         "Export Library", mess)
             QtWidgets.QApplication.restoreOverrideCursor()
         else:
             return False
+
 
     def addToLibrary(self, editorTabWidget):
         if editorTabWidget.getSource().strip() == '':

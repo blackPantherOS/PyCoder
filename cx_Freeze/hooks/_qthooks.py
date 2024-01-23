@@ -1,8 +1,9 @@
 """A collection of functions which are the base to hooks for PyQt5, PyQt6,
-PySide2 and PySide6."""
-
+PySide2 and PySide6.
+"""
 from __future__ import annotations
 
+import json
 import os
 import sys
 from contextlib import suppress
@@ -22,7 +23,6 @@ def _qt_implementation(module: Module) -> str:
 @lru_cache(maxsize=None)
 def _qt_libraryinfo_paths(name: str) -> dict[str, tuple[Path, Path]]:
     """Cache the QtCore library paths."""
-
     try:
         qtcore = __import__(name, fromlist=["QtCore"]).QtCore
     except RuntimeError:
@@ -73,10 +73,8 @@ def _qt_libraryinfo_paths(name: str) -> dict[str, tuple[Path, Path]]:
     # set the target paths
     data: dict[str, tuple[Path, Path]] = {}
     target_base = Path("lib", name)
-    try:
+    with suppress(ValueError):
         target_base = target_base / prefix_path.relative_to(qt_root_dir)
-    except ValueError:
-        pass
     if name == "PyQt5" and prefix_path.name != "Qt5":
         # conda pyqt
         target_base = target_base / "Qt5"
@@ -115,11 +113,18 @@ def _qt_libraryinfo_paths(name: str) -> dict[str, tuple[Path, Path]]:
     return data
 
 
+def get_qt_paths(name: str, variable: str) -> tuple[Path, Path]:
+    """Helper function to get the source and target path of Qt variable."""
+    libraryinfo_paths = _qt_libraryinfo_paths(name)
+    source_path, target_path = libraryinfo_paths[variable]
+    return (source_path, target_path)
+
+
 def get_qt_plugins_paths(name: str, plugins: str) -> list[tuple[Path, Path]]:
     """Helper function to get a list of source and target paths of Qt plugins,
-    indicated to be used in include_files."""
-    libraryinfo_paths = _qt_libraryinfo_paths(name)
-    source_path, target_path = libraryinfo_paths["PluginsPath"]
+    indicated to be used in include_files.
+    """
+    source_path, target_path = get_qt_paths(name, "PluginsPath")
     source_path = source_path / plugins
     if not source_path.exists():
         return []
@@ -128,10 +133,9 @@ def get_qt_plugins_paths(name: str, plugins: str) -> list[tuple[Path, Path]]:
 
 def copy_qt_files(finder: ModuleFinder, name: str, *args) -> None:
     """Helper function to find and copy Qt plugins, resources, translations,
-    etc."""
-    variable = args[0]
-    libraryinfo_paths = _qt_libraryinfo_paths(name)
-    source_path, target_path = libraryinfo_paths[variable]  # type: Path, Path
+    etc.
+    """
+    source_path, target_path = get_qt_paths(name, variable=args[0])
     for arg in args[1:]:
         if "*" in arg:
             # XXX: this code needs improvement
@@ -154,7 +158,8 @@ def load_qt_qaxcontainer(finder: ModuleFinder, module: Module) -> None:
 
 def load_qt_phonon(finder: ModuleFinder, module: Module) -> None:
     """In Windows, phonon5.dll requires an additional dll phonon_ds94.dll to
-    be present in the build directory inside a folder phonon_backend."""
+    be present in the build directory inside a folder phonon_backend.
+    """
     if IS_WINDOWS or IS_MINGW:
         name = _qt_implementation(module)
         copy_qt_files(finder, name, "PluginsPath", "phonon_backend")
@@ -165,7 +170,8 @@ def load_qt_qt(finder: ModuleFinder, module: Module) -> None:
     other modules and injects their namespace into its own. It seems a
     foolish way of doing things but perhaps there is some hidden advantage
     to this technique over pure Python; ignore the absence of some of
-    the modules since not every installation includes all of them."""
+    the modules since not every installation includes all of them.
+    """
     name = _qt_implementation(module)
     for mod in (
         "_qt",
@@ -179,10 +185,8 @@ def load_qt_qt(finder: ModuleFinder, module: Module) -> None:
         "QtTest",
         "QtXml",
     ):
-        try:
+        with suppress(ImportError):
             finder.include_module(f"{name}.{mod}")
-        except ImportError:
-            pass
 
 
 def load_qt_qtcharts(finder: ModuleFinder, module: Module) -> None:
@@ -206,19 +210,19 @@ def load_qt_qtdesigner(finder: ModuleFinder, module: Module) -> None:
 
 def load_qt_qtgui(finder: ModuleFinder, module: Module) -> None:
     """There is a chance that QtGui will use some image formats, then, add the
-    image format plugins."""
+    image format plugins.
+    """
     name = _qt_implementation(module)
     finder.include_module("datetime")
     finder.include_module(f"{name}.QtSvg")  # class Svg
+    copy_qt_files(finder, name, "PluginsPath", "accessiblebridge")
     copy_qt_files(finder, name, "PluginsPath", "generic")
-    copy_qt_files(finder, name, "PluginsPath", "iconengines")
     copy_qt_files(finder, name, "PluginsPath", "imageformats")
-    # On Qt5, we need the platform plugins. For simplicity, we just copy
-    # any that are installed.
+    copy_qt_files(finder, name, "PluginsPath", "pictureformats")  # obsolete
+    # For simplicity, we just copy the platform plugins that are installed.
     copy_qt_files(finder, name, "PluginsPath", "platforminputcontexts")
     copy_qt_files(finder, name, "PluginsPath", "platforms")
     copy_qt_files(finder, name, "PluginsPath", "platformthemes")
-    copy_qt_files(finder, name, "PluginsPath", "styles")
 
 
 def load_qt_qthelp(finder: ModuleFinder, module: Module) -> None:
@@ -241,6 +245,9 @@ def load_qt_qtmultimedia(finder: ModuleFinder, module: Module) -> None:
     copy_qt_files(finder, name, "PluginsPath", "audio")
     copy_qt_files(finder, name, "PluginsPath", "mediaservice")
     copy_qt_files(finder, name, "PluginsPath", "multimedia")
+    copy_qt_files(finder, name, "PluginsPath", "playlistformats")
+    copy_qt_files(finder, name, "PluginsPath", "resourcepolicy")
+    copy_qt_files(finder, name, "PluginsPath", "video")
 
 
 def load_qt_qtmultimediawidgets(finder: ModuleFinder, module: Module) -> None:
@@ -253,6 +260,7 @@ def load_qt_qtmultimediawidgets(finder: ModuleFinder, module: Module) -> None:
 def load_qt_qtnetwork(finder: ModuleFinder, module: Module) -> None:
     """Include module dependency."""
     name = _qt_implementation(module)
+    copy_qt_files(finder, name, "PluginsPath", "bearer")
     copy_qt_files(finder, name, "PluginsPath", "networkinformation")
     copy_qt_files(finder, name, "PluginsPath", "tls")
 
@@ -297,6 +305,7 @@ def load_qt_qtquick(finder: ModuleFinder, module: Module) -> None:
     name = _qt_implementation(module)
     finder.include_module(f"{name}.QtGui")
     finder.include_module(f"{name}.QtQml")
+    copy_qt_files(finder, name, "PluginsPath", "scenegraph")
 
 
 def load_qt_qtquickwidgets(finder: ModuleFinder, module: Module) -> None:
@@ -305,11 +314,24 @@ def load_qt_qtquickwidgets(finder: ModuleFinder, module: Module) -> None:
     finder.include_module(f"{name}.QtWidgets")
 
 
+def load_qt_qtscript(finder: ModuleFinder, module: Module) -> None:
+    """Include module dependency."""
+    name = _qt_implementation(module)
+    copy_qt_files(finder, name, "PluginsPath", "script")
+
+
 def load_qt_qtscripttools(finder: ModuleFinder, module: Module) -> None:
     """Include module dependency."""
     name = _qt_implementation(module)
     finder.include_module(f"{name}.QtWidgets")
     finder.include_module(f"{name}.QtScript")
+
+
+def load_qt_qtsensors(finder: ModuleFinder, module: Module) -> None:
+    """Include module dependency."""
+    name = _qt_implementation(module)
+    copy_qt_files(finder, name, "PluginsPath", "sensorgestures")
+    copy_qt_files(finder, name, "PluginsPath", "sensors")
 
 
 def load_qt_qtsql(finder: ModuleFinder, module: Module) -> None:
@@ -323,6 +345,7 @@ def load_qt_qtsvg(finder: ModuleFinder, module: Module) -> None:
     """Include module dependency."""
     name = _qt_implementation(module)
     finder.include_module(f"{name}.QtWidgets")
+    copy_qt_files(finder, name, "PluginsPath", "iconengines")
 
 
 def load_qt_qtsvgwidgets(finder: ModuleFinder, module: Module) -> None:
@@ -368,18 +391,47 @@ def load_qt_qtwebenginecore(finder: ModuleFinder, module: Module) -> None:
             copy_qt_files(finder, name, "ArchDataPath", filename)
             # pyqt5 - all files listed in LibraryExecutablesPath
             copy_qt_files(finder, name, "LibraryExecutablesPath", filename)
-    elif IS_MACOS:
-        copy_qt_files(
-            finder, name, "LibrariesPath", "QtWebEngineCore.framework"
-        )
+    elif IS_MACOS and not IS_CONDA:
+        # wheels for macOS
+        source_path, _ = get_qt_paths(name, "LibrariesPath")
+        source_framework = source_path / "QtWebEngineCore.framework"
+        # QtWebEngineProcess
+        finder.include_files(source_framework / "Helpers", "share")
+        # QtWebEngineCore resources
+        source_resources = source_framework / "Resources"
+        if source_resources.exists():
+            target_datapath = get_qt_paths(name, "DataPath")[1]
+            for resource in source_resources.iterdir():
+                if resource.name == "Info.plist":
+                    continue
+                if resource.name == "qtwebengine_locales":
+                    target = get_qt_paths(name, "TranslationsPath")[1]
+                else:
+                    target = target_datapath / "resources"
+                finder.include_files(
+                    resource,
+                    target / resource.name,
+                    copy_dependent_files=False,
+                )
     else:
+        # wheels for Linux or conda-forge Linux and macOS
         copy_qt_files(
             finder, name, "LibraryExecutablesPath", "QtWebEngineProcess"
         )
-        # conda-forge linux
-        copy_qt_files(finder, name, "LibrariesPath", "libnss*.*")
+        if IS_CONDA:  # conda-forge Linux and macOS
+            prefix = Path(sys.prefix)
+            conda_meta = prefix / "conda-meta"
+            pkg = next(conda_meta.glob("nss-*.json"))
+            files = json.loads(pkg.read_text(encoding="utf_8"))["files"]
+            for file in files:
+                source = prefix / file
+                if source.match("lib*.so") or source.match("lib*.dylib"):
+                    finder.include_files(source, f"lib/{source.name}")
+        else:
+            copy_qt_files(finder, name, "LibraryExecutablesPath", "libnss*.*")
+
     copy_qt_files(finder, name, "DataPath", "resources")
-    copy_qt_files(finder, name, "TranslationsPath")
+    copy_qt_files(finder, name, "TranslationsPath", "qtwebengine_*")
 
 
 def load_qt_qtwebenginewidgets(finder: ModuleFinder, module: Module) -> None:
@@ -395,6 +447,8 @@ def load_qt_qtwebenginewidgets(finder: ModuleFinder, module: Module) -> None:
     with suppress(ImportError):
         finder.include_module(f"{name}.QtWebEngineQuick")  # qt6
     copy_qt_files(finder, name, "LibrariesPath", "*WebEngineWidgets.*")
+    copy_qt_files(finder, name, "PluginsPath", "designer")
+    copy_qt_files(finder, name, "PluginsPath", "imageformats")
     copy_qt_files(finder, name, "PluginsPath", "webview")
     copy_qt_files(finder, name, "PluginsPath", "xcbglintegrations")
 
@@ -416,6 +470,8 @@ def load_qt_qtwidgets(finder: ModuleFinder, module: Module) -> None:
     """Include module dependency."""
     name = _qt_implementation(module)
     finder.include_module(f"{name}.QtGui")
+    copy_qt_files(finder, name, "PluginsPath", "accessible")
+    copy_qt_files(finder, name, "PluginsPath", "styles")
 
 
 def load_qt_qtxmlpatterns(finder: ModuleFinder, module: Module) -> None:
@@ -427,13 +483,12 @@ def load_qt_qtxmlpatterns(finder: ModuleFinder, module: Module) -> None:
 def load_qt_uic(finder: ModuleFinder, module: Module) -> None:
     """The uic module makes use of "plugins" that need to be read directly and
     cannot be frozen; the PyQt5.QtWebKit and PyQt5.QtNetwork modules are
-    also implicity loaded."""
+    also implicity loaded.
+    """
     name = _qt_implementation(module)
     finder.include_module(f"{name}.QtNetwork")
-    try:
+    with suppress(ImportError):
         finder.include_module(f"{name}.QtWebKit")
-    except ImportError:
-        pass
     source_dir = module.path[0] / "widget-plugins"
     if source_dir.exists():
         finder.include_files(source_dir, f"{name}.uic.widget-plugins")

@@ -9,15 +9,10 @@ from pathlib import Path
 from sysconfig import get_config_var, get_platform
 
 from setuptools import Distribution
-try:
-    from setuptools.errors import SetupError
-except:    
-    class SetupError(Exception):
-        pass
 
 from ._compat import IS_MINGW, IS_WINDOWS
-from .common import get_resource_file_path, validate_args
-from .exception import ConfigError
+from .common import get_resource_file_path
+from .exception import OptionError, SetupError
 
 STRINGREPLACE = list(
     string.whitespace + string.punctuation.replace(".", "").replace("_", "")
@@ -27,9 +22,7 @@ __all__ = ["Executable"]
 
 
 class Executable:
-    """
-    Base Executable class.
-    """
+    """Base Executable class."""
 
     def __init__(
         self,
@@ -40,31 +33,18 @@ class Executable:
         icon: str | Path | None = None,
         shortcut_name: str | None = None,
         shortcut_dir: str | Path | None = None,
-        copyright: str | None = None,  # pylint: disable=W0622
+        copyright: str | None = None,  # noqa: A002
         trademarks: str | None = None,
         manifest: str | Path | None = None,
         uac_admin: bool = False,
-        *,
-        initScript: str | None = None,
-        targetName: str | None = None,
-        shortcutName: str | None = None,
-        shortcutDir: str | None = None,
     ):
         self.main_script = script
-        self.init_script = validate_args(
-            "init_script", init_script, initScript
-        )
+        self.init_script = init_script
         self.base = base
-        self.target_name = validate_args(
-            "target_name", target_name, targetName
-        )
+        self.target_name = target_name
         self.icon = icon
-        self.shortcut_name = validate_args(
-            "shortcut_name", shortcut_name, shortcutName
-        )
-        self.shortcut_dir = validate_args(
-            "shortcut_dir", shortcut_dir, shortcutDir
-        )
+        self.shortcut_name = shortcut_name
+        self.shortcut_dir = shortcut_dir
         self.copyright = copyright
         self.trademarks = trademarks
         self.manifest = manifest
@@ -75,9 +55,7 @@ class Executable:
 
     @property
     def base(self) -> Path:
-        """
-
-        :return: the name of the base executable
+        """:return: the name of the base executable
         :rtype: Path
 
         """
@@ -96,14 +74,12 @@ class Executable:
         name_base = f"{name}-{soabi}"
         self._base: Path = get_resource_file_path("bases", name_base, suffix)
         if self._base is None:
-            raise ConfigError(f"no base named {name!r} ({name_base!r})")
+            raise OptionError(f"no base named {name!r} ({name_base!r})")
         self._ext: str = suffix
 
     @property
     def icon(self) -> str:
-        """
-
-        :return: the path of the icon
+        """:return: the path of the icon
         :rtype: Path
 
         """
@@ -115,9 +91,7 @@ class Executable:
 
     @property
     def init_module_name(self) -> str:
-        """
-
-        :return: the name of the init module in zip file
+        """:return: the name of the init module in zip file
         :rtype: str
 
         """
@@ -125,8 +99,7 @@ class Executable:
 
     @property
     def init_script(self) -> Path:
-        """
-        :return: the name of the initialization script that will be executed
+        """:return: the name of the initialization script that will be executed
         before the main script is executed
         :rtype: Path
 
@@ -140,13 +113,11 @@ class Executable:
             "initscripts", name, ".py"
         )
         if self._init_script is None:
-            raise ConfigError(f"no init_script named {name}")
+            raise OptionError(f"no init_script named {name}")
 
     @property
     def main_module_name(self) -> str:
-        """
-
-        :return: the name of the main module in zip file
+        """:return: the name of the main module in zip file
         :rtype: str
 
         """
@@ -154,8 +125,7 @@ class Executable:
 
     @property
     def main_script(self) -> Path:
-        """
-        :return: the path of the file containing the script which is to be
+        """:return: the path of the file containing the script which is to be
         frozen
         :rtype: Path
 
@@ -168,9 +138,8 @@ class Executable:
 
     @property
     def manifest(self) -> str | None:
-        """
-        :return: the XML schema of the manifest which is to be included in the
-        frozen executable
+        """:return: the XML schema of the manifest which is to be included in
+        the frozen executable
         :rtype: str
 
         """
@@ -187,9 +156,8 @@ class Executable:
 
     @property
     def shortcut_name(self) -> str:
-        """
-        :return: the name to give a shortcut for the executable when included
-        in an MSI package (Windows only).
+        """:return: the name to give a shortcut for the executable when
+        included in an MSI package (Windows only).
         :rtype: str
 
         """
@@ -201,8 +169,7 @@ class Executable:
 
     @property
     def shortcut_dir(self) -> Path:
-        """
-        :return: tthe directory in which to place the shortcut when being
+        """:return: tthe directory in which to place the shortcut when being
         installed by an MSI package; see the MSI Shortcut table documentation
         for more information on what values can be placed here (Windows only).
         :rtype: Path
@@ -216,9 +183,7 @@ class Executable:
 
     @property
     def target_name(self) -> str:
-        """
-
-        :return: the name of the target executable
+        """:return: the name of the target executable
         :rtype: str
 
         """
@@ -231,7 +196,7 @@ class Executable:
         else:
             pathname = Path(name)
             if name != pathname.name:
-                raise ConfigError(
+                raise OptionError(
                     "target_name should only be the name, for example: "
                     f"{pathname.name}"
                 )
@@ -244,14 +209,12 @@ class Executable:
                 name = name.replace(invalid, "_")
         name = os.path.normcase(name)
         if not name.isidentifier():
-            raise ConfigError(f"Invalid name for target_name ({self._name!r})")
+            raise OptionError(f"Invalid name for target_name ({self._name!r})")
         self._internal_name: str = name
 
 
-# pylint: disable-next=unused-argument
-def validate_executables(dist: Distribution, attr: str, value):
+def validate_executables(dist: Distribution, attr: str, value):  # noqa: ARG001
     """Verify that value is a Executable list."""
-
     try:
         # verify that value is a list or tuple to exclude unordered
         # or single-use iterables

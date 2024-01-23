@@ -1,16 +1,18 @@
 """
 API for the command-line I{pyflakes} tool.
 """
-from __future__ import with_statement
-
-import sys
+import ast
 import os
-import _ast
+import platform
+import re
+import sys
 
 from pyflakes import checker, __version__
 from pyflakes import reporter as modReporter
 
 __all__ = ['check', 'checkPath', 'checkRecursive', 'iterSourceCode', 'main']
+
+PYTHON_SHEBANG_REGEX = re.compile(br'^#!.*\bpython(3(\.\d+)?|w)?[dmu]?\s')
 
 
 def check(codeString, filename, reporter=None):
@@ -34,27 +36,15 @@ def check(codeString, filename, reporter=None):
         reporter = modReporter._makeDefaultReporter()
     # First, compile into an AST and handle syntax errors.
     try:
-        tree = compile(codeString, filename, "exec", _ast.PyCF_ONLY_AST)
-    except SyntaxError:
-        value = sys.exc_info()[1]
-        msg = value.args[0]
-
-        (lineno, offset, text) = value.lineno, value.offset, value.text
-
-        # If there's an encoding problem with the file, the text is None.
-        if text is None:
-            # Avoid using msg, since for the only known case, it contains a
-            # bogus message that claims the encoding the file declared was
-            # unknown.
-            reporter.unexpectedError(filename, 'problem decoding source')
-        else:
-            reporter.syntaxError(filename, msg, lineno, offset, text)
+        tree = ast.parse(codeString, filename=filename)
+    except SyntaxError as e:
+        reporter.syntaxError(filename, e.args[0], e.lineno, e.offset, e.text)
         return 1
     except Exception:
         reporter.unexpectedError(filename, 'problem decoding source')
         return 1
     # Okay, it's syntactically valid.  Now check it.
-    w = checker.Checker(tree, filename)
+    w = checker.Checker(tree, filename=filename)
     w.messages.sort(key=lambda m: m.lineno)
     for warning in w.messages:
         reporter.flake(warning)
@@ -73,27 +63,34 @@ def checkPath(filename, reporter=None):
     if reporter is None:
         reporter = modReporter._makeDefaultReporter()
     try:
-        # in Python 2.6, compile() will choke on \r\n line endings. In later
-        # versions of python it's smarter, and we want binary mode to give
-        # compile() the best opportunity to do the right thing WRT text
-        # encodings.
-        if sys.version_info < (2, 7):
-            mode = 'rU'
-        else:
-            mode = 'rb'
-
-        with open(filename, mode) as f:
+        with open(filename, 'rb') as f:
             codestr = f.read()
-        if sys.version_info < (2, 7):
-            codestr += '\n'     # Work around for Python <= 2.6
-    except UnicodeError:
-        reporter.unexpectedError(filename, 'problem decoding source')
-        return 1
-    except IOError:
-        msg = sys.exc_info()[1]
-        reporter.unexpectedError(filename, msg.args[1])
+    except OSError as e:
+        reporter.unexpectedError(filename, e.args[1])
         return 1
     return check(codestr, filename, reporter)
+
+
+def isPythonFile(filename):
+    """Return True if filename points to a Python file."""
+    if filename.endswith('.py'):
+        return True
+
+    # Avoid obvious Emacs backup files
+    if filename.endswith("~"):
+        return False
+
+    max_bytes = 128
+
+    try:
+        with open(filename, 'rb') as f:
+            text = f.read(max_bytes)
+            if not text:
+                return False
+    except OSError:
+        return False
+
+    return PYTHON_SHEBANG_REGEX.match(text)
 
 
 def iterSourceCode(paths):
@@ -108,8 +105,9 @@ def iterSourceCode(paths):
         if os.path.isdir(path):
             for dirpath, dirnames, filenames in os.walk(path):
                 for filename in filenames:
-                    if filename.endswith('.py'):
-                        yield os.path.join(dirpath, filename)
+                    full_path = os.path.join(dirpath, filename)
+                    if isPythonFile(full_path):
+                        yield full_path
         else:
             yield path
 
@@ -157,16 +155,28 @@ def _exitOnSignal(sigName, message):
         pass
 
 
-def main(prog=None):
+def _get_version():
+    """
+    Retrieve and format package version along with python version & OS used
+    """
+    return ('%s Python %s on %s' %
+            (__version__, platform.python_version(), platform.system()))
+
+
+def main(prog=None, args=None):
     """Entry point for the script "pyflakes"."""
-    import optparse
+    import argparse
 
     # Handle "Keyboard Interrupt" and "Broken pipe" gracefully
     _exitOnSignal('SIGINT', '... stopped')
     _exitOnSignal('SIGPIPE', 1)
 
-    parser = optparse.OptionParser(prog=prog, version=__version__)
-    (__, args) = parser.parse_args()
+    parser = argparse.ArgumentParser(prog=prog,
+                                     description='Check Python source files for errors')
+    parser.add_argument('-V', '--version', action='version', version=_get_version())
+    parser.add_argument('path', nargs='*',
+                        help='Path(s) of Python file(s) to check. STDIN if not given.')
+    args = parser.parse_args(args=args).path
     reporter = modReporter._makeDefaultReporter()
     if args:
         warnings = checkRecursive(args, reporter)

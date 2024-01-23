@@ -15,6 +15,11 @@ class About(QtWidgets.QDialog):
         QtWidgets.QDialog.__init__(self, parent,
                                QtCore.Qt.Window | QtCore.Qt.WindowCloseButtonHint)
 
+        try:
+            cx_Freeze_version = cx_Freeze.version()
+        except AttributeError:
+            cx_Freeze_version = "N/A"
+
         self.setWindowTitle("About")
 
         mainLayout = QtWidgets.QVBoxLayout()
@@ -25,7 +30,7 @@ class About(QtWidgets.QDialog):
 
         form = QtWidgets.QFormLayout()
         #form.setMargin(10)
-        form.addRow("<b>Version</b>", QtWidgets.QLabel("0.1.1"))
+        form.addRow("<b>Version</b>", QtWidgets.QLabel("0.1.2"))
         form.addRow("<b>Author</b>", QtWidgets.QLabel("blackPanther Project"))
         form.addRow("<b>Email</b>", QtWidgets.QLabel("info@blackpanther.hu"))
 
@@ -64,7 +69,7 @@ class About(QtWidgets.QDialog):
         table.addTopLevelItem(QtWidgets.QTreeWidgetItem(
             ["AutoPep8", autopep8.__version__, "Hideo Hattori"]))
         table.addTopLevelItem(QtWidgets.QTreeWidgetItem(
-            ["CxFreeze", cx_Freeze.version, "Anthony Tuininga"]))
+            ["CxFreeze", cx_Freeze_version, "Anthony Tuininga"]))
         self.view.addWidget(table)
 
         self.licenseEdit = QtWidgets.QTextEdit()

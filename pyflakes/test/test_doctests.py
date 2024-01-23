@@ -1,13 +1,19 @@
 import textwrap
 
 from pyflakes import messages as m
+from pyflakes.checker import (
+    PYPY,
+    DoctestScope,
+    FunctionScope,
+    ModuleScope,
+)
 from pyflakes.test.test_other import Test as TestOther
 from pyflakes.test.test_imports import Test as TestImports
 from pyflakes.test.test_undefined_names import Test as TestUndefinedNames
 from pyflakes.test.harness import TestCase, skip
 
 
-class _DoctestMixin(object):
+class _DoctestMixin:
 
     withDoctest = True
 
@@ -21,7 +27,8 @@ class _DoctestMixin(object):
                   line.startswith('except ') or
                   line.startswith('finally:') or
                   line.startswith('else:') or
-                  line.startswith('elif ')):
+                  line.startswith('elif ') or
+                  (lines and lines[-1].startswith(('>>> @', '... @')))):
                 line = "... %s" % line
             else:
                 line = ">>> %s" % line
@@ -35,12 +42,196 @@ class _DoctestMixin(object):
         return doctestificator % "\n       ".join(lines)
 
     def flakes(self, input, *args, **kw):
-        return super(_DoctestMixin, self).flakes(self.doctestify(input), *args, **kw)
+        return super().flakes(self.doctestify(input), *args, **kw)
 
 
 class Test(TestCase):
 
     withDoctest = True
+
+    def test_scope_class(self):
+        """Check that a doctest is given a DoctestScope."""
+        checker = self.flakes("""
+        m = None
+
+        def doctest_stuff():
+            '''
+                >>> d = doctest_stuff()
+            '''
+            f = m
+            return f
+        """)
+
+        scopes = checker.deadScopes
+        module_scopes = [
+            scope for scope in scopes if scope.__class__ is ModuleScope]
+        doctest_scopes = [
+            scope for scope in scopes if scope.__class__ is DoctestScope]
+        function_scopes = [
+            scope for scope in scopes if scope.__class__ is FunctionScope]
+
+        self.assertEqual(len(module_scopes), 1)
+        self.assertEqual(len(doctest_scopes), 1)
+
+        module_scope = module_scopes[0]
+        doctest_scope = doctest_scopes[0]
+
+        self.assertIsInstance(doctest_scope, DoctestScope)
+        self.assertIsInstance(doctest_scope, ModuleScope)
+        self.assertNotIsInstance(doctest_scope, FunctionScope)
+        self.assertNotIsInstance(module_scope, DoctestScope)
+
+        self.assertIn('m', module_scope)
+        self.assertIn('doctest_stuff', module_scope)
+
+        self.assertIn('d', doctest_scope)
+
+        self.assertEqual(len(function_scopes), 1)
+        self.assertIn('f', function_scopes[0])
+
+    def test_nested_doctest_ignored(self):
+        """Check that nested doctests are ignored."""
+        checker = self.flakes("""
+        m = None
+
+        def doctest_stuff():
+            '''
+                >>> def function_in_doctest():
+                ...     \"\"\"
+                ...     >>> ignored_undefined_name
+                ...     \"\"\"
+                ...     df = m
+                ...     return df
+                ...
+                >>> function_in_doctest()
+            '''
+            f = m
+            return f
+        """)
+
+        scopes = checker.deadScopes
+        module_scopes = [
+            scope for scope in scopes if scope.__class__ is ModuleScope]
+        doctest_scopes = [
+            scope for scope in scopes if scope.__class__ is DoctestScope]
+        function_scopes = [
+            scope for scope in scopes if scope.__class__ is FunctionScope]
+
+        self.assertEqual(len(module_scopes), 1)
+        self.assertEqual(len(doctest_scopes), 1)
+
+        module_scope = module_scopes[0]
+        doctest_scope = doctest_scopes[0]
+
+        self.assertIn('m', module_scope)
+        self.assertIn('doctest_stuff', module_scope)
+        self.assertIn('function_in_doctest', doctest_scope)
+
+        self.assertEqual(len(function_scopes), 2)
+
+        self.assertIn('f', function_scopes[0])
+        self.assertIn('df', function_scopes[1])
+
+    def test_global_module_scope_pollution(self):
+        """Check that global in doctest does not pollute module scope."""
+        checker = self.flakes("""
+        def doctest_stuff():
+            '''
+                >>> def function_in_doctest():
+                ...     global m
+                ...     m = 50
+                ...     df = 10
+                ...     m = df
+                ...
+                >>> function_in_doctest()
+            '''
+            f = 10
+            return f
+
+        """)
+
+        scopes = checker.deadScopes
+        module_scopes = [
+            scope for scope in scopes if scope.__class__ is ModuleScope]
+        doctest_scopes = [
+            scope for scope in scopes if scope.__class__ is DoctestScope]
+        function_scopes = [
+            scope for scope in scopes if scope.__class__ is FunctionScope]
+
+        self.assertEqual(len(module_scopes), 1)
+        self.assertEqual(len(doctest_scopes), 1)
+
+        module_scope = module_scopes[0]
+        doctest_scope = doctest_scopes[0]
+
+        self.assertIn('doctest_stuff', module_scope)
+        self.assertIn('function_in_doctest', doctest_scope)
+
+        self.assertEqual(len(function_scopes), 2)
+
+        self.assertIn('f', function_scopes[0])
+        self.assertIn('df', function_scopes[1])
+        self.assertIn('m', function_scopes[1])
+
+        self.assertNotIn('m', module_scope)
+
+    def test_global_undefined(self):
+        self.flakes("""
+        global m
+
+        def doctest_stuff():
+            '''
+                >>> m
+            '''
+        """, m.UndefinedName)
+
+    def test_nested_class(self):
+        """Doctest within nested class are processed."""
+        self.flakes("""
+        class C:
+            class D:
+                '''
+                    >>> m
+                '''
+                def doctest_stuff(self):
+                    '''
+                        >>> m
+                    '''
+                    return 1
+        """, m.UndefinedName, m.UndefinedName)
+
+    def test_ignore_nested_function(self):
+        """Doctest module does not process doctest in nested functions."""
+        # 'syntax error' would cause a SyntaxError if the doctest was processed.
+        # However doctest does not find doctest in nested functions
+        # (https://bugs.python.org/issue1650090). If nested functions were
+        # processed, this use of m should cause UndefinedName, and the
+        # name inner_function should probably exist in the doctest scope.
+        self.flakes("""
+        def doctest_stuff():
+            def inner_function():
+                '''
+                    >>> syntax error
+                    >>> inner_function()
+                    1
+                    >>> m
+                '''
+                return 1
+            m = inner_function()
+            return m
+        """)
+
+    def test_inaccessible_scope_class(self):
+        """Doctest may not access class scope."""
+        self.flakes("""
+        class C:
+            def doctest_stuff(self):
+                '''
+                    >>> m
+                '''
+                return 1
+            m = 1
+        """, m.UndefinedName)
 
     def test_importBeforeDoctest(self):
         self.flakes("""
@@ -131,13 +322,23 @@ class Test(TestCase):
             m.DoctestSyntaxError).messages
         exc = exceptions[0]
         self.assertEqual(exc.lineno, 4)
-        self.assertEqual(exc.col, 26)
+        if not PYPY:
+            self.assertEqual(exc.col, 18)
+        else:
+            self.assertEqual(exc.col, 26)
+
+        # PyPy error column offset is 0,
+        # for the second and third line of the doctest
+        # i.e. at the beginning of the line
         exc = exceptions[1]
         self.assertEqual(exc.lineno, 5)
-        self.assertEqual(exc.col, 16)
+        if PYPY:
+            self.assertEqual(exc.col, 13)
+        else:
+            self.assertEqual(exc.col, 16)
         exc = exceptions[2]
         self.assertEqual(exc.lineno, 6)
-        self.assertEqual(exc.col, 18)
+        self.assertEqual(exc.col, 13)
 
     def test_indentationErrorInDoctest(self):
         exc = self.flakes('''
@@ -148,7 +349,7 @@ class Test(TestCase):
             """
         ''', m.DoctestSyntaxError).messages[0]
         self.assertEqual(exc.lineno, 5)
-        self.assertEqual(exc.col, 16)
+        self.assertEqual(exc.col, 13)
 
     def test_offsetWithMultiLineArgs(self):
         (exc1, exc2) = self.flakes(
@@ -220,37 +421,24 @@ class Test(TestCase):
             return 1
         ''')
 
+    def test_globalUnderscoreInDoctest(self):
+        self.flakes("""
+        from gettext import ugettext as _
+
+        def doctest_stuff():
+            '''
+                >>> pass
+            '''
+        """, m.UnusedImport)
+
 
 class TestOther(_DoctestMixin, TestOther):
-    pass
+    """Run TestOther with each test wrapped in a doctest."""
 
 
 class TestImports(_DoctestMixin, TestImports):
-
-    def test_futureImport(self):
-        """XXX This test can't work in a doctest"""
-
-    def test_futureImportUsed(self):
-        """XXX This test can't work in a doctest"""
+    """Run TestImports with each test wrapped in a doctest."""
 
 
 class TestUndefinedNames(_DoctestMixin, TestUndefinedNames):
-
-    def test_doubleNestingReportsClosestName(self):
-        """
-        Lines in doctest are a bit different so we can't use the test
-        from TestUndefinedNames
-        """
-        exc = self.flakes('''
-        def a():
-            x = 1
-            def b():
-                x = 2 # line 7 in the file
-                def c():
-                    x
-                    x = 3
-                    return x
-                return x
-            return x
-        ''', m.UndefinedLocal).messages[0]
-        self.assertEqual(exc.message_args, ('x', 7))
+    """Run TestUndefinedNames with each test wrapped in a doctest."""

@@ -21,37 +21,6 @@ class Test(TestCase):
         f()
         ''', m.UndefinedLocal, m.UnusedVariable)
 
-    @skipIf(version_info >= (3,),
-            'in Python 3 list comprehensions execute in a separate scope')
-    def test_redefinedInListComp(self):
-        """
-        Test that shadowing a variable in a list comprehension raises
-        a warning.
-        """
-        self.flakes('''
-        a = 1
-        [1 for a, b in [(1, 2)]]
-        ''', m.RedefinedInListComp)
-        self.flakes('''
-        class A:
-            a = 1
-            [1 for a, b in [(1, 2)]]
-        ''', m.RedefinedInListComp)
-        self.flakes('''
-        def f():
-            a = 1
-            [1 for a, b in [(1, 2)]]
-        ''', m.RedefinedInListComp)
-        self.flakes('''
-        [1 for a, b in [(1, 2)]]
-        [1 for a, b in [(1, 2)]]
-        ''')
-        self.flakes('''
-        for a, b in [(1, 2)]:
-            pass
-        [1 for a, b in [(1, 2)]]
-        ''')
-
     def test_redefinedInGenerator(self):
         """
         Test that reusing a variable in a generator does not raise
@@ -81,7 +50,6 @@ class Test(TestCase):
         (1 for a, b in [(1, 2)])
         ''')
 
-    @skipIf(version_info < (2, 7), "Python >= 2.7 only")
     def test_redefinedInSetComprehension(self):
         """
         Test that reusing a variable in a set comprehension does not raise
@@ -111,7 +79,6 @@ class Test(TestCase):
         {1 for a, b in [(1, 2)]}
         ''')
 
-    @skipIf(version_info < (2, 7), "Python >= 2.7 only")
     def test_redefinedInDictComprehension(self):
         """
         Test that reusing a variable in a dict comprehension does not raise
@@ -149,6 +116,31 @@ class Test(TestCase):
         self.flakes('''
         def a(): pass
         def a(): pass
+        ''', m.RedefinedWhileUnused)
+
+    def test_redefined_function_shadows_variable(self):
+        self.flakes('''
+        x = 1
+        def x(): pass
+        ''', m.RedefinedWhileUnused)
+
+    def test_redefinedUnderscoreFunction(self):
+        """
+        Test that shadowing a function definition named with underscore doesn't
+        raise anything.
+        """
+        self.flakes('''
+        def _(): pass
+        def _(): pass
+        ''')
+
+    def test_redefinedUnderscoreImportation(self):
+        """
+        Test that shadowing an underscore importation raises a warning.
+        """
+        self.flakes('''
+        from .i18n import _
+        def _(): pass
         ''', m.RedefinedWhileUnused)
 
     def test_redefinedClassFunction(self):
@@ -222,21 +214,6 @@ class Test(TestCase):
             [a for a in '12']
         ''')
 
-    @skipIf(version_info >= (3,),
-            'in Python 3 list comprehensions execute in a separate scope')
-    def test_redefinedElseInListComp(self):
-        """
-        Test that shadowing a variable in a list comprehension in
-        an else (or if) block raises a warning.
-        """
-        self.flakes('''
-        if False:
-            pass
-        else:
-            a = 1
-            [a for a in '12']
-        ''', m.RedefinedInListComp)
-
     def test_functionDecorator(self):
         """
         Test that shadowing a function definition with a decorated version of
@@ -260,7 +237,6 @@ class Test(TestCase):
             a = classmethod(a)
         ''')
 
-    @skipIf(version_info < (2, 6), "Python >= 2.6 only")
     def test_modernProperty(self):
         self.flakes("""
         class A:
@@ -352,6 +328,632 @@ class Test(TestCase):
         class Foo(object):
             return
         ''', m.ReturnOutsideFunction)
+
+    def test_moduleWithReturn(self):
+        """
+        If a return is used at the module level, a warning is emitted.
+        """
+        self.flakes('''
+        return
+        ''', m.ReturnOutsideFunction)
+
+    def test_classWithYield(self):
+        """
+        If a yield is used inside a class, a warning is emitted.
+        """
+        self.flakes('''
+        class Foo(object):
+            yield
+        ''', m.YieldOutsideFunction)
+
+    def test_moduleWithYield(self):
+        """
+        If a yield is used at the module level, a warning is emitted.
+        """
+        self.flakes('''
+        yield
+        ''', m.YieldOutsideFunction)
+
+    def test_classWithYieldFrom(self):
+        """
+        If a yield from is used inside a class, a warning is emitted.
+        """
+        self.flakes('''
+        class Foo(object):
+            yield from range(10)
+        ''', m.YieldOutsideFunction)
+
+    def test_moduleWithYieldFrom(self):
+        """
+        If a yield from is used at the module level, a warning is emitted.
+        """
+        self.flakes('''
+        yield from range(10)
+        ''', m.YieldOutsideFunction)
+
+    def test_continueOutsideLoop(self):
+        self.flakes('''
+        continue
+        ''', m.ContinueOutsideLoop)
+
+        self.flakes('''
+        def f():
+            continue
+        ''', m.ContinueOutsideLoop)
+
+        self.flakes('''
+        while True:
+            pass
+        else:
+            continue
+        ''', m.ContinueOutsideLoop)
+
+        self.flakes('''
+        while True:
+            pass
+        else:
+            if 1:
+                if 2:
+                    continue
+        ''', m.ContinueOutsideLoop)
+
+        self.flakes('''
+        while True:
+            def f():
+                continue
+        ''', m.ContinueOutsideLoop)
+
+        self.flakes('''
+        while True:
+            class A:
+                continue
+        ''', m.ContinueOutsideLoop)
+
+    def test_continueInsideLoop(self):
+        self.flakes('''
+        while True:
+            continue
+        ''')
+
+        self.flakes('''
+        for i in range(10):
+            continue
+        ''')
+
+        self.flakes('''
+        while True:
+            if 1:
+                continue
+        ''')
+
+        self.flakes('''
+        for i in range(10):
+            if 1:
+                continue
+        ''')
+
+        self.flakes('''
+        while True:
+            while True:
+                pass
+            else:
+                continue
+        else:
+            pass
+        ''')
+
+        self.flakes('''
+        while True:
+            try:
+                pass
+            finally:
+                while True:
+                    continue
+        ''')
+
+    def test_breakOutsideLoop(self):
+        self.flakes('''
+        break
+        ''', m.BreakOutsideLoop)
+
+        self.flakes('''
+        def f():
+            break
+        ''', m.BreakOutsideLoop)
+
+        self.flakes('''
+        while True:
+            pass
+        else:
+            break
+        ''', m.BreakOutsideLoop)
+
+        self.flakes('''
+        while True:
+            pass
+        else:
+            if 1:
+                if 2:
+                    break
+        ''', m.BreakOutsideLoop)
+
+        self.flakes('''
+        while True:
+            def f():
+                break
+        ''', m.BreakOutsideLoop)
+
+        self.flakes('''
+        while True:
+            class A:
+                break
+        ''', m.BreakOutsideLoop)
+
+        self.flakes('''
+        try:
+            pass
+        finally:
+            break
+        ''', m.BreakOutsideLoop)
+
+    def test_breakInsideLoop(self):
+        self.flakes('''
+        while True:
+            break
+        ''')
+
+        self.flakes('''
+        for i in range(10):
+            break
+        ''')
+
+        self.flakes('''
+        while True:
+            if 1:
+                break
+        ''')
+
+        self.flakes('''
+        for i in range(10):
+            if 1:
+                break
+        ''')
+
+        self.flakes('''
+        while True:
+            while True:
+                pass
+            else:
+                break
+        else:
+            pass
+        ''')
+
+        self.flakes('''
+        while True:
+            try:
+                pass
+            finally:
+                while True:
+                    break
+        ''')
+
+        self.flakes('''
+        while True:
+            try:
+                pass
+            finally:
+                break
+        ''')
+
+        self.flakes('''
+        while True:
+            try:
+                pass
+            finally:
+                if 1:
+                    if 2:
+                        break
+        ''')
+
+    def test_defaultExceptLast(self):
+        """
+        A default except block should be last.
+
+        YES:
+
+        try:
+            ...
+        except Exception:
+            ...
+        except:
+            ...
+
+        NO:
+
+        try:
+            ...
+        except:
+            ...
+        except Exception:
+            ...
+        """
+        self.flakes('''
+        try:
+            pass
+        except ValueError:
+            pass
+        ''')
+
+        self.flakes('''
+        try:
+            pass
+        except ValueError:
+            pass
+        except:
+            pass
+        ''')
+
+        self.flakes('''
+        try:
+            pass
+        except:
+            pass
+        ''')
+
+        self.flakes('''
+        try:
+            pass
+        except ValueError:
+            pass
+        else:
+            pass
+        ''')
+
+        self.flakes('''
+        try:
+            pass
+        except:
+            pass
+        else:
+            pass
+        ''')
+
+        self.flakes('''
+        try:
+            pass
+        except ValueError:
+            pass
+        except:
+            pass
+        else:
+            pass
+        ''')
+
+    def test_defaultExceptNotLast(self):
+        self.flakes('''
+        try:
+            pass
+        except:
+            pass
+        except ValueError:
+            pass
+        ''', m.DefaultExceptNotLast)
+
+        self.flakes('''
+        try:
+            pass
+        except:
+            pass
+        except:
+            pass
+        ''', m.DefaultExceptNotLast)
+
+        self.flakes('''
+        try:
+            pass
+        except:
+            pass
+        except ValueError:
+            pass
+        except:
+            pass
+        ''', m.DefaultExceptNotLast)
+
+        self.flakes('''
+        try:
+            pass
+        except:
+            pass
+        except ValueError:
+            pass
+        except:
+            pass
+        except ValueError:
+            pass
+        ''', m.DefaultExceptNotLast, m.DefaultExceptNotLast)
+
+        self.flakes('''
+        try:
+            pass
+        except:
+            pass
+        except ValueError:
+            pass
+        else:
+            pass
+        ''', m.DefaultExceptNotLast)
+
+        self.flakes('''
+        try:
+            pass
+        except:
+            pass
+        except:
+            pass
+        else:
+            pass
+        ''', m.DefaultExceptNotLast)
+
+        self.flakes('''
+        try:
+            pass
+        except:
+            pass
+        except ValueError:
+            pass
+        except:
+            pass
+        else:
+            pass
+        ''', m.DefaultExceptNotLast)
+
+        self.flakes('''
+        try:
+            pass
+        except:
+            pass
+        except ValueError:
+            pass
+        except:
+            pass
+        except ValueError:
+            pass
+        else:
+            pass
+        ''', m.DefaultExceptNotLast, m.DefaultExceptNotLast)
+
+        self.flakes('''
+        try:
+            pass
+        except:
+            pass
+        except ValueError:
+            pass
+        finally:
+            pass
+        ''', m.DefaultExceptNotLast)
+
+        self.flakes('''
+        try:
+            pass
+        except:
+            pass
+        except:
+            pass
+        finally:
+            pass
+        ''', m.DefaultExceptNotLast)
+
+        self.flakes('''
+        try:
+            pass
+        except:
+            pass
+        except ValueError:
+            pass
+        except:
+            pass
+        finally:
+            pass
+        ''', m.DefaultExceptNotLast)
+
+        self.flakes('''
+        try:
+            pass
+        except:
+            pass
+        except ValueError:
+            pass
+        except:
+            pass
+        except ValueError:
+            pass
+        finally:
+            pass
+        ''', m.DefaultExceptNotLast, m.DefaultExceptNotLast)
+
+        self.flakes('''
+        try:
+            pass
+        except:
+            pass
+        except ValueError:
+            pass
+        else:
+            pass
+        finally:
+            pass
+        ''', m.DefaultExceptNotLast)
+
+        self.flakes('''
+        try:
+            pass
+        except:
+            pass
+        except:
+            pass
+        else:
+            pass
+        finally:
+            pass
+        ''', m.DefaultExceptNotLast)
+
+        self.flakes('''
+        try:
+            pass
+        except:
+            pass
+        except ValueError:
+            pass
+        except:
+            pass
+        else:
+            pass
+        finally:
+            pass
+        ''', m.DefaultExceptNotLast)
+
+        self.flakes('''
+        try:
+            pass
+        except:
+            pass
+        except ValueError:
+            pass
+        except:
+            pass
+        except ValueError:
+            pass
+        else:
+            pass
+        finally:
+            pass
+        ''', m.DefaultExceptNotLast, m.DefaultExceptNotLast)
+
+    def test_starredAssignmentNoError(self):
+        """
+        Python 3 extended iterable unpacking
+        """
+        self.flakes('''
+        a, *b = range(10)
+        ''')
+
+        self.flakes('''
+        *a, b = range(10)
+        ''')
+
+        self.flakes('''
+        a, *b, c = range(10)
+        ''')
+
+        self.flakes('''
+        (a, *b) = range(10)
+        ''')
+
+        self.flakes('''
+        (*a, b) = range(10)
+        ''')
+
+        self.flakes('''
+        (a, *b, c) = range(10)
+        ''')
+
+        self.flakes('''
+        [a, *b] = range(10)
+        ''')
+
+        self.flakes('''
+        [*a, b] = range(10)
+        ''')
+
+        self.flakes('''
+        [a, *b, c] = range(10)
+        ''')
+
+        # Taken from test_unpack_ex.py in the cPython source
+        s = ", ".join("a%d" % i for i in range(1 << 8 - 1)) + \
+            ", *rest = range(1<<8)"
+        self.flakes(s)
+
+        s = "(" + ", ".join("a%d" % i for i in range(1 << 8 - 1)) + \
+            ", *rest) = range(1<<8)"
+        self.flakes(s)
+
+        s = "[" + ", ".join("a%d" % i for i in range(1 << 8 - 1)) + \
+            ", *rest] = range(1<<8)"
+        self.flakes(s)
+
+    def test_starredAssignmentErrors(self):
+        """
+        SyntaxErrors (not encoded in the ast) surrounding Python 3 extended
+        iterable unpacking
+        """
+        # Taken from test_unpack_ex.py in the cPython source
+        s = ", ".join("a%d" % i for i in range(1 << 8)) + \
+            ", *rest = range(1<<8 + 1)"
+        self.flakes(s, m.TooManyExpressionsInStarredAssignment)
+
+        s = "(" + ", ".join("a%d" % i for i in range(1 << 8)) + \
+            ", *rest) = range(1<<8 + 1)"
+        self.flakes(s, m.TooManyExpressionsInStarredAssignment)
+
+        s = "[" + ", ".join("a%d" % i for i in range(1 << 8)) + \
+            ", *rest] = range(1<<8 + 1)"
+        self.flakes(s, m.TooManyExpressionsInStarredAssignment)
+
+        s = ", ".join("a%d" % i for i in range(1 << 8 + 1)) + \
+            ", *rest = range(1<<8 + 2)"
+        self.flakes(s, m.TooManyExpressionsInStarredAssignment)
+
+        s = "(" + ", ".join("a%d" % i for i in range(1 << 8 + 1)) + \
+            ", *rest) = range(1<<8 + 2)"
+        self.flakes(s, m.TooManyExpressionsInStarredAssignment)
+
+        s = "[" + ", ".join("a%d" % i for i in range(1 << 8 + 1)) + \
+            ", *rest] = range(1<<8 + 2)"
+        self.flakes(s, m.TooManyExpressionsInStarredAssignment)
+
+        # No way we can actually test this!
+        # s = "*rest, " + ", ".join("a%d" % i for i in range(1<<24)) + \
+        #    ", *rest = range(1<<24 + 1)"
+        # self.flakes(s, m.TooManyExpressionsInStarredAssignment)
+
+        self.flakes('''
+        a, *b, *c = range(10)
+        ''', m.TwoStarredExpressions)
+
+        self.flakes('''
+        a, *b, c, *d = range(10)
+        ''', m.TwoStarredExpressions)
+
+        self.flakes('''
+        *a, *b, *c = range(10)
+        ''', m.TwoStarredExpressions)
+
+        self.flakes('''
+        (a, *b, *c) = range(10)
+        ''', m.TwoStarredExpressions)
+
+        self.flakes('''
+        (a, *b, c, *d) = range(10)
+        ''', m.TwoStarredExpressions)
+
+        self.flakes('''
+        (*a, *b, *c) = range(10)
+        ''', m.TwoStarredExpressions)
+
+        self.flakes('''
+        [a, *b, *c] = range(10)
+        ''', m.TwoStarredExpressions)
+
+        self.flakes('''
+        [a, *b, c, *d] = range(10)
+        ''', m.TwoStarredExpressions)
+
+        self.flakes('''
+        [*a, *b, *c] = range(10)
+        ''', m.TwoStarredExpressions)
 
     @skip("todo: Too hard to make this warn but other cases stay silent")
     def test_doubleAssignment(self):
@@ -485,6 +1087,36 @@ class Test(TestCase):
         def g(): foo = 'anything'; foo.is_used()
         ''')
 
+    def test_function_arguments(self):
+        """
+        Test to traverse ARG and ARGUMENT handler
+        """
+        self.flakes('''
+        def foo(a, b):
+            pass
+        ''')
+
+        self.flakes('''
+        def foo(a, b, c=0):
+            pass
+        ''')
+
+        self.flakes('''
+        def foo(a, b, c=0, *args):
+            pass
+        ''')
+
+        self.flakes('''
+        def foo(a, b, c=0, *args, **kwargs):
+            pass
+        ''')
+
+    def test_function_arguments_python3(self):
+        self.flakes('''
+        def foo(a, b, c=0, *args, d=0, **kwargs):
+            pass
+        ''')
+
 
 class TestUnusedAssignment(TestCase):
     """
@@ -500,6 +1132,16 @@ class TestUnusedAssignment(TestCase):
         def a():
             b = 1
         ''', m.UnusedVariable)
+
+    def test_unusedUnderscoreVariable(self):
+        """
+        Don't warn when the magic "_" (underscore) variable is unused.
+        See issue #202.
+        """
+        self.flakes('''
+        def a(unused_param):
+            _ = unused_param
+        ''')
 
     def test_unusedVariableAsLocals(self):
         """
@@ -523,6 +1165,30 @@ class TestUnusedAssignment(TestCase):
                 return
         ''', m.UnusedVariable)
 
+    @skip("todo: Difficult because it doesn't apply in the context of a loop")
+    def test_unusedReassignedVariable(self):
+        """
+        Shadowing a used variable can still raise an UnusedVariable warning.
+        """
+        self.flakes('''
+        def a():
+            b = 1
+            b.foo()
+            b = 2
+        ''', m.UnusedVariable)
+
+    def test_variableUsedInLoop(self):
+        """
+        Shadowing a used variable cannot raise an UnusedVariable warning in the
+        context of a loop.
+        """
+        self.flakes('''
+        def a():
+            b = True
+            while b:
+                b = False
+        ''')
+
     def test_assignToGlobal(self):
         """
         Assigning to a global and then not using that global is perfectly
@@ -535,7 +1201,6 @@ class TestUnusedAssignment(TestCase):
             b = 1
         ''')
 
-    @skipIf(version_info < (3,), 'new in Python 3')
     def test_assignToNonlocal(self):
         """
         Assigning to a nonlocal and then not using that binding is perfectly
@@ -692,13 +1357,35 @@ class TestUnusedAssignment(TestCase):
         self.flakes("a = foo if True else 'oink'", m.UndefinedName)
         self.flakes("a = 'moo' if True else bar", m.UndefinedName)
 
+    def test_if_tuple(self):
+        """
+        Test C{if (foo,)} conditions.
+        """
+        self.flakes("""if (): pass""")
+        self.flakes("""
+        if (
+            True
+        ):
+            pass
+        """)
+        self.flakes("""
+        if (
+            True,
+        ):
+            pass
+        """, m.IfTuple)
+        self.flakes("""
+        x = 1 if (
+            True,
+        ) else 2
+        """, m.IfTuple)
+
     def test_withStatementNoNames(self):
         """
         No warnings are emitted for using inside or after a nameless C{with}
         statement a name defined beforehand.
         """
         self.flakes('''
-        from __future__ import with_statement
         bar = None
         with open("foo"):
             bar
@@ -711,7 +1398,6 @@ class TestUnusedAssignment(TestCase):
         within the suite or afterwards.
         """
         self.flakes('''
-        from __future__ import with_statement
         with open('foo') as bar:
             bar
         bar
@@ -723,7 +1409,6 @@ class TestUnusedAssignment(TestCase):
         C{with} statement.
         """
         self.flakes('''
-        from __future__ import with_statement
         import foo
         with open('foo') as foo.bar:
             pass
@@ -735,7 +1420,6 @@ class TestUnusedAssignment(TestCase):
         C{with} statement.
         """
         self.flakes('''
-        from __future__ import with_statement
         import foo
         with open('foo') as foo[0]:
             pass
@@ -747,7 +1431,6 @@ class TestUnusedAssignment(TestCase):
         target of a C{with} statement is not defined.
         """
         self.flakes('''
-        from __future__ import with_statement
         import foo
         with open('foo') as foo[bar]:
             pass
@@ -759,7 +1442,6 @@ class TestUnusedAssignment(TestCase):
         a C{with} statement within the suite or afterwards.
         """
         self.flakes('''
-        from __future__ import with_statement
         with open('foo') as (bar, baz):
             bar, baz
         bar, baz
@@ -771,7 +1453,6 @@ class TestUnusedAssignment(TestCase):
         C{with} statement within the suite or afterwards.
         """
         self.flakes('''
-        from __future__ import with_statement
         with open('foo') as [bar, baz]:
             bar, baz
         bar, baz
@@ -786,7 +1467,6 @@ class TestUnusedAssignment(TestCase):
         created are respected in the suite of the statement and afterwards.
         """
         self.flakes('''
-        from __future__ import with_statement
         c = d = e = g = h = i = None
         with open('foo') as [(a, b), c[d], e.f, g[h:i]]:
             a, b, c, d, e, g, h, i
@@ -799,7 +1479,6 @@ class TestUnusedAssignment(TestCase):
         C{with} statement is used before the C{with} statement.
         """
         self.flakes('''
-        from __future__ import with_statement
         bar
         with open('foo') as bar:
             pass
@@ -807,12 +1486,11 @@ class TestUnusedAssignment(TestCase):
 
     def test_withStatementTupleNamesUndefined(self):
         """
-        An undefined name warning is emitted if a name first defined by a the
+        An undefined name warning is emitted if a name first defined by the
         tuple-unpacking form of the C{with} statement is used before the
         C{with} statement.
         """
         self.flakes('''
-        from __future__ import with_statement
         baz
         with open('foo') as (bar, baz):
             pass
@@ -824,7 +1502,6 @@ class TestUnusedAssignment(TestCase):
         rebound by the name defined by a C{with} statement.
         """
         self.flakes('''
-        from __future__ import with_statement
         import bar
         with open('foo') as bar:
             pass
@@ -837,7 +1514,6 @@ class TestUnusedAssignment(TestCase):
         C{with} statement.
         """
         self.flakes('''
-        from __future__ import with_statement
         import bar
         with open('foo') as (bar, baz):
             pass
@@ -849,7 +1525,6 @@ class TestUnusedAssignment(TestCase):
         body of a C{with} statement without first being bound.
         """
         self.flakes('''
-        from __future__ import with_statement
         with open('foo') as bar:
             baz
         ''', m.UndefinedName)
@@ -860,7 +1535,6 @@ class TestUnusedAssignment(TestCase):
         the body ends without warning.
         """
         self.flakes('''
-        from __future__ import with_statement
         with open('foo') as bar:
             baz = 10
         baz
@@ -872,18 +1546,15 @@ class TestUnusedAssignment(TestCase):
         expression of a C{with} statement is undefined.
         """
         self.flakes('''
-        from __future__ import with_statement
         with bar as baz:
             pass
         ''', m.UndefinedName)
 
         self.flakes('''
-        from __future__ import with_statement
         with bar as bar:
             pass
         ''', m.UndefinedName)
 
-    @skipIf(version_info < (2, 7), "Python >= 2.7 only")
     def test_dictComprehension(self):
         """
         Dict comprehensions are properly handled.
@@ -892,7 +1563,6 @@ class TestUnusedAssignment(TestCase):
         a = {1: x for x in range(10)}
         ''')
 
-    @skipIf(version_info < (2, 7), "Python >= 2.7 only")
     def test_setComprehensionAndLiteral(self):
         """
         Set comprehensions are properly handled.
@@ -903,17 +1573,38 @@ class TestUnusedAssignment(TestCase):
         ''')
 
     def test_exceptionUsedInExcept(self):
-        as_exc = ', ' if version_info < (2, 6) else ' as '
         self.flakes('''
         try: pass
-        except Exception%se: e
-        ''' % as_exc)
+        except Exception as e: e
+        ''')
 
         self.flakes('''
         def download_review():
             try: pass
-            except Exception%se: e
-        ''' % as_exc)
+            except Exception as e: e
+        ''')
+
+    def test_exceptionUnusedInExcept(self):
+        self.flakes('''
+        try: pass
+        except Exception as e: pass
+        ''', m.UnusedVariable)
+
+    @skipIf(version_info < (3, 11), 'new in Python 3.11')
+    def test_exception_unused_in_except_star(self):
+        self.flakes('''
+            try:
+                pass
+            except* OSError as e:
+                pass
+        ''', m.UnusedVariable)
+
+    def test_exceptionUnusedInExceptInFunction(self):
+        self.flakes('''
+        def download_review():
+            try: pass
+            except Exception as e: pass
+        ''', m.UnusedVariable)
 
     def test_exceptWithoutNameInFunction(self):
         """
@@ -951,7 +1642,40 @@ class TestUnusedAssignment(TestCase):
         baz += bar()
         ''')
 
-    @skipIf(version_info < (3, 3), 'new in Python 3.3')
+    def test_assert_without_message(self):
+        """An assert without a message is not an error."""
+        self.flakes('''
+        a = 1
+        assert a
+        ''')
+
+    def test_assert_with_message(self):
+        """An assert with a message is not an error."""
+        self.flakes('''
+        a = 1
+        assert a, 'x'
+        ''')
+
+    def test_assert_tuple(self):
+        """An assert of a non-empty tuple is always True."""
+        self.flakes('''
+        assert (False, 'x')
+        assert (False, )
+        ''', m.AssertTuple, m.AssertTuple)
+
+    def test_assert_tuple_empty(self):
+        """An assert of an empty tuple is always False."""
+        self.flakes('''
+        assert ()
+        ''')
+
+    def test_assert_static(self):
+        """An assert of a static value is not an error."""
+        self.flakes('''
+        assert True
+        assert 1
+        ''')
+
     def test_yieldFromUndefined(self):
         """
         Test C{yield from} statement
@@ -961,6 +1685,362 @@ class TestUnusedAssignment(TestCase):
             yield from foo()
         ''', m.UndefinedName)
 
-    def test_returnOnly(self):
-        """Do not crash on lone "return"."""
-        self.flakes('return 2')
+    def test_f_string(self):
+        """Test PEP 498 f-strings are treated as a usage."""
+        self.flakes('''
+        baz = 0
+        print(f'\x7b4*baz\N{RIGHT CURLY BRACKET}')
+        ''')
+
+    def test_assign_expr(self):
+        """Test PEP 572 assignment expressions are treated as usage / write."""
+        self.flakes('''
+        from foo import y
+        print(x := y)
+        print(x)
+        ''')
+
+    def test_assign_expr_generator_scope(self):
+        """Test assignment expressions in generator expressions."""
+        self.flakes('''
+        if (any((y := x[0]) for x in [[True]])):
+            print(y)
+        ''')
+
+    def test_assign_expr_nested(self):
+        """Test assignment expressions in nested expressions."""
+        self.flakes('''
+        if ([(y:=x) for x in range(4) if [(z:=q) for q in range(4)]]):
+            print(y)
+            print(z)
+        ''')
+
+
+class TestStringFormatting(TestCase):
+
+    def test_f_string_without_placeholders(self):
+        self.flakes("f'foo'", m.FStringMissingPlaceholders)
+        self.flakes('''
+            f"""foo
+            bar
+            """
+        ''', m.FStringMissingPlaceholders)
+        self.flakes('''
+            print(
+                f'foo'
+                f'bar'
+            )
+        ''', m.FStringMissingPlaceholders)
+        # this is an "escaped placeholder" but not a placeholder
+        self.flakes("f'{{}}'", m.FStringMissingPlaceholders)
+        # ok: f-string with placeholders
+        self.flakes('''
+            x = 5
+            print(f'{x}')
+        ''')
+        # ok: f-string with format specifiers
+        self.flakes('''
+            x = 'a' * 90
+            print(f'{x:.8}')
+        ''')
+        # ok: f-string with multiple format specifiers
+        self.flakes('''
+            x = y = 5
+            print(f'{x:>2} {y:>2}')
+        ''')
+
+    def test_invalid_dot_format_calls(self):
+        self.flakes('''
+            '{'.format(1)
+        ''', m.StringDotFormatInvalidFormat)
+        self.flakes('''
+            '{} {1}'.format(1, 2)
+        ''', m.StringDotFormatMixingAutomatic)
+        self.flakes('''
+            '{0} {}'.format(1, 2)
+        ''', m.StringDotFormatMixingAutomatic)
+        self.flakes('''
+            '{}'.format(1, 2)
+        ''', m.StringDotFormatExtraPositionalArguments)
+        self.flakes('''
+            '{}'.format(1, bar=2)
+        ''', m.StringDotFormatExtraNamedArguments)
+        self.flakes('''
+            '{} {}'.format(1)
+        ''', m.StringDotFormatMissingArgument)
+        self.flakes('''
+            '{2}'.format()
+        ''', m.StringDotFormatMissingArgument)
+        self.flakes('''
+            '{bar}'.format()
+        ''', m.StringDotFormatMissingArgument)
+        # too much string recursion (placeholder-in-placeholder)
+        self.flakes('''
+            '{:{:{}}}'.format(1, 2, 3)
+        ''', m.StringDotFormatInvalidFormat)
+        # ok: dotted / bracketed names need to handle the param differently
+        self.flakes("'{.__class__}'.format('')")
+        self.flakes("'{foo[bar]}'.format(foo={'bar': 'barv'})")
+        # ok: placeholder-placeholders
+        self.flakes('''
+            print('{:{}} {}'.format(1, 15, 2))
+        ''')
+        # ok: not a placeholder-placeholder
+        self.flakes('''
+            print('{:2}'.format(1))
+        ''')
+        # ok: not mixed automatic
+        self.flakes('''
+            '{foo}-{}'.format(1, foo=2)
+        ''')
+        # ok: we can't determine statically the format args
+        self.flakes('''
+            a = ()
+            "{}".format(*a)
+        ''')
+        self.flakes('''
+            k = {}
+            "{foo}".format(**k)
+        ''')
+
+    def test_invalid_percent_format_calls(self):
+        self.flakes('''
+            '%(foo)' % {'foo': 'bar'}
+        ''', m.PercentFormatInvalidFormat)
+        self.flakes('''
+            '%s %(foo)s' % {'foo': 'bar'}
+        ''', m.PercentFormatMixedPositionalAndNamed)
+        self.flakes('''
+            '%(foo)s %s' % {'foo': 'bar'}
+        ''', m.PercentFormatMixedPositionalAndNamed)
+        self.flakes('''
+            '%j' % (1,)
+        ''', m.PercentFormatUnsupportedFormatCharacter)
+        self.flakes('''
+            '%s %s' % (1,)
+        ''', m.PercentFormatPositionalCountMismatch)
+        self.flakes('''
+            '%s %s' % (1, 2, 3)
+        ''', m.PercentFormatPositionalCountMismatch)
+        self.flakes('''
+            '%(bar)s' % {}
+        ''', m.PercentFormatMissingArgument,)
+        self.flakes('''
+            '%(bar)s' % {'bar': 1, 'baz': 2}
+        ''', m.PercentFormatExtraNamedArguments)
+        self.flakes('''
+            '%(bar)s' % (1, 2, 3)
+        ''', m.PercentFormatExpectedMapping)
+        self.flakes('''
+            '%s %s' % {'k': 'v'}
+        ''', m.PercentFormatExpectedSequence)
+        self.flakes('''
+            '%(bar)*s' % {'bar': 'baz'}
+        ''', m.PercentFormatStarRequiresSequence)
+        # ok: single %s with mapping
+        self.flakes('''
+            '%s' % {'foo': 'bar', 'baz': 'womp'}
+        ''')
+        # ok: does not cause a MemoryError (the strings aren't evaluated)
+        self.flakes('''
+            "%1000000000000f" % 1
+        ''')
+        # ok: %% should not count towards placeholder count
+        self.flakes('''
+            '%% %s %% %s' % (1, 2)
+        ''')
+        # ok: * consumes one positional argument
+        self.flakes('''
+            '%.*f' % (2, 1.1234)
+            '%*.*f' % (5, 2, 3.1234)
+        ''')
+
+    def test_ok_percent_format_cannot_determine_element_count(self):
+        self.flakes('''
+            a = []
+            '%s %s' % [*a]
+            '%s %s' % (*a,)
+        ''')
+        self.flakes('''
+            k = {}
+            '%(k)s' % {**k}
+        ''')
+
+
+class TestAsyncStatements(TestCase):
+
+    def test_asyncDef(self):
+        self.flakes('''
+        async def bar():
+            return 42
+        ''')
+
+    def test_asyncDefAwait(self):
+        self.flakes('''
+        async def read_data(db):
+            await db.fetch('SELECT ...')
+        ''')
+
+    def test_asyncDefUndefined(self):
+        self.flakes('''
+        async def bar():
+            return foo()
+        ''', m.UndefinedName)
+
+    def test_asyncFor(self):
+        self.flakes('''
+        async def read_data(db):
+            output = []
+            async for row in db.cursor():
+                output.append(row)
+            return output
+        ''')
+
+    def test_asyncForUnderscoreLoopVar(self):
+        self.flakes('''
+        async def coro(it):
+            async for _ in it:
+                pass
+        ''')
+
+    def test_loopControlInAsyncFor(self):
+        self.flakes('''
+        async def read_data(db):
+            output = []
+            async for row in db.cursor():
+                if row[0] == 'skip':
+                    continue
+                output.append(row)
+            return output
+        ''')
+
+        self.flakes('''
+        async def read_data(db):
+            output = []
+            async for row in db.cursor():
+                if row[0] == 'stop':
+                    break
+                output.append(row)
+            return output
+        ''')
+
+    def test_loopControlInAsyncForElse(self):
+        self.flakes('''
+        async def read_data(db):
+            output = []
+            async for row in db.cursor():
+                output.append(row)
+            else:
+                continue
+            return output
+        ''', m.ContinueOutsideLoop)
+
+        self.flakes('''
+        async def read_data(db):
+            output = []
+            async for row in db.cursor():
+                output.append(row)
+            else:
+                break
+            return output
+        ''', m.BreakOutsideLoop)
+
+    def test_asyncWith(self):
+        self.flakes('''
+        async def commit(session, data):
+            async with session.transaction():
+                await session.update(data)
+        ''')
+
+    def test_asyncWithItem(self):
+        self.flakes('''
+        async def commit(session, data):
+            async with session.transaction() as trans:
+                await trans.begin()
+                ...
+                await trans.end()
+        ''')
+
+    def test_matmul(self):
+        self.flakes('''
+        def foo(a, b):
+            return a @ b
+        ''')
+
+    def test_formatstring(self):
+        self.flakes('''
+        hi = 'hi'
+        mom = 'mom'
+        f'{hi} {mom}'
+        ''')
+
+    def test_raise_notimplemented(self):
+        self.flakes('''
+        raise NotImplementedError("This is fine")
+        ''')
+
+        self.flakes('''
+        raise NotImplementedError
+        ''')
+
+        self.flakes('''
+        raise NotImplemented("This isn't gonna work")
+        ''', m.RaiseNotImplemented)
+
+        self.flakes('''
+        raise NotImplemented
+        ''', m.RaiseNotImplemented)
+
+
+class TestIncompatiblePrintOperator(TestCase):
+    """
+    Tests for warning about invalid use of print function.
+    """
+
+    def test_valid_print(self):
+        self.flakes('''
+        print("Hello")
+        ''')
+
+    def test_invalid_print_when_imported_from_future(self):
+        exc = self.flakes('''
+        from __future__ import print_function
+        import sys
+        print >>sys.stderr, "Hello"
+        ''', m.InvalidPrintSyntax).messages[0]
+
+        self.assertEqual(exc.lineno, 4)
+        self.assertEqual(exc.col, 0)
+
+    def test_print_augmented_assign(self):
+        # nonsense, but shouldn't crash pyflakes
+        self.flakes('print += 1')
+
+    def test_print_function_assignment(self):
+        """
+        A valid assignment, tested for catching false positives.
+        """
+        self.flakes('''
+        from __future__ import print_function
+        log = print
+        log("Hello")
+        ''')
+
+    def test_print_in_lambda(self):
+        self.flakes('''
+        from __future__ import print_function
+        a = lambda: print
+        ''')
+
+    def test_print_returned_in_function(self):
+        self.flakes('''
+        from __future__ import print_function
+        def a():
+            return print
+        ''')
+
+    def test_print_as_condition_test(self):
+        self.flakes('''
+        from __future__ import print_function
+        if print: pass
+        ''')

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE usedata>
+<usedata>
+ <openedprojects/>
+ <settings>
+  <key>AutoCompletion=Api</key>
+  <key>ShowWhiteSpaces=False</key>
+  <key>EnableAutoCompletion=True</key>
+  <key>EnableAssistance=True</key>
+  <key>ShowCaretLine=True</key>
+  <key>EditorStyleName=Default</key>
+  <key>ShowLineNumbers=True</key>
+  <key>EdgeColumn=78</key>
+  <key>CaretLineColor=#D4FFD4</key>
+  <key>EditorStyleCss=Default</key>
+  <key>DynamicSearch=True</key>
+  <key>UI=Custom</key>
+  <key>Running=False</key>
+  <key>SelectionColor=#aaddff</key>
+  <key>ShowEdgeLine=False</key>
+  <key>EnableFolding=False</key>
+  <key>MarkSearchOccurrence=True</key>
+  <key>DocOnHover=False</key>
+  <key>SoundsEnabled=False</key>
+  <key>EditorStyleHtml=Default</key>
+  <key>MarkOperationalLines=False</key>
+  <key>EnableAlerts=True</key>
+  <key>EdgeMode=Line</key>
+  <key>MatchBraces=False</key>
+  <key>Autosave=False</key>
+  <key>EditorStyleXml=Default</key>
+  <key>enableStyleGuide=False</key>
+  <key>EditorStylePython=Default</key>
+  <key>CallTips=False</key>
+  <key>FirstRun=False</key>
+  <key>LastOpenedPath=C:/Users/HARRIOSN/Desktop</key>
+ </settings>
+</usedata>
+<usedata/>
