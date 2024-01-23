@@ -123,7 +123,7 @@ class CreateProjectThread(QtCore.QThread):
             'RunType': 'Run',
             'BufferSize': '900',
             'RunArguments': '',
-            'DefaultInterpreter': '',
+            'DefaultInterpreter': 'python3',
             'TraceType': '3',
             'RunWithArguments': 'False',
             'RunInternal': 'True',

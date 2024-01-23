@@ -920,7 +920,7 @@ class EditorTabWidget(QtWidgets.QTabWidget):
             tabIndex = self.currentIndex()
         else:
             pass
-        # vector
+        # vector for crashfix
         try:
             data = self.widget(tabIndex).widget(0).DATA[attrib]
         except:
@@ -1017,10 +1017,15 @@ class EditorTabWidget(QtWidgets.QTabWidget):
 
     def saveAs(self, index=None, copyOnly=False):
         options = QtWidgets.QFileDialog.Options()
-        filter = self.getFilter()
-        fileName = QtWidgets.QFileDialog.getSaveFileName(self,
-                                                     "Save As", os.path.join(self.useData.getLastOpenedDir(),
-                                                                             self.getTabName()), filter, options)[0]
+        #crashfix by vect
+        #filter = self.getFilter()
+        #fileName = QtWidgets.QFileDialog.getSaveFileName(self,
+        #                                             "Save As", os.path.join(self.useData.getLastOpenedDir(),
+        #                                                                     self.getTabName()), filter, options)[0]
+        options = QtWidgets.QFileDialog.Options()
+        fileName, _ = QtWidgets.QFileDialog.getSaveFileName(self,
+                                                     "Save As", os.path.join(self.useData.getLastOpenedDir(), self.getTabName()),
+                                                             self.getFilter(), options=options)
         if fileName:
             self.useData.saveLastOpenedDir(os.path.split(fileName)[0])
             try:

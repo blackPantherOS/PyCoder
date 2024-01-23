@@ -336,7 +336,9 @@ class Assistant(QtWidgets.QStackedWidget):
                 self.errorView.addTopLevelItem(item)
 
                 lineno = int(item.text(1)) - 1
-                offset = item.data(10, 2)
+                # crashfix by vector
+                offset = item.data(10, 2)[1]
+                #print ("Debug ", offset)
                 msg = item.text(2)
 
                 lineText = editor.text(lineno)

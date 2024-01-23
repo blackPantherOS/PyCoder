@@ -725,21 +725,21 @@ class BuildConfig(QtWidgets.QWidget):
     def addIcon(self):
         options = QtWidgets.QFileDialog.Options()
         if sys.platform == "win32":
-            filter = "Icon Files (*.ico)"
+            file_filter = "Icon Files (*.ico)"
         elif sys.platform == "darwin":
-            filter = "Icon Files (*.icns)"
+            file_filter = "Icon Files (*.icns)"
         else:
-            filter = "Icon Files (*.png)"
-        filePath = QtWidgets.QFileDialog.getOpenFileName(self,
-                                                    "Select Icon", self.useData.getLastOpenedDir(
-                                                    ), filter, options)[0]
+            file_filter = "Icon Files (*.png *.svg);;All Files (*)"
+        filePath, _ = QtWidgets.QFileDialog.getOpenFileName(self,
+                                                    "Select Icon", self.useData.getLastOpenedDir(),
+                                                    file_filter, options=options)
         if filePath:
             destPath = os.path.join(self.projectPathDict['iconsdir'],
-                                   os.path.basename(filePath))
+                                    os.path.basename(filePath))
             if os.path.exists(destPath):
                 reply = QtWidgets.QMessageBox.warning(self, "Add Icon",
-                                                 "Icon with same name already exists. Replace?",
-                                                 QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+                                                     "Icon with the same name already exists. Replace?",
+                                                     QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
                 if reply == QtWidgets.QMessageBox.Yes:
                     pass
                 else:

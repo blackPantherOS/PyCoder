@@ -268,13 +268,22 @@ class GeneralSettings(QtWidgets.QDialog):
                 editorTabWidget.adjustToStyleSheet(False)
 
     def exportSettings(self):
+        # crashfix by vector
+        #options = QtWidgets.QFileDialog.Options()
+        #savepath = os.path.join(self.useData.getLastOpenedDir(),
+        #                        "PyCoder_Settings" + '_' + QtCore.QDateTime().currentDateTime().toString().replace(' ', '_').replace(':', '-'))
+        #savepath = os.path.normpath(savepath)
+        #fileName = QtWidgets.QFileDialog.getSaveFileName(self,
+        #                                             "Choose Folder", savepath,
+        #                                             "PyCoder Settings (*)", options)[0]
         options = QtWidgets.QFileDialog.Options()
         savepath = os.path.join(self.useData.getLastOpenedDir(),
                                 "PyCoder_Settings" + '_' + QtCore.QDateTime().currentDateTime().toString().replace(' ', '_').replace(':', '-'))
         savepath = os.path.normpath(savepath)
-        fileName = QtWidgets.QFileDialog.getSaveFileName(self,
-                                                     "Choose Folder", savepath,
-                                                     "PyCoder Settings (*)", options)[0]
+        fileName, _ = QtWidgets.QFileDialog.getSaveFileName(self,
+                                                         "Choose Folder", savepath,
+                                                         "PyCoder Settings (*)", options=options)
+  
         if fileName:
             try:
                 QtWidgets.QApplication.setOverrideCursor(QtCore.Qt.WaitCursor)

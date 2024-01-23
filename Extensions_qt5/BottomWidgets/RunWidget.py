@@ -184,17 +184,17 @@ class SetRunParameters(QtWidgets.QLabel):
             elif sys.platform == 'darwin':
                 self.projectSettings["DefaultInterpreter"] = \
                     os.path.join(self.projectPathDict["venvdir"],
-                                     "Scripts", "python.exe")
+                                     "Scripts", "python")
             else:
                 self.projectSettings["DefaultInterpreter"] = \
                     os.path.join(self.projectPathDict["venvdir"],
-                                     "Scripts", "python.exe")
+                                     "Scripts", "python3")
         else:
             if len(self.useData.SETTINGS["InstalledInterpreters"]) > 0:
                 self.projectSettings["DefaultInterpreter"] = \
                     self.installedPythonVersionBox.currentText()
             else:
-                self.projectSettings["DefaultInterpreter"] = 'None'
+                self.projectSettings["DefaultInterpreter"] = '/usr/bin/python3'
         self.projectSettings["UseVirtualEnv"] = str(
             self.useVirtualEnvBox.isChecked())
 
