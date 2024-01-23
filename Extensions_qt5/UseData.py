@@ -334,9 +334,24 @@ class UseData(QtCore.QObject):
 
         self.CUSTOM_SHORTCUTS = {'Ide': {}, 'Editor': {}}
 
+        self.settings = QtCore.QSettings("pycoder", "pycorder")
+        self.settings_path = os.path.dirname(self.settings.fileName())
+
+        # Check if settings.ini exists in the local directory, if not, copy it from the current working directory
+        local_settings_path = "settings.ini"
+        os.makedirs(self.settings_path, exist_ok=True)
+
+        if not os.path.exists(self.settings.fileName()):
+            print(f"Copying {local_settings_path} from current directory to {self.settings.fileName()}")
+            self.copySettingsFromCurrentDirectory(self.settings.fileName())
+
         # load configuration from file
         tempList = []
-        file = open("settings.ini", "r")
+        try:
+            file = open(self.settings.fileName(), "r")
+        except:
+            file = open("settings.ini", "r")
+
         for i in file.readlines():
             if i.strip() == '':
                 pass
@@ -349,6 +364,20 @@ class UseData(QtCore.QObject):
         self.loadUseData()
 
         self.SETTINGS["InstalledInterpreters"] = self.getPythonExecutables()
+
+    def copySettingsFromCurrentDirectory(self, destination_path):
+        try:
+            # Read the content of the source file
+            with open("settings.ini", "r") as source_file:
+                content = source_file.read()
+
+            # Write the content to the destination path
+            with open(destination_path, "w") as destination_file:
+                destination_file.write(content)
+            print(f"Settings copied successfully")
+
+        except Exception as e:
+            print(f"Error copying settings.ini: {e}")
 
     def loadAppData(self):
         self.workspaceDir = self.settings["workspace"]
