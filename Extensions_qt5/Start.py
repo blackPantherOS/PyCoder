@@ -40,17 +40,17 @@ class Start(QtWidgets.QLabel):
 
                             QListView::item:hover {
                                  border: none;
-                                 background: #E3E3E3;
+                                 background: #25baff;
                             }
 
                             QListView::item:selected:!active {
                                  border: 1px solid white;
-                                 background: #E3E3E3;
+                                 background: #a9ab19;
                             }
 
                             QListView::item:selected:active {
                                  color: white;
-                                 background: #3F3F3F;
+                                 background: #119837;
                             }""")
         vbox.addWidget(centerLabel)
 
@@ -70,7 +70,8 @@ class Start(QtWidgets.QLabel):
         centralLayout.addLayout(hbox)
 
         label = QtWidgets.QLabel("Getting started...")
-        # vector label.setFont(QtGui.QFont("Consolas", 20))
+        label.setStyleSheet("color: #000; font: 20px;")
+        #label.setFont(QtGui.QFont("Consolas", 20))
         hbox.addWidget(label)
 
         hbox.addStretch(1)
@@ -95,7 +96,8 @@ class Start(QtWidgets.QLabel):
             "context of a project. Start editing your files by first "
             "creating a project or opening an existing one.")
         label.setWordWrap(True)
-        #vector label.setFont(QtGui.QFont("Consolas", 10))
+        #label.setFont(QtGui.QFont("Consolas", 12))
+        label.setStyleSheet("color: #000; font: 14px;")
         centralLayout.addWidget(label)
 
         centralLayout.addStretch(1)
