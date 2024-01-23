@@ -42,9 +42,11 @@ Then perhaps:
 ### License:
 * GPL v3
 
-### Latest version: 0.1.1 
+### Latest version: 0.1.2
 
-* is an alpha 1 (not released)
+* its an alpha 1 (not released)
 
 ### Screenshots
-![Alt text](/Resources/screenshots/pycoder.png "PyCoder running on blackPanther OS")
+![Alt text](/Resources/screenshots/pycoder.png "PyCoder running on blackPanther OS v18.1Pro")
+![Alt text](/Resources/screenshots/pycoder2.png "PyCoder running on blackPanther OS v24.1")
+
