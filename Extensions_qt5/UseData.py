@@ -4,7 +4,6 @@ import re
 import codecs
 import traceback
 import logging
-import configparser
 # FIXME QtXml is no longer supported.
 from PyQt5 import QtCore, QtXml
 from PyQt5.Qsci import QsciScintilla
