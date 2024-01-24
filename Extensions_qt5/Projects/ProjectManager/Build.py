@@ -75,11 +75,11 @@ class BuildThread(QtCore.QThread):
         packages = self.profile["Packages"]
 
         try:
+                           #targetDir=self.projectPathDict['builddir'],
             executables = [cx_Freeze.Executable(
                            self.projectPathDict['mainscript'],
                            icon=iconPath,
-                           targetDir=self.projectPathDict['builddir'],
-                           initScript=initScript,
+                           init_script=initScript,
                            base=base)]
             if self.projectSettings["UseVirtualEnv"] == "True":
                 venv_path = self.projectPathDict["venvdir"]
@@ -127,6 +127,7 @@ class BuildThread(QtCore.QThread):
                                 namespacePackages=namespacePackages,
                                 constantsModules=constantsModules,
                                 packages=packages)
+
             freezer.Freeze()
 
             badModules = freezer.finder._badModules
@@ -252,8 +253,13 @@ class Build(QtWidgets.QWidget):
         self.durationTime = QtCore.QTime()
 
     def openDir(self):
-        if os.path.exists(self.projectPathDict["builddir"]) == True:
-            os.startfile(self.projectPathDict["builddir"], 'explore')
+        if os.path.exists(self.projectPathDict["builddir"]):
+            print("System:", sys.platform)
+            if sys.platform.startswith('win'):
+                os.system('start explorer "{}"'.format(self.projectPathDict["builddir"]))
+            else:
+                opener = "xdg-open" if sys.platform == "linux" else "open"
+                os.system('{} "{}"'.format(opener, self.projectPathDict["builddir"]))
         else:
             message = QtWidgets.QMessageBox.critical(self, "Open",
                                                  "Build folder is missing!")
