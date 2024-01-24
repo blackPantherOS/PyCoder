@@ -258,6 +258,9 @@ class ProjectTree(QtWidgets.QTreeView):
         self.contextMenu.addSeparator()
 
         if selection:
+            self.contextMenu.addSeparator()
+            self.contextMenu.addAction(self.backAct)
+            self.contextMenu.addSeparator()
             self.contextMenu.addAction(self.copyAct)
             self.contextMenu.addAction(self.pasteAct)
             self.contextMenu.addAction(self.deleteAct)
@@ -292,6 +295,10 @@ class ProjectTree(QtWidgets.QTreeView):
         self.copyAct = QtWidgets.QAction(
             "Copy", self, shortcut=QtGui.QKeySequence.Copy,
             statusTip="Copy", triggered=self.copyItem)
+
+        self.backAct = QtWidgets.QAction(
+            "Backup this..", self,
+            statusTip="Create a hot backup", triggered=self.createBackup)
 
         self.pasteAct = QtWidgets.QAction(
             "Paste", self, shortcut=QtGui.QKeySequence.Paste,
@@ -335,6 +342,26 @@ class ProjectTree(QtWidgets.QTreeView):
         self.showAllFilesAct.setCheckable(True)
         self.showAllFilesAct.setChecked(True)
 
+    def getSelected(self):
+        indexes = self.selectedIndexes()
+        if not indexes:
+            return None
+
+        selected_item = self.fileSystemModel.fileInfo(indexes[0])
+        return selected_item
+
+    def getSelected_nolist(self):
+        indexes = self.selectedIndexes()
+        if not indexes:
+            return None
+
+        selected_items = []
+        for index in indexes:
+            item = self.fileSystemModel.fileInfo(index)
+            selected_items.append(item)
+
+        return selected_items[0] if len(selected_items) == 1 else selected_items
+
     def getCurrentFilePath(self):
         indexList = self.selectedIndexes()
         path_index = indexList[0]
@@ -364,6 +391,27 @@ class ProjectTree(QtWidgets.QTreeView):
 
         clipboard = self.app.clipboard()
         clipboard.setMimeData(data)
+
+    def createBackup(self):
+        selected_item = self.getSelected()
+        if selected_item:
+            try:
+                source_path = selected_item.absoluteFilePath()
+                backup_path = source_path + ".bak"
+                backup_path = self.getUniqueBackupName(os.path.dirname(backup_path), os.path.basename(backup_path))
+                shutil.copytree(source_path, backup_path) if os.path.isdir(source_path) else shutil.copy2(source_path, backup_path)
+            except Exception as e:
+                QtWidgets.QMessageBox.critical(self, "Error", f"Failed to create backup: {str(e)}")
+
+    def getUniqueBackupName(self, directory, basename):
+        # Azonosít egy egyedi .bak nevet a megadott könyvtárban
+        backup_path = os.path.join(directory, basename)
+        base, ext = os.path.splitext(backup_path)
+        count = 1
+        while os.path.exists(backup_path):
+            backup_path = f"{base}_bak{count}{ext}"
+            count += 1
+        return backup_path
 
     def pasteItem(self):
         destDir = self.getCurrentDirectory()
