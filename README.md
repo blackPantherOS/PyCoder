@@ -1,8 +1,8 @@
 PyCoder - The LightWare Python IDE based on Qt5
 =====
-   Developing by blackPanther OS Project - www.blackpanther.hu    
-   Credits: Harrison Amoatey (Qt4 version development)
-
+   Developing by blackPanther Project - <a href="http://blackpanther.hu">blackpanther.hu</a>    
+   Credits: Harrison Amoatey, Miklos Horvath
+   
 ##  Python 3 IDE
 
 PyCoder seeks to simplify the process of development in python by means of:
@@ -11,6 +11,7 @@ PyCoder seeks to simplify the process of development in python by means of:
 1. Utilization of very powerful open source libraries
 1. Implementation of carefully chosen features
 1. Support for other file formats that commonly accompany python development
+1. Python, Xml, Css, Html edit support 
 
 ###  Features:
 1. Builds source code into executable
@@ -30,23 +31,30 @@ PyCoder seeks to simplify the process of development in python by means of:
 1. Etc.
 
 ### Download
-   Click on [Release](Not released, this is aplha version) to view available downloads.
+   Click on [<a href='https://github.com/blackPantherOS/PyCoder/releases'>Release</a>] to view available downloads.
 
 ### Dependencies:
 1. Python 3 ( for running programs )
 1. PyQt5 ( if you are running from source )
+1. see requirements.txt 
 
+   /PyQt6 UI developing in progress/
+   
 Then perhaps:
 * Pywin32 for windows ( for stamping executables if you are running from source )
 
 ### License:
 * GPL v3
 
-### Latest version: 0.1.2
+### Latest version:
 
-* its an alpha 1 (not released)
+** 0.1.32
+  
+### Icon
+![Alt text](pycoder.svg "PyCoder Icon")
 
 ### Screenshots
-![Alt text](/Resources/screenshots/pycoder.png "PyCoder running on blackPanther OS v18.1Pro")
+
 ![Alt text](/Resources/screenshots/pycoder2.png "PyCoder running on blackPanther OS v24.1")
+![Alt text](/Resources/screenshots/pycoder.png "PyCoder running on blackPanther OS v18.1Pro")
 
