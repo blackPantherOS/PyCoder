@@ -4,7 +4,7 @@ import re
 import codecs
 import traceback
 import logging
-
+import configparser
 # FIXME QtXml is no longer supported.
 from PyQt5 import QtCore, QtXml
 from PyQt5.Qsci import QsciScintilla
@@ -334,21 +334,22 @@ class UseData(QtCore.QObject):
 
         self.CUSTOM_SHORTCUTS = {'Ide': {}, 'Editor': {}}
 
-        self.settings = QtCore.QSettings("pycoder", "pycorder")
-        self.settings_path = os.path.dirname(self.settings.fileName())
+        config_path = os.path.expanduser("~/.config/pycoder")
+        config_file = "settings.ini"
+        settings_file_path = os.path.join(config_path, config_file)
 
-        # Check if settings.ini exists in the local directory, if not, copy it from the current working directory
-        local_settings_path = "settings.ini"
-        os.makedirs(self.settings_path, exist_ok=True)
+        if not os.path.exists(config_path):
+            print("Dir not found! Create..")
+            os.makedirs(config_path, exist_ok=True)
 
-        if not os.path.exists(self.settings.fileName()):
-            print(f"Copying {local_settings_path} from current directory to {self.settings.fileName()}")
-            self.copySettingsFromCurrentDirectory(self.settings.fileName())
+        if not os.path.exists(settings_file_path):
+            print(f"Copying {config_file} from current directory to {settings_file_path}")
+            self.copySettingsFromCurrentDirectory(settings_file_path)
 
         # load configuration from file
         tempList = []
         try:
-            file = open(self.settings.fileName(), "r")
+            file = open(settings_file_path, "r")
         except:
             file = open("settings.ini", "r")
 
@@ -607,7 +608,16 @@ class UseData(QtCore.QObject):
             self.SETTINGS["LastOpenedPath"] = path
 
     def saveSettings(self):
-        file = open("settings.ini", "w")
+
+        config_path = os.path.expanduser("~/.config/pycoder")
+        config_file = "settings.ini"
+        settings_file_path = os.path.join(config_path, config_file)
+
+        if not os.path.exists(settings_file_path):
+            print(f"Copying {config_file} from current directory to {settings_file_path}")
+            self.copySettingsFromCurrentDirectory(settings_file_path)
+
+        file = open(settings_file_path, "w")
         for key, value in self.settings.items():
             file.write('\n' + key + '=' + value)
         file.close()
