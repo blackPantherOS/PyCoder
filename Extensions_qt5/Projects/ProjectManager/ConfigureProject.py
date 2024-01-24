@@ -454,7 +454,8 @@ class BuildConfig(QtWidgets.QWidget):
         self.useData = useData
         
         mainLayout = QtWidgets.QVBoxLayout()
-        mainLayout.setContentsMargins(0, 0, 0, 0)
+        mainLayout.setContentsMargins(0,0, 0, 0)
+        #Disabled embed contetnt size self.setMinimumWidth(400)
         self.setLayout(mainLayout)
 
         self.lists = {"Includes": [],
@@ -913,7 +914,7 @@ class ConfigureProject(QtWidgets.QLabel):
         self.setObjectName("containerLabel")
         self.setStyleSheet(StyleSheet.toolWidgetStyle)
 
-        self.setMinimumSize(500, 350)
+        self.setMinimumSize(550, 450)
         self.pagesList = []
 
         mainLayout = QtWidgets.QVBoxLayout()
