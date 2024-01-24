@@ -13,7 +13,10 @@ try:
 except:
     from Xtra import pycodestyle as pep8
 
-from Xtra.autopep8 import FixPEP8
+try:
+    from autopep8 import FixPEP8
+except:
+    from Xtra.autopep8 import FixPEP8
 
 class ErrorCheckerThread(QtCore.QThread):
 
