@@ -2,10 +2,18 @@ import os
 import ast
 from PyQt5 import QtCore, QtGui, QtWidgets
 from pyflakes.checker import Checker as flakeChecker
-from Xtra import pep8
-from Xtra import autopep8
-from Xtra.autopep8 import FixPEP8
 
+try:
+    import autopep8
+except:
+    from Xtra import autopep8
+
+try:
+    import pycodestyle as pep8
+except:
+    from Xtra import pycodestyle as pep8
+
+from Xtra.autopep8 import FixPEP8
 
 class ErrorCheckerThread(QtCore.QThread):
 
