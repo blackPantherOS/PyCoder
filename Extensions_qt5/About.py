@@ -2,12 +2,19 @@ import os
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-from Xtra import autopep8
-from Xtra import pep8
+try:
+    import autopep8
+except:
+    from Xtra import autopep8
+
+try:
+    import pycodestyle
+except:
+    from Xtra import pycodestyle
+
 import pyflakes
 import rope
 import cx_Freeze
-
 
 class About(QtWidgets.QDialog):
 
@@ -15,22 +22,16 @@ class About(QtWidgets.QDialog):
         QtWidgets.QDialog.__init__(self, parent,
                                QtCore.Qt.Window | QtCore.Qt.WindowCloseButtonHint)
 
-        try:
-            cx_Freeze_version = cx_Freeze.version()
-        except AttributeError:
-            cx_Freeze_version = "N/A"
-
         self.setWindowTitle("About")
 
         mainLayout = QtWidgets.QVBoxLayout()
         mainLayout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(mainLayout)
 
-        self.setFixedSize(500, 300)
-
+        self.setFixedSize(500, 350)
         form = QtWidgets.QFormLayout()
-        #form.setMargin(10)
-        form.addRow("<b>Version</b>", QtWidgets.QLabel("0.1.2"))
+        form.setContentsMargins(10, 10, 10, 10)
+        form.addRow("<b>Version</b>", QtWidgets.QLabel("0.1.3"))
         form.addRow("<b>Author</b>", QtWidgets.QLabel("blackPanther Project"))
         form.addRow("<b>Email</b>", QtWidgets.QLabel("info@blackpanther.hu"))
 
@@ -63,13 +64,13 @@ class About(QtWidgets.QDialog):
         table.addTopLevelItem(QtWidgets.QTreeWidgetItem(
             ["PyFlakes", pyflakes.__version__, "Florent Xicluna"]))
         table.addTopLevelItem(QtWidgets.QTreeWidgetItem(
-            ["Pep8", pep8.__version__, "Florent Xicluna"]))
+            ["PyCodeStyle (Pep8)", pycodestyle.__version__, "Florent Xicluna, Ian Lee"]))
         table.addTopLevelItem(QtWidgets.QTreeWidgetItem(
             ["PyQt5", "4.10", "Riverbank Computing Limited"]))
         table.addTopLevelItem(QtWidgets.QTreeWidgetItem(
             ["AutoPep8", autopep8.__version__, "Hideo Hattori"]))
         table.addTopLevelItem(QtWidgets.QTreeWidgetItem(
-            ["CxFreeze", cx_Freeze_version, "Anthony Tuininga"]))
+            ["CxFreeze", cx_Freeze.__version__, "Anthony Tuininga"]))
         self.view.addWidget(table)
 
         self.licenseEdit = QtWidgets.QTextEdit()
