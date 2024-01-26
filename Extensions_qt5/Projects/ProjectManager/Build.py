@@ -26,7 +26,7 @@ class BuildThread(QtCore.QThread):
         if self.profile["base"] == "Console":
             base = "ConsoleKeepPath"
         else:
-            base = "Win32GUI"
+            base = "Win32GUI" if sys.platform.startswith("win") else None
         initScript = None
 
         if self.profile["icon"] in os.listdir(self.projectPathDict['iconsdir']):
@@ -73,36 +73,65 @@ class BuildThread(QtCore.QThread):
         namespacePackages = self.profile["Namespace Packages"]
         constantsModules = self.profile["Constants Modules"]
         packages = self.profile["Packages"]
+        build_dir = self.projectPathDict['builddir']
 
         try:
-                           #targetDir=self.projectPathDict['builddir'],
             executables = [cx_Freeze.Executable(
                            self.projectPathDict['mainscript'],
                            icon=iconPath,
                            init_script=initScript,
-                           base=base)]
+                           base=base,)]
+            options = {
+                'build_exe': {
+                    'build_exe': self.projectPathDict['builddir']
+                }
+            }
+
+
             if self.projectSettings["UseVirtualEnv"] == "True":
                 venv_path = self.projectPathDict["venvdir"]
-                path = [self.projectPathDict['sourcedir'],
-                        os.path.join(venv_path, "Scripts"),
+                path = [
+                    self.projectPathDict['sourcedir'],
+                    os.path.join(venv_path, "Scripts"),
+                ]
+
+                if sys.platform.startswith("win"):
+                    path.extend([
                         os.path.join(venv_path, "Lib"),
                         os.path.join(venv_path, "Lib", "site-packages"),
-                        os.path.join(venv_path, "Include")]
+                        os.path.join(venv_path, "Include")
+                    ])
+
+                else:  # Linux
+                    path.append(build_dir)
+
             else:
                 py_path = os.path.dirname(self.projectSettings["DefaultInterpreter"])
-                path = [self.projectPathDict['sourcedir'],
-                        py_path,
+                path = [
+                    self.projectPathDict['sourcedir'],
+                    #os.path.join(py_path, "includes")
+                ]
+
+                if sys.platform.startswith("win"):
+                    path.extend([
                         os.path.join(py_path, "DLLs"),
                         os.path.join(py_path, "libs"),
                         os.path.join(py_path, "Lib"),
                         os.path.join(py_path, "Lib", "site-packages"),
-                        os.path.join(py_path, "include")]
+                        os.path.join(py_path, "include"),
+                    ])
+                else:  # Linux
+                    path.append(build_dir)
+
+            path = list(filter(None, path))
+
             extraPathList = []
             for i in path:
                 extraPathList.extend(self.pathListFromDir(i))
             path.extend(extraPathList)
-            
-            freezer = Cx_Freeze(executables,
+
+            if sys.platform.startswith("win"):
+                freezer = Cx_Freeze(executables,
                                 self.projectPathDict,
                                 self.useData,
                                 base=base,
@@ -128,23 +157,34 @@ class BuildThread(QtCore.QThread):
                                 constantsModules=constantsModules,
                                 packages=packages)
 
-            freezer.Freeze()
 
-            badModules = freezer.finder._badModules
-            names = list(badModules.keys())
-            names.sort()
-            self.missing = []
-            for name in names:
-                callers = list(badModules[name].keys())
-                callers.sort()
-                self.missing.append("? {0} imported from {1}".format
-                                   (name, ", ".join(callers)))
+                freezer.Freeze()
+
+                try:
+                    badModules = freezer.finder._badModules
+                    names = list(badModules.keys())
+                    names.sort()
+                    self.missing = []
+                    for name in names:
+                        callers = list(badModules[name].keys())
+                        callers.sort()
+                        self.missing.append("? {0} imported from {1}".format
+                                            (name, ", ".join(callers)))
+                except AttributeError:
+                    print("The finder in cx_Freeze curren not available.")
+            else:
+
+                self.missing = []
+                freezer = cx_Freeze.Freezer(executables,
+                                target_dir=build_dir)
+                freezer.freeze()
+
         except Exception as err:
             exc_type, exc_value, exc_traceback = sys.exc_info()
             logging.error(repr(traceback.format_exception(exc_type, exc_value,
                                       exc_traceback)))
             self.error = str(err)
-            
+
     def pathListFromDir(self, dirPath):
         """
         This is to get the list of module search paths from .pth files
@@ -165,7 +205,7 @@ class BuildThread(QtCore.QThread):
                             fullPath = os.path.join(dirPath, lineText)
                             if os.path.exists(fullPath):
                                 pathList.append(fullPath)
-                                
+
         return pathList
 
     def build(self, profile, projectPathDict, projectSettings, useData):
@@ -174,8 +214,12 @@ class BuildThread(QtCore.QThread):
         self.useData = useData
         self.projectSettings = projectSettings
 
-        self.start()
+        targetDir=self.projectPathDict['builddir']
+        if not os.path.exists(targetDir):
+            os.makedirs(targetDir, exist_ok=True)
 
+        print("Start build to target dir:", targetDir)
+        self.start()
 
 class Cx_Freeze(Freezer):
     def __init__(self, executables,
@@ -208,7 +252,7 @@ class Cx_Freeze(Freezer):
                          icon=icon,
                          metadata=metadata,
                          includeMSVCR=True,
-                         targetDir=projectPathDict['builddir'],
+                         target_dir=projectPathDict['builddir'],
                          initScript=initScript,
                          path=path,
                          base=base,
@@ -254,7 +298,6 @@ class Build(QtWidgets.QWidget):
 
     def openDir(self):
         if os.path.exists(self.projectPathDict["builddir"]):
-            print("System:", sys.platform)
             if sys.platform.startswith('win'):
                 os.system('start explorer "{}"'.format(self.projectPathDict["builddir"]))
             else:
