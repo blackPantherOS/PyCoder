@@ -48,7 +48,7 @@ Then perhaps:
 
 ### Latest version:
 
-** 0.1.32
+** 0.2.0
   
 ### Icon
 ![Alt text](pycoder.svg "PyCoder Icon")
