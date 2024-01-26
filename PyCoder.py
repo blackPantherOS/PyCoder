@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 #*********************************************************************************************************
 #*   __     __               __     ______                __   __                      _______ _______   *
 #*  |  |--.|  |.---.-..----.|  |--.|   __ \.---.-..-----.|  |_|  |--..-----..----.    |       |     __|  *
@@ -9,9 +9,10 @@
 # Project         : PyCoder
 # Module          : Development IDE
 # File            : PyCoder.py
-# Version         : 0.1.1
+# Version         : 0.2.0
 # Authors         : Charles K. Barcza & Miklos Horvath - info@blackpanther.hu
 # Created On      : Fri Jan 17 2020
+# Last updated    : Fri Jan 26 2024
 # Credits         : Harrison Amoatey - the Qt4 code
 # Purpose         : LightWare Python IDE based on Qt5
 #---------------------------------------------------------------
