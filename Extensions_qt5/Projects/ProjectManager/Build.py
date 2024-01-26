@@ -6,6 +6,7 @@ import cx_Freeze
 from cx_Freeze import Freezer
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+sys.setrecursionlimit(5000)
 
 class Metadata(object):
     def __init__(self):
