@@ -54,7 +54,6 @@ Then perhaps:
 ![Alt text](pycoder.svg "PyCoder Icon")
 
 ### Screenshots
-
+![Alt text](/Resources/screenshots/PyCoder6.png "PyCoder6 running on blackPanther OS v24.1")
 ![Alt text](/Resources/screenshots/pycoder2.png "PyCoder running on blackPanther OS v24.1")
-![Alt text](/Resources/screenshots/pycoder.png "PyCoder running on blackPanther OS v18.1Pro")
 
