@@ -1,4 +1,4 @@
-PyCoder - The LightWare Python IDE based on Qt5
+PyCoder - The LightWare Python IDE based on Qt6
 =====
    Developing by blackPanther Project - <a href="http://blackpanther.hu">blackpanther.hu</a>    
    Credits: Harrison Amoatey, Miklos Horvath
@@ -35,10 +35,10 @@ PyCoder seeks to simplify the process of development in python by means of:
 
 ### Dependencies:
 1. Python 3 ( for running programs )
-1. PyQt5 ( if you are running from source )
+1. PyQt6 ( if you are running from source )
 1. see requirements.txt 
 
-   /PyQt6 UI developing in progress/
+   /PyQt6 developing in progress/
    
 Then perhaps:
 * Pywin32 for windows ( for stamping executables if you are running from source )
@@ -48,7 +48,7 @@ Then perhaps:
 
 ### Latest version:
 
-** 0.2.0
+** 0.5.0
   
 ### Icon
 ![Alt text](pycoder.svg "PyCoder Icon")
