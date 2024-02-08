@@ -38,7 +38,7 @@ PyCoder seeks to simplify the process of development in python by means of:
 1. PyQt5 ( if you are running from source )
 1. see requirements.txt 
 
-   /PyQt6 UI developing in progress/
+   /PyQt6 <a href="https://github.com/blackPantherOS/PyCoder/tree/Qt6_based">UI developing in progress</a>/
    
 Then perhaps:
 * Pywin32 for windows ( for stamping executables if you are running from source )
