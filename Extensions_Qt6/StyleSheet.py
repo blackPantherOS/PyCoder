@@ -674,22 +674,27 @@ mainMenuStyle = """
 
                 QPushButton {
                     padding: 2px 6px 2px 6px;
-                    color: grey;
-                    background: transparent;
-                    border: none;
-                    border-radius: 0px;
+                    color: #000;
+                    margin-left:5px;
+                    margin-right:5px;
+                    text-shadow: 2px 2px #ff0000;
+                    background: gray;
+                    font: bold;
+                    border: 1px;
+                    border-radius: 4px;
                 }
 
                 QPushButton:hover {
-                    color: black;
+                    color: yellow;
                 }
 
                 QPushButton:pressed {
+                    color: red;
 
                 }
 
                 QPushButton:checked {
-                    color: black;
+                    color: ffeb50;
                 }
 
                 """

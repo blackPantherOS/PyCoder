@@ -155,7 +155,7 @@ class PyCoder(QtWidgets.QWidget):
         self.showFullScreenAct = \
             QtGui.QAction(
                 QtGui.QIcon(os.path.join(
-                "Resources", "images", "fullscreen")),
+                "Resources", "images", "Fullscreen")),
                 "Fullscreen", self,
                 statusTip="Fullscreen",
                           triggered=self.showFullScreenMode)
