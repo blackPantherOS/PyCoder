@@ -11,14 +11,9 @@ class Notification(QtWidgets.QLabel):
 
         self.easingCurve = QtCore.QEasingCurve.Type.OutCubic
 
-        # crash fix by vector
-        try:
-            self.showAnimation = QtCore.QPropertyAnimation(self, 'maximumWidth')
-            print("Animation:", self.showAnimation)
-            self.showAnimation.setDuration(200)
-            self.showAnimation.setEasingCurve(self.easingCurve)
-        except:
-            pass
+        self.showAnimation = QtCore.QPropertyAnimation(self, b"maximumWidth")
+        self.showAnimation.setDuration(200)
+        self.showAnimation.setEasingCurve(self.easingCurve)
 
         self.setStyleSheet("""background: #1A1A1A;
                                 color: white;
