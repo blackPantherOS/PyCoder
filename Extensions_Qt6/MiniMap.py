@@ -9,7 +9,7 @@ class Handle(QtWidgets.QFrame):
         self.minimap = parent
         self.editor = parent.editor
         self.setMouseTracking(True)
-        self.setCursor(QtCore.Qt.OpenHandCursor)
+        self.setCursor(QtCore.Qt.CursorShape.OpenHandCursor)
         self.setStyleSheet("""
                         border-top: 1px solid grey; 
                         border-right: none; 
@@ -28,14 +28,14 @@ class Handle(QtWidgets.QFrame):
         
     def mousePressEvent(self, event):
         self.pressed = True
-        self.setCursor(QtCore.Qt.ClosedHandCursor)
+        self.setCursor(QtCore.Qt.CursorShape.ClosedHandCursor)
         
     def mouseReleaseEvent(self, event):
         super(Handle, self).mouseReleaseEvent(event)
         self.pressed = False
-        self.setCursor(QtCore.Qt.OpenHandCursor)
+        self.setCursor(QtCore.Qt.CursorShape.OpenHandCursor)
 
-    def mouseMoveEvent(self, event):
+    def mouseMoveEvent1(self, event):
         super(Handle, self).mouseMoveEvent(event)
         if self.pressed:
             relativePos = self.mapToParent(event.pos())
@@ -50,7 +50,23 @@ class Handle(QtWidgets.QFrame):
                     self.minimapScrollBar.sliderPosition() + 2)
             self.move(0, y)
             self.minimap.updateEditorScrollPos(relativePos, event.pos())
-            
+
+    def mouseMoveEvent(self, event):
+        super(Handle, self).mouseMoveEvent(event)
+        if self.pressed:
+            relativePos = self.mapToParent(event.pos())
+            y = int(relativePos.y() - (self.height() / 2)) # Az 'y' értéket egész számra kerekítjük
+            if y < 0:
+                y = 0
+            if y < self.scroll_margins[0]:
+                self.minimapScrollBar.setSliderPosition(
+                    self.minimapScrollBar.sliderPosition() - 2)
+            elif y > self.scroll_margins[1]:
+                self.minimapScrollBar.setSliderPosition(
+                    self.minimapScrollBar.sliderPosition() + 2)
+            self.move(0, y)
+            self.minimap.updateEditorScrollPos(relativePos, event.pos())
+
     def updatePosition(self):
         font_size = QtGui.QFontMetrics(self.minimap.font()).height()
         height = self.minimap.lines() * font_size
@@ -58,21 +74,20 @@ class Handle(QtWidgets.QFrame):
         self.scroll_margins = (height, self.minimap.height() - height)
         
     def move_slider(self, y):
-        self.move(0, y)
+        self.move(0, int(y))
 
 class MiniMap(QsciScintilla):
     def __init__(self, editor=None, parent=None):
         QsciScintilla.__init__(self, parent)
         
         self.editor = editor
-        
-        self.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        self.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        self.setCursor(QtCore.Qt.PointingHandCursor)
-        self.viewport().setCursor(QtCore.Qt.PointingHandCursor)
+    
+        self.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.setCursor(QtCore.Qt.CursorShape.PointingHandCursor)
+        self.viewport().setCursor(QtCore.Qt.CursorShape.PointingHandCursor)
         self.setMarginWidth(1, 0)
         font = QtGui.QFont()
-        print("FontMiniMap:", font)
         font.setPointSize(1)
         self.setFont(font)
         self.setDocument(self.editor.document())
@@ -126,13 +141,13 @@ class MiniMap(QsciScintilla):
         self.editor.wheelEvent(event)
         
     def turnOn(self):
-        self.editor.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        self.editor.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.editor.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.editor.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.show()
         
     def turnOff(self):
-        self.editor.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
-        self.editor.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+        self.editor.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+        self.editor.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAsNeeded)
         self.hide()
 
 if __name__ == '__main__':
