@@ -25,7 +25,7 @@ class TextEditor(BaseScintilla):
         self.enableMarkOccurrence(useData)
 
         self.setFont(Global.getDefaultFont())
-        # vector self.setWrapMode(QsciScintilla.WrapWord)
+        self.setWrapMode(QsciScintilla.WrapMode.WrapWord)
 
         mainLayout = QtWidgets.QVBoxLayout()
         mainLayout.setContentsMargins(0, 0, 0, 0)
@@ -61,7 +61,6 @@ class TextEditor(BaseScintilla):
         # setup
         # define the font to use
         self.font = Global.getDefaultFont()
-        #print("Def font: ", self.font)
         self.font.setFixedPitch(True)
         self.font.setPointSize(10)
         # the font metrics here will help
