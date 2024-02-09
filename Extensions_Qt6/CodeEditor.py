@@ -498,7 +498,7 @@ class CodeEditor(BaseScintilla):
 
     def mouseMoveEvent(self, event):
         if self.useData.SETTINGS["DocOnHover"] == "True":
-            self.lastHoverPos = event.globalPos()
+            self.lastHoverPos = QtGui.QCursor.pos() 
             self.hoverOffset = self.positionFromPoint(event.pos())
 
             QtWidgets.QToolTip.hideText()
@@ -761,7 +761,7 @@ class CodeEditor(BaseScintilla):
             self.notification.showMessage("No snippets available.")
 
     def clearErrorMarkerAndIndicator(self):
-        #vector self.clearAllIndicators(self.syntaxErrorIndicator)
+        self.clearAllIndicators(self.syntaxErrorIndicator)
         self.clearAnnotations()
         self.markerDeleteAll(9)
 
