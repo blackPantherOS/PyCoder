@@ -9,8 +9,8 @@ from Extensions_Qt6.Settings.ColorScheme.StyleLexer import StyleLexer
 class GetName(QtWidgets.QDialog):
 
     def __init__(self, caption, path, defaultText=None, parent=None):
-        QtWidgets.QDialog.__init__(self, parent, QtCore.Qt.Window |
-                               QtCore.Qt.WindowCloseButtonHint)
+        QtWidgets.QDialog.__init__(self, parent, QtCore.Qt.WindowType.Window |
+                               QtCore.Qt.WindowType.WindowCloseButtonHint)
 
         self.setWindowTitle(caption)
 
@@ -51,7 +51,7 @@ class GetName(QtWidgets.QDialog):
 
         self.accepted = False
 
-        self.exec_()
+        self.exec()
 
     def enableAcceptButton(self):
         text = self.nameLine.text().strip()
