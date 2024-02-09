@@ -823,7 +823,7 @@ class EditorTabWidget(QtWidgets.QTabWidget):
 
     def showGotoLineWidget(self):
         self.showMe(self.gotoLineWidget)
-        self.gotoLineWidget.lineNumberLine.setFocus(True)
+        self.gotoLineWidget.lineNumberLine.setFocus()
 
     def showSnapShotSwitcher(self):
         self.showMe(self.viewSwitcher)
@@ -1016,36 +1016,6 @@ class EditorTabWidget(QtWidgets.QTabWidget):
             file.close()
             return True
         except:
-            return False
-
-    def saveAs1(self, index=None, copyOnly=False):
-        options = None
-        fileName, _ = QtWidgets.QFileDialog.getSaveFileName(self,
-                                                     "Save As", os.path.join(self.useData.getLastOpenedDir(), self.getTabName()),
-                                                             self.getFilter(), options=options)
-        if fileName:
-            self.useData.saveLastOpenedDir(os.path.split(fileName)[0])
-            try:
-                if index is None:
-                    index = self.currentIndex()
-                fileName = os.path.normpath(fileName)
-                editor = self.getEditor(index)
-                file = open(fileName, "w")
-                file.write(editor.text())
-                file.close()
-                editor.setModified(False)
-                self.updateTabName(index)
-                if not copyOnly:
-                    self.updateEditorData("filePath", fileName)
-                self.filesWatch.addPath(fileName)
-                return True
-            except Exception as err:
-                exc_type, exc_value, exc_traceback = sys.exc_info()
-                logging.error(repr(traceback.format_exception(exc_type, exc_value,
-                             exc_traceback)))
-                self.saveErrorMess(str(err.args[1]))
-                return False
-        else:
             return False
 
     def saveAs(self, index=None, copyOnly=False):
