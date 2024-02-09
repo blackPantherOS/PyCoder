@@ -122,16 +122,11 @@ class TextEditor(BaseScintilla):
 
         self.setEolMode(QsciScintilla.EolMode.EolUnix)
 
-        #self.searchIndicator = self.indicatorDefine(
-        #    QsciScintilla.INDIC_ROUNDBOX, 10)
-        #self.setIndicatorForegroundColor(
-        #    QtGui.QColor("#FFDB4A"), self.searchIndicator)
-        #self.setIndicatorDrawUnder(True, self.searchIndicator)
-
-        # Initialise search indicator
-        #self.searchIndicator = self.indicSetFore(
-        #QsciScintilla.INDIC_ROUNDBOX, QtGui.QColor("#FFDB4A"))
-        #self.indicSetUnder(self.searchIndicator, True)
+        self.searchIndicator = self.indicatorDefine(
+            QsciScintilla.IndicatorStyle.RoundBoxIndicator, 10)
+        self.setIndicatorForegroundColor(
+            QtGui.QColor("#FFDB4A"), self.searchIndicator)
+        self.setIndicatorDrawUnder(True, self.searchIndicator)
 
         self.setAutoCompletion()
 

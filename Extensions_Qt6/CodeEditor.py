@@ -319,29 +319,18 @@ class CodeEditor(BaseScintilla):
 
         self.setAutoCompletion()
 
-        " Initialises indicators "
-        self.syntaxErrorIndicator = int(8)
-        #self.syntaxErrorIndicator = self.indicatorDefine(
-        #    QsciScintilla.INDIC_SQUIGGLE, 8)
-        #self.setIndicatorForegroundColor(QtGui.QColor(
-        #    "#FF0000"), self.syntaxErrorIndicator)
-        #self.setIndicatorDrawUnder(True, self.syntaxErrorIndicator)
+        #" Initialises indicators "
+        self.syntaxErrorIndicator = self.indicatorDefine(
+            QsciScintilla.IndicatorStyle.SquiggleIndicator , 8)
+        self.setIndicatorForegroundColor(QtGui.QColor(
+            "#FF0000"), self.syntaxErrorIndicator)
+        self.setIndicatorDrawUnder(True, self.syntaxErrorIndicator)
 
-        #vector self.syntaxErrorIndicator = self.indicSetFore(
-        #QsciScintilla.INDIC_SQUIGGLE, QtGui.QColor("#FF0000"))
-        #self.indicSetUnder(self.syntaxErrorIndicator, True)
-
-        self.searchIndicator = int(10)
-        #self.searchIndicator = self.indicatorDefine(
-        #    QsciScintilla.INDIC_ROUNDBOX, 10)
-        #self.setIndicatorForegroundColor(
-        #    QtGui.QColor("#FFDB4A"), self.searchIndicator)
-        #self.setIndicatorDrawUnder(True, self.searchIndicator)
-        
-        # Initialise search indicator
-        #self.searchIndicator = self.indicSetFore(
-        #QsciScintilla.INDIC_ROUNDBOX, QtGui.QColor("#FFDB4A"))
-        #self.indicSetUnder(self.searchIndicator, True)
+        self.searchIndicator = self.indicatorDefine(
+            QsciScintilla.IndicatorStyle.RoundBoxIndicator, 10)
+        self.setIndicatorForegroundColor(
+            QtGui.QColor("#FFDB4A"), self.searchIndicator)
+        self.setIndicatorDrawUnder(True, self.searchIndicator)
 
         self.userListActivated.connect(self.insertText)
 

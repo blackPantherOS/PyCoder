@@ -40,10 +40,10 @@ class BaseScintilla(QsciScintilla):
     def enableMarkOccurrence(self, useData):
         self.useData = useData
 
-        self.matchIndicator = int(9) #self.indicatorDefine(QsciScintilla.IndicatorStyle, '9')
-        #self.setIndicatorForegroundColor(
-        #    QtGui.QColor("#FFCC00"), self.matchIndicator)
-        #self.setIndicatorDrawUnder(True, self.matchIndicator)
+        self.matchIndicator = self.indicatorDefine(QsciScintilla.IndicatorStyle.BoxIndicator, 9)
+        self.setIndicatorForegroundColor(
+            QtGui.QColor("#FFCC00"), self.matchIndicator)
+        self.setIndicatorDrawUnder(True, self.matchIndicator)
 
         self.findOccurenceThread = FindOccurenceThread()
         self.findOccurenceThread.markOccurrence.connect(self.markOccurence)
