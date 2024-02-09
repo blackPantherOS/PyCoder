@@ -34,7 +34,7 @@ class MessagesWidget(QtWidgets.QTreeWidget):
             parentItem.addChild(item)
         parentItem.setExpanded(True)
         #self.scrollToItem(parentItem, 1)
-        self.scrollToItem(parentItem, QAbstractItemView.ScrollHint.EnsureVisible)
+        self.scrollToItem(parentItem, QtWidgets.QAbstractItemView.ScrollHint.EnsureVisible)
 
 
         self.vSplitter.showMessageAvailable()

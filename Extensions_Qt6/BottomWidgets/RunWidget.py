@@ -300,18 +300,16 @@ class RunWidget(BaseScintilla):
         self.setMarginWidth(1, 0)
         self.toggleInsertOrOvertype()
 
-        self.linkIndicator = int(8)
-        #vectopr self.linkIndicator = self.indicatorDefine(
-        #    QsciScintilla.INDIC_PLAIN, 8)
-        #self.setIndicatorForegroundColor(QtGui.QColor(
-        #    "#474747"), self.linkIndicator)
-        #self.setIndicatorDrawUnder(True, self.linkIndicator)
-        
+        self.linkIndicator = self.indicatorDefine(
+            QsciScintilla.IndicatorStyle.PlainIndicator, 8)
+        self.setIndicatorForegroundColor(QtGui.QColor(
+            "#474747"), self.linkIndicator)
+        self.setIndicatorDrawUnder(True, self.linkIndicator)
+
         self.lexer = OutputLexer(self)
         self.setLexer(self.lexer)
         self.setFont(Global.getDefaultFont())
         self.openMode = QtCore.QIODeviceBase.OpenModeFlag.ReadWrite
-        #vector self.openMode = QtCore.QIODevice.ReadWrite
         self.currentProcess = None
 
         self.setCaretForegroundColor(QtGui.QColor("#ffffff"))
@@ -668,8 +666,9 @@ class RunWidget(BaseScintilla):
         if self.editorTabWidget.errorsInProject():
             reply = QtWidgets.QMessageBox.warning(self, "Run Project",
                                               "There are errors in your project. Run anyway?",
-                                              QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-            if reply == QtWidgets.QMessageBox.Yes:
+                                              QtWidgets.QMessageBox.StandardButton.Yes | 
+                                              QtWidgets.QMessageBox.StandardButton.No)
+            if reply == QtWidgets.QMessageBox.StandardButton.Yes:
                 pass
             else:
                 return

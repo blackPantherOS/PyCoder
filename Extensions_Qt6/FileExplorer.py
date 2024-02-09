@@ -15,11 +15,11 @@ class ManageShortcuts(QtWidgets.QLabel):
         self.setMinimumSize(600, 230)
 
         #vector self.setBackgroundRole(QtGui.QPalette.Window)
-        
         #palette = self.palette()
         #palette.setColor(QtGui.QPalette.Window, QtGui.QColor(255, 255, 255))  # Háttérszín beállítása
+        #palette.setColor(QtGui.QPalette.ColorGroup.Normal, QtGui.QPalette.ColorRole.Window, QtGui.QColor("#FFFF00")) 
         #self.setPalette(palette)
-        
+
         self.setAutoFillBackground(True)
         self.setObjectName("containerLabel")
         self.setStyleSheet(StyleSheet.toolWidgetStyle)
@@ -325,8 +325,10 @@ class FileExplorer(QtWidgets.QTreeView):
             pass
         mess = 'Create shortcut to "{0}"?'.format(path)
         reply = QtWidgets.QMessageBox.information(self, "Create Shortcut",
-                                              mess, QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-        if reply == QtWidgets.QMessageBox.Yes:
+                                              mess, 
+                                              QtWidgets.QMessageBox.StandardButton.Yes | 
+                                              QtWidgets.QMessageBox.StandardButton.No)
+        if reply == QtWidgets.QMessageBox.StandardButton.Yes:
             # save shortcut
             if path in self.FILE_EXPLORER_SHORTCUTS:
                 return

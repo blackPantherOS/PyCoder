@@ -696,8 +696,9 @@ class CodeEditor(BaseScintilla):
     def takeSnapshot(self):
         reply = QtWidgets.QMessageBox.warning(self, "Snapshot",
                                           "Take a snapshot of the current module state?",
-                                          QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-        if reply == QtWidgets.QMessageBox.Yes:
+                                          QtWidgets.QMessageBox.StandardButton.Yes | 
+                                          QtWidgets.QMessageBox.StandardButton.No)
+        if reply == QtWidgets.QMessageBox.StandardButton.Yes:
             subStack = self.editorTabWidget.currentWidget()
             subStack.widget(1).setText(self.text())
         else:

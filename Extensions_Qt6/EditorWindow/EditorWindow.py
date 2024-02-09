@@ -689,8 +689,10 @@ class EditorWindow(QtWidgets.QWidget):
         if self.runWidget.currentProcess is not None:
             mess = "Close running program?"
             reply = QtWidgets.QMessageBox.warning(self, "Close",
-                                              mess, QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-            if reply == QtWidgets.QMessageBox.Yes:
+                                              mess, 
+                                              QtWidgets.QMessageBox.StandardButton.Yes | 
+                                              QtWidgets.QMessageBox.StandardButton.No)
+            if reply == QtWidgets.QMessageBox.StandardButton.Yes:
                 self.runWidget.stopProcess()
             else:
                 return False
@@ -707,18 +709,19 @@ class EditorWindow(QtWidgets.QWidget):
                 mess = 'Save changes to "{0}"?'.format(
                     self.editorTabWidget.tabText(v))
                 reply = QtWidgets.QMessageBox.warning(self, "Close", mess,
-                                                  QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No |
-                                                  QtWidgets.QMessageBox.Cancel)
-                if reply == QtWidgets.QMessageBox.No:
+                                                  QtWidgets.QMessageBox.StandardButton.Yes | 
+                                                  QtWidgets.QMessageBox.StandardButton.No |
+                                                  QtWidgets.QMessageBox.StandardButton.Cancel)
+                if reply == QtWidgets.QMessageBox.StandardButton.No:
                     if len(modified) == 0:
                         pass
-                elif reply == QtWidgets.QMessageBox.Yes:
+                elif reply == QtWidgets.QMessageBox.StandardButton.Yes:
                     saved = self.editorTabWidget.save()
                     if saved:
                         pass
                     else:
                         return False
-                elif reply == QtWidgets.QMessageBox.Cancel:
+                elif reply == QtWidgets.QMessageBox.StandardButton.Cancel:
                     return False
         self.saveUiState()
         self.editorTabWidget.saveSession()

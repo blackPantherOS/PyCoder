@@ -209,11 +209,12 @@ class SnippetsManager(QtWidgets.QDialog):
 
         mess = 'Remove "{0}" from snippets?'.format(name)
         reply = QtWidgets.QMessageBox.warning(self, "Remove", mess,
-                                          QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-        if reply == QtWidgets.QMessageBox.Yes:
+                                          QtWidgets.QMessageBox.StandardButton.Yes | 
+                                          QtWidgets.QMessageBox.StandardButton.No)
+        if reply == QtWidgets.QMessageBox.StandardButton.Yes:
             os.remove(os.path.join(self.path, name))
             self.loadSnippetList()
-        elif reply == QtWidgets.QMessageBox.No:
+        elif reply == QtWidgets.QMessageBox.StandardButton.No:
             pass
 
     def loadSnippetList(self):

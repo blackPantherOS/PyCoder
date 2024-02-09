@@ -555,8 +555,9 @@ class Library(QtWidgets.QMainWindow):
         mess = 'Remove "{0}" from library?'.format(
             self.currentSnippetItem.text(0))
         reply = QtWidgets.QMessageBox.warning(self, "Remove", mess,
-                                          QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-        if reply == QtWidgets.QMessageBox.Yes:
+                                          QtWidgets.QMessageBox.StandardButton.Yes | 
+                                          QtWidgets.QMessageBox.StandardButton.No)
+        if reply == QtWidgets.QMessageBox.StandardButton.Yes:
             path = os.path.join(self.useData.appPathDict["librarydir"],
                                 self.currentSnippetNameLabel.text())
             try:
@@ -635,8 +636,9 @@ class Library(QtWidgets.QMainWindow):
             if os.path.exists(path):
                 mess = "File already exists in Library.\n\nReplace it?"
                 reply = QtWidgets.QMessageBox.warning(self, "Library Add",
-                                                  mess, QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-                if reply == QtWidgets.QMessageBox.Yes:
+                                                  mess, QtWidgets.QMessageBox.StandardButton.Yes | 
+                                                  QtWidgets.QMessageBox.StandardButton.No)
+                if reply == QtWidgets.QMessageBox.StandardButton.Yes:
                     pass
                 else:
                     return

@@ -20,6 +20,11 @@ class ExternalLauncher(QtWidgets.QLabel):
         self.setStyleSheet(StyleSheet.toolWidgetStyle)
 
         #vector self.setBackgroundRole(QtGui.QPalette.Background)
+        #palette = self.palette()
+        #palette.setColor(QtGui.QPalette.Window, QtGui.QColor(255, 255, 255))  # Háttérszín beállítása
+        #palette.setColor(QtGui.QPalette.ColorGroup.Normal, QtGui.QPalette.ColorRole.Window, QtGui.QColor("#FFFF00")) 
+        #self.setPalette(palette)
+
         self.setAutoFillBackground(True)
         self.setObjectName("containerLabel")
 

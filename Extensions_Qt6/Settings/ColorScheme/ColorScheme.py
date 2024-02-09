@@ -307,8 +307,9 @@ class ColorScheme(QtWidgets.QDialog):
 
         mess = "Do you really want to remove '{0}'?".format(currentScheme)
         reply = QtWidgets.QMessageBox.warning(self, "Remove",
-                                          mess, QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-        if reply == QtWidgets.QMessageBox.Yes:
+                                          mess, QtWidgets.QMessageBox.StandardButton.Yes | 
+                                          QtWidgets.QMessageBox.StandardButton.No)
+        if reply == QtWidgets.QMessageBox.StandardButton.Yes:
             schemeFullName = currentScheme + '.xml'
             groupName = self.schemeTypeBox.currentText()
             path = os.path.join(
@@ -325,7 +326,7 @@ class ColorScheme(QtWidgets.QDialog):
             except Exception as err:
                 message = QtWidgets.QMessageBox.warning(self, "Remove",
                                                     "Removing failed!\n\n{0}".format(str(err)))
-        elif reply == QtWidgets.QMessageBox.No:
+        elif reply == QtWidgets.QMessageBox.StandardButton.No:
             pass
 
     def applyScheme(self):

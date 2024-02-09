@@ -119,8 +119,9 @@ class EditorTabBar(QtWidgets.QTabBar):
     def reload(self):
         reply = QtWidgets.QMessageBox.warning(self, "Reload",
                                           "Do you really want to reload?",
-                                          QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-        if reply == QtWidgets.QMessageBox.Yes:
+                                          QtWidgets.QMessageBox.StandardButton.Yes | 
+                                          QtWidgets.QMessageBox.StandardButton.No)
+        if reply == QtWidgets.QMessageBox.StandardButton.Yes:
             self.editorTabWidget.reloadModules()
         else:
             return
@@ -871,8 +872,9 @@ class EditorTabWidget(QtWidgets.QTabWidget):
     def removeBookmarks(self):
         reply = QtWidgets.QMessageBox.warning(self, "Remove Bookmarks",
                                           "Do you really want to remove all bookmarks?",
-                                          QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-        if reply == QtWidgets.QMessageBox.Yes:
+                                          QtWidgets.QMessageBox.StandardButton.Yes | 
+                                          QtWidgets.QMessageBox.StandardButton.No)
+        if reply == QtWidgets.QMessageBox.StandardButton.Yes:
             pass
         else:
             return
@@ -965,11 +967,12 @@ class EditorTabWidget(QtWidgets.QTabWidget):
     def requestSaveMess(self, tabIndex):
         mess = "Save changes to '{0}'?".format(self.tabText(tabIndex))
         reply = QtWidgets.QMessageBox.information(self, "Save", mess,
-                                              QtWidgets.QMessageBox.Save | QtWidgets.QMessageBox.Discard |
-                                              QtWidgets.QMessageBox.Cancel)
-        if reply == QtWidgets.QMessageBox.Save:
+                                              QtWidgets.QMessageBox.StandardButton.Save | 
+                                              QtWidgets.QMessageBox.StandardButton.Discard |
+                                              QtWidgets.QMessageBox.StandardButton.Cancel)
+        if reply == QtWidgets.QMessageBox.StandardButton.Save:
             self.save()
-        elif reply == QtWidgets.QMessageBox.Discard:
+        elif reply == QtWidgets.QMessageBox.StandardButton.Discard:
             if self.count() == 1:
                 self.newFile()
             self.removeTabBackup(tabIndex)
@@ -1015,11 +1018,40 @@ class EditorTabWidget(QtWidgets.QTabWidget):
         except:
             return False
 
-    def saveAs(self, index=None, copyOnly=False):
+    def saveAs1(self, index=None, copyOnly=False):
         options = None
         fileName, _ = QtWidgets.QFileDialog.getSaveFileName(self,
                                                      "Save As", os.path.join(self.useData.getLastOpenedDir(), self.getTabName()),
                                                              self.getFilter(), options=options)
+        if fileName:
+            self.useData.saveLastOpenedDir(os.path.split(fileName)[0])
+            try:
+                if index is None:
+                    index = self.currentIndex()
+                fileName = os.path.normpath(fileName)
+                editor = self.getEditor(index)
+                file = open(fileName, "w")
+                file.write(editor.text())
+                file.close()
+                editor.setModified(False)
+                self.updateTabName(index)
+                if not copyOnly:
+                    self.updateEditorData("filePath", fileName)
+                self.filesWatch.addPath(fileName)
+                return True
+            except Exception as err:
+                exc_type, exc_value, exc_traceback = sys.exc_info()
+                logging.error(repr(traceback.format_exception(exc_type, exc_value,
+                             exc_traceback)))
+                self.saveErrorMess(str(err.args[1]))
+                return False
+        else:
+            return False
+
+    def saveAs(self, index=None, copyOnly=False):
+        fileName, _ = QtWidgets.QFileDialog.getSaveFileName(self,
+                                                     "Save As", os.path.join(self.useData.getLastOpenedDir(), self.getTabName()),
+                                                             self.getFilter())
         if fileName:
             self.useData.saveLastOpenedDir(os.path.split(fileName)[0])
             try:

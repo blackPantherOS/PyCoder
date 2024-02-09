@@ -130,8 +130,9 @@ class Keymap(QtWidgets.QDialog):
                                                           'Shortcut',
                                                           "Shortcut already in use by '{0}'\n\nReplace it?".format(
                                                               item.text(0)),
-                                                          QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
-                        if reply == QtWidgets.QMessageBox.Yes:
+                                                          QtWidgets.QMessageBox.StandardButton.Yes, 
+                                                          QtWidgets.QMessageBox.StandardButton.No)
+                        if reply == QtWidgets.QMessageBox.StandardButton.Yes:
                             item.setText(1, "")
                             return True
                         else:
@@ -224,8 +225,9 @@ class Keymap(QtWidgets.QDialog):
     def setDefaultShortcuts(self):
         reply = QtWidgets.QMessageBox.warning(self, "Default Keymap",
                                           "Setting keymap to default will wipe away your current keymap.\n\nProceed?",
-                                          QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-        if reply == QtWidgets.QMessageBox.Yes:
+                                          QtWidgets.QMessageBox.StandardButton.Yes | 
+                                          QtWidgets.QMessageBox.StandardButton.No)
+        if reply == QtWidgets.QMessageBox.StandardButton.Yes:
             for key, value in self.useData.DEFAULT_SHORTCUTS['Ide'].items():
                 default = self.useData.DEFAULT_SHORTCUTS['Ide'][key]
                 self.useData.CUSTOM_SHORTCUTS['Ide'][key] = default
