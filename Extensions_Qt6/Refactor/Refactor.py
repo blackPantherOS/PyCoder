@@ -21,7 +21,7 @@ from Extensions_Qt6.Refactor.UsageDialog import UsageDialog
 class GetName(QtWidgets.QDialog):
 
     def __init__(self, caption, defaultText, parent=None):
-        QtWidgets.QDialog.__init__(self, parent, QtCore.Qt.Window |
+        QtWidgets.QDialog.__init__(self, parent, QtCore.Qt.WindowType.Window |
                                QtCore.Qt.WindowType.WindowCloseButtonHint)
 
         self.setWindowTitle(caption)
