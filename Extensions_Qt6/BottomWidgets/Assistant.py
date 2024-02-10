@@ -416,7 +416,7 @@ class Assistant(QtWidgets.QStackedWidget):
                 parentItem = QtWidgets.QTreeWidgetItem()
                 item = QtWidgets.QTreeWidgetItem()
                 item.setText(2, "<No Issues>")
-                item.setFlags(QtCore.Qt.NoItemFlags)
+                item.setFlags(QtCore.Qt.ItemFlag.NoItemFlags)
                 parentItem.addChild(item)
                 self.pep8View.addTopLevelItem(parentItem)
                 parentItem.setExpanded(True)

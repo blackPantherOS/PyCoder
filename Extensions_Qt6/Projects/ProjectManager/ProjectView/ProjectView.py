@@ -427,8 +427,9 @@ class ProjectTree(QtWidgets.QTreeView):
                     reply = QtWidgets.QMessageBox.warning(self, "Paste",
                                                       "'" + os.path.basename(
                                                           dest) + "' already exists in the destination directory.\n\nWould you like to replace it?",
-                                                      QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-                    if reply == QtWidgets.QMessageBox.Yes:
+                                                      QtWidgets.QMessageBox.StandardButton.Yes | 
+                                                      QtWidgets.QMessageBox.StandardButton.No)
+                    if reply == QtWidgets.QMessageBox.StandardButton.Yes:
                         pass
                     else:
                         continue
@@ -491,8 +492,9 @@ class ProjectTree(QtWidgets.QTreeView):
                         self, "Add Existing Files",
                         "'" + os.path.basename(
                             destPathName) + "' already exists in the destination directory.\n\nWould you like to replace it?",
-                        QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-                    if reply == QtWidgets.QMessageBox.Yes:
+                        QtWidgets.QMessageBox.StandardButton.Yes | 
+                        QtWidgets.QMessageBox.StandardButton.No)
+                    if reply == QtWidgets.QMessageBox.StandardButton.Yes:
                         pass
                     else:
                         continue
@@ -513,8 +515,9 @@ class ProjectTree(QtWidgets.QTreeView):
                     self, "Add Existing Directory",
                                                   "'" + os.path.basename(
                                                       destPathName) + "' already exists in the destination directory.\n\nWould you like to replace it?",
-                                                  QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-                if reply == QtWidgets.QMessageBox.Yes:
+                                                  QtWidgets.QMessageBox.StandardButton.Yes | 
+                                                  QtWidgets.QMessageBox.StandardButton.No)
+                if reply == QtWidgets.QMessageBox.StandardButton.Yes:
                     pass
                 else:
                     return
@@ -538,8 +541,9 @@ class ProjectTree(QtWidgets.QTreeView):
         reply = QtWidgets.QMessageBox.warning(self, "Delete",
                                           "Permanently delete '" + os.path.basename(
                                               path) + "' from the project?",
-                                          QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-        if reply == QtWidgets.QMessageBox.Yes:
+                                          QtWidgets.QMessageBox.StandardButton.Yes | 
+                                          QtWidgets.QMessageBox.StandardButton.No)
+        if reply == QtWidgets.QMessageBox.StandardButton.Yes:
             try:
                 if os.path.isdir(path):
                     shutil.rmtree(path)
@@ -838,7 +842,7 @@ class ProjectView(QtWidgets.QWidget):
             folderItem = QtWidgets.QTreeWidgetItem()
             item = QtWidgets.QTreeWidgetItem()
             item.setText(0, "<No results found>")
-            item.setFlags(QtCore.Qt.NoItemFlags)
+            item.setFlags(QtCore.Qt.ItemFlag.NoItemFlags)
             folderItem.addChild(item)
             self.searchResultsTree.addTopLevelItem(folderItem)
             folderItem.setExpanded(True)
