@@ -638,7 +638,7 @@ class UseData(QtCore.QObject):
 
     def getPythonExecutables(self):
         pythonExecutables = FindInstalledPython()
-        print(str(pythonExecutables))
+        #print(str(pythonExecutables))
         interpreters = pythonExecutables.python_executables()
 
         return interpreters
