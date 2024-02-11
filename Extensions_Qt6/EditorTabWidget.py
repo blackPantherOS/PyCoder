@@ -165,7 +165,7 @@ class EditorTabWidget(QtWidgets.QTabWidget):
             app, manageFavourites, externalLauncher, editorWindow, parent=None):
         QtWidgets.QTabWidget.__init__(self, parent)
 
-        # vector self.setElideMode(1)
+        self.setElideMode(QtCore.Qt.TextElideMode.ElideRight)
 
         self.useData = useData
         self.projectPathDict = projectPathDict
@@ -459,7 +459,11 @@ class EditorTabWidget(QtWidgets.QTabWidget):
         if index is None:
             index = self.currentIndex()
         subStack = self.widget(index)
-        return subStack.widget(0).getEditor(0)
+        #vector return subStack.widget(0).getEditor(0)
+        if subStack is not None:
+            return subStack.widget(0).getEditor(0)
+        else:
+            return None
 
     def getCloneEditor(self, index=None):
         if index is None:
@@ -483,20 +487,6 @@ class EditorTabWidget(QtWidgets.QTabWidget):
 
     def clearMarkerAndIndicators(self):
         self.currentEditor.clearMarkerAndIndicators()
-
-    def splitVertical(self):
-        splitter = self.currentWidget().widget(0)
-        # vector splitter.setOrientation(2)
-        splitter.widget(1).show()
-
-    def splitHorizontal(self):
-        splitter = self.currentWidget().widget(0)
-        # vector splitter.setOrientation(1)
-        splitter.widget(1).show()
-
-    def removeSplit(self):
-        splitter = self.currentWidget().widget(0)
-        splitter.widget(1).hide()
 
     def dragEnterEvent(self, event):
         if event.mimeData().hasUrls():
@@ -1153,6 +1143,7 @@ class EditorTabWidget(QtWidgets.QTabWidget):
             editor2 = TextEditor(self.useData, DATA, self.colorScheme, self,
                                  encoding)
             snapShot = TextSnapshot(self.useData, self.colorScheme, extension)
+
         mode = QsciScintilla.EolMode.EolUnix
         editor.setEolMode(mode)
         editor2.setEolMode(mode)
@@ -1160,7 +1151,9 @@ class EditorTabWidget(QtWidgets.QTabWidget):
 
         snapShot.setReadOnly(True)
         subStack = QtWidgets.QStackedWidget()
+
         editorSplitter = EditorSplitter(editor, editor2, DATA, self, subStack)
+
         editor2.setDocument(editor.document())
         subStack.addWidget(editorSplitter)
         subStack.addWidget(snapShot)
@@ -1191,6 +1184,22 @@ class EditorTabWidget(QtWidgets.QTabWidget):
         self.setCurrentWidget(subStack)
 
         return subStack
+
+    def splitVertical(self):
+        splitter = self.currentWidget().widget(0)
+        splitter.splitHorizontal()
+        splitter.editor2.show()
+
+    def splitHorizontal(self):
+        splitter = self.currentWidget().widget(0)
+        splitter.splitVertical()
+        splitter.editor2.show()
+
+    def removeSplit(self):
+        splitter = self.currentWidget().widget(0)
+        #splitter.widget(1).hide()
+        splitter.editor2.hide()
+        #editor2.hide()
 
     def reloadModules(self, pathList=[]):
         index_list = []
