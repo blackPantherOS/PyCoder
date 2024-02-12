@@ -722,27 +722,35 @@ class BaseScintilla(QsciScintilla):
         return point
 
     def get_current_word(self):
-        """
-        Return current word at cursor position
-        """
-        line, index = self.getCursorPosition()
-        text = self.text(line)
-        wc = self.wordCharacters()
-        if wc is None:
-            regexp = QtCore.QRegularExpression('[^\w_]')
-        else:
-            regexp = QtCore.QRegularExpression('[^{0}]'.format(QtCore.QRegularExpression.escape(wc)))
-        match = regexp.match(text, index)
-        if not match.hasMatch() and index > 0:
-            # we are on a word boundary, try again
-            match = regexp.match(text, index - 1)
-        if match.hasMatch():
-            start = match.capturedStart()
-            end = match.capturedEnd()
-            word = text[start:end]
-        else:
-            word = ''
-        return word
+          """
+          Return current word at cursor position
+          """
+          line, index = self.getCursorPosition()
+          text = self.text(line)
+          wc = self.wordCharacters()
+
+          if wc is None:
+                regexp = QtCore.QRegularExpression("[^\w_]")
+          else:
+                if isinstance(wc, list):
+                    wc = "".join(wc)
+                regexp = QtCore.QRegularExpression(f"[^{re.escape(wc)}]")
+
+          match = regexp.match(text, index - 1)
+          if not match.hasMatch() and index > 0:
+                match = regexp.match(text, index - 1)
+          elif match.hasMatch():
+                start = match.capturedStart()
+                while start > 0 and text[start - 1] in wc:
+                    start -= 1
+                end = match.capturedEnd()
+                end -= 1
+                while end < len(text) and text[end] in wc:
+                    end += 1
+                word = text[start:end]
+          else:
+                word = ""
+          return word
 
     def clearAllIndicators(self, indicator):
         self.clearIndicatorRange(0, 0, self.lines(), 0, indicator)
