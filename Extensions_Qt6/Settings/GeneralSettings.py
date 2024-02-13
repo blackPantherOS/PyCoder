@@ -4,7 +4,6 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 from PyQt6.Qsci import QsciScintilla
 from Extensions_Qt6 import StyleSheet
 
-
 class GeneralSettings(QtWidgets.QDialog):
 
     def __init__(self, useData, mainApp, projectWindowStack, parent=None):
@@ -124,6 +123,7 @@ class GeneralSettings(QtWidgets.QDialog):
         self.matchBracesBox = QtWidgets.QCheckBox("Match Braces")
         if self.useData.SETTINGS["MatchBraces"] == "True":
             self.matchBracesBox.setChecked(True)
+
         self.matchBracesBox.toggled.connect(self.setMatchBraces)
         vbox.addWidget(self.matchBracesBox)
 
@@ -142,6 +142,14 @@ class GeneralSettings(QtWidgets.QDialog):
             self.docOnHoverBox.setChecked(True)
         self.docOnHoverBox.toggled.connect(self.setDocOnHover)
         vbox.addWidget(self.docOnHoverBox)
+
+        # MiniMap
+
+        self.MiniMapBox = QtWidgets.QCheckBox("Show MiniMap")
+        if self.useData.SETTINGS["MiniMap"] == "True":
+            self.MiniMapBox.setChecked(True)
+        self.MiniMapBox.toggled.connect(self.setMiniMap)
+        vbox.addWidget(self.MiniMapBox)
 
         # MARK OPERATIONAL LINES
 
@@ -473,6 +481,9 @@ class GeneralSettings(QtWidgets.QDialog):
 
     def setDocOnHover(self, state):
         self.useData.SETTINGS["DocOnHover"] = str(state)
+
+    def setMiniMap(self, state):
+        self.useData.SETTINGS["MiniMap"] = str(state)
 
     def setMarkOperationalLines(self, state):
         self.useData.SETTINGS["MarkOperationalLines"] = str(state)
