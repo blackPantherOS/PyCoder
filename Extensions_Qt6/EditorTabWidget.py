@@ -23,7 +23,6 @@ from Extensions_Qt6.BottomWidgets.RunWidget import SetRunParameters
 from Extensions_Qt6.Projects.ProjectManager.ConfigureProject import ConfigureProject
 from Extensions_Qt6 import StyleSheet
 
-
 class EditorTabBar(QtWidgets.QTabBar):
 
     def __init__(self, app, renameFileAct,
@@ -39,6 +38,7 @@ class EditorTabBar(QtWidgets.QTabBar):
         self.moduleToPackageAct = moduleToPackageAct
 
         self.createActions()
+
 
     def setKeymap(self):
         shortcuts = self.editorTabWidget.useData.CUSTOM_SHORTCUTS
@@ -176,6 +176,7 @@ class EditorTabWidget(QtWidgets.QTabWidget):
         self.projectSettings = projectSettings
         self.bookmarkToolbar = bookmarkToolbar
         self.editorWindow = editorWindow
+
 
         self.toolWidgetList = []
         # backup keys are generated from the system time, but sometimes
@@ -1187,12 +1188,12 @@ class EditorTabWidget(QtWidgets.QTabWidget):
 
     def splitVertical(self):
         splitter = self.currentWidget().widget(0)
-        splitter.splitHorizontal()
+        splitter.addSplitHorizontal()
         splitter.editor2.show()
 
     def splitHorizontal(self):
         splitter = self.currentWidget().widget(0)
-        splitter.splitVertical()
+        splitter.addSplitVertical()
         splitter.editor2.show()
 
     def removeSplit(self):
@@ -1280,6 +1281,7 @@ class EditorTabWidget(QtWidgets.QTabWidget):
 
     def get_current_word(self):
         current_word = self.focusedEditor().get_current_word()
+        print("Current word:", current_word)
         return current_word
 
     def getOffset(self):
