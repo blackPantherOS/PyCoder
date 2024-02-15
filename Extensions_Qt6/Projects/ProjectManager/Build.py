@@ -295,7 +295,8 @@ class Build(QtWidgets.QWidget):
         self.buildThread = BuildThread()
         self.buildThread.finished.connect(self.buildFinished)
 
-        self.durationTime = QtCore.QTime()
+        self.durationTime = QtCore.QElapsedTimer()
+
 
     def openDir(self):
         if os.path.exists(self.projectPathDict["builddir"]):
