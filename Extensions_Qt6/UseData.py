@@ -389,8 +389,7 @@ class UseData(QtCore.QObject):
             else:
                 sys.exit()
         self.appPathDict = {
-            #"logfile": os.path.join(self.workspaceDir, "LOG.txt"),
-            "logfile": os.path.join("./", "LOG.txt"),
+            "logfile": os.path.join(self.workspaceDir, "LOG.txt"),
             "snippetsdir": os.path.join(self.workspaceDir, "Snippets"),
             "librarydir": os.path.join(self.workspaceDir, "Library"),
             "projectsdir": os.path.join(self.workspaceDir, "Projects"),
