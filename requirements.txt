@@ -1,8 +1,9 @@
 importlib-metadata>=6.0.0
 packaging>=23.0
-PyQt5>=5.15.2
-PyQt5-sip>=12.11.1
+PyQt6>=6.5.2
+PyQt6-sip>=13.4.0
 pytoolconfig>=1.2.5
-QScintilla>=2.13.4
+QScintilla>=2.14.1
 tomli>=2.0.1
-typing_extensions>=4.5.0
+typing_extensions>=4.8.0
+zipp>=3.8.0
