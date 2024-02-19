@@ -6,8 +6,8 @@ from PyQt6.Qsci import QsciScintilla
 class GetShortcut(QtWidgets.QDialog):
 
     def __init__(self, parent=None):
-        QtWidgets.QDialog.__init__(self, parent, QtCore.Qt.Window |
-                               QtCore.Qt.WindowCloseButtonHint)
+        QtWidgets.QDialog.__init__(self, parent, QtCore.Qt.WindowType.Window | QtCore.Qt.WindowType.WindowCloseButtonHint)
+
         self.setWindowTitle("New Shortcut")
 
         self.accepted = False

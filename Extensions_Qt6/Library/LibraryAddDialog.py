@@ -5,8 +5,7 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 class LibraryAddDialog(QtWidgets.QDialog):
 
     def __init__(self, editorTabWidget, parent):
-        QtWidgets.QDialog.__init__(self, parent, QtCore.Qt.Window |
-                               QtCore.Qt.WindowCloseButtonHint)
+        QtWidgets.QDialog.__init__(self, parent, QtCore.Qt.WindowType.Window | QtCore.Qt.WindowType.WindowCloseButtonHint)
 
         self.setWindowTitle("Library Add")
         self.setFixedSize(400, 120)

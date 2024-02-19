@@ -24,8 +24,7 @@ def sizeformat(size):
 class EditComment(QtWidgets.QDialog):
 
     def __init__(self, text, parent=None):
-        QtWidgets.QDialog.__init__(self, parent, QtCore.Qt.Window |
-                               QtCore.Qt.WindowCloseButtonHint)
+        QtWidgets.QDialog.__init__(self, parent, QtCore.Qt.WindowType.Window | QtCore.Qt.WindowType.WindowCloseButtonHint)
 
         self.resize(400, 200)
         self.setWindowTitle("Edit Comment")
@@ -61,8 +60,8 @@ class EditComment(QtWidgets.QDialog):
 class GetName(QtWidgets.QDialog):
 
     def __init__(self, caption, path, defaultText=None, parent=None):
-        QtWidgets.QDialog.__init__(self, parent, QtCore.Qt.Window |
-                               QtCore.Qt.WindowCloseButtonHint)
+        QtWidgets.QDialog.__init__(self, parent, QtCore.Qt.WindowType.Window | QtCore.Qt.WindowType.WindowCloseButtonHint)
+
 
         self.setWindowTitle(caption)
 

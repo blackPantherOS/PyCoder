@@ -13,8 +13,7 @@ from Extensions_Qt6 import StyleSheet
 class SelectBox(QtWidgets.QDialog):
 
     def __init__(self, caption, itemsList, parent=None):
-        QtWidgets.QDialog.__init__(self, parent, QtCore.Qt.Window |
-                               QtCore.Qt.WindowCloseButtonHint)
+        QtWidgets.QDialog.__init__(self, parent, QtCore.Qt.WindowType.Window | QtCore.Qt.WindowType.WindowCloseButtonHint)
 
         self.setWindowTitle(caption)
 
@@ -354,8 +353,9 @@ class VenvSetup(QtWidgets.QWidget):
             return
         reply = QtWidgets.QMessageBox.warning(self, "Install",
                                          "This will install a new virtual environment.\n\nProceed?",
-                                         QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-        if reply == QtWidgets.QMessageBox.Yes:
+                                         QtWidgets.QMessageBox.StandardButton.Yes | 
+                                         QtWidgets.QMessageBox.StandardButton.No)
+        if reply == QtWidgets.QMessageBox.StandardButton.Yes:
             if len(self.useData.SETTINGS["InstalledInterpreters"]) == 0:
                 message = QtWidgets.QMessageBox.information(
                     self, "Install", "There is no Python installation to install against.\n\nPlease make sure Python is installed.")
@@ -392,8 +392,9 @@ class VenvSetup(QtWidgets.QWidget):
             return
         reply = QtWidgets.QMessageBox.warning(self, "Install",
                                          "This will upgrade the current the virtual environment.\n\nProceed?",
-                                         QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-        if reply == QtWidgets.QMessageBox.Yes:
+                                         QtWidgets.QMessageBox.StandardButton.Yes | 
+                                         QtWidgets.QMessageBox.StandardButton.No)
+        if reply == QtWidgets.QMessageBox.StandardButton.Yes:
             if len(self.useData.SETTINGS["InstalledInterpreters"]) == 0:
                 message = QtWidgets.QMessageBox.information(
                     self, "Install", "There is no Python installation to install against.\n\nPlease make sure Python is installed.")
@@ -429,8 +430,9 @@ class VenvSetup(QtWidgets.QWidget):
             return
         reply = QtWidgets.QMessageBox.warning(self, "Uninstall",
                                          "This will uninstall the current virtual environment.\n\nProceed?",
-                                         QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-        if reply == QtWidgets.QMessageBox.Yes:
+                                         QtWidgets.QMessageBox.StandardButton.Yes | 
+                                         QtWidgets.QMessageBox.StandardButton.No)
+        if reply == QtWidgets.QMessageBox.StandardButton.Yes:
             try:
                 self.treeView.setModel(self.newFileSystemModel())
                 if os.path.exists(self.projectPathDict["venvdir"]):
@@ -740,8 +742,9 @@ class BuildConfig(QtWidgets.QWidget):
             if os.path.exists(destPath):
                 reply = QtWidgets.QMessageBox.warning(self, "Add Icon",
                                                      "Icon with the same name already exists. Replace?",
-                                                     QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-                if reply == QtWidgets.QMessageBox.Yes:
+                                                     QtWidgets.QMessageBox.StandardButton.Yes | 
+                                                     QtWidgets.QMessageBox.StandardButton.No)
+                if reply == QtWidgets.QMessageBox.StandardButton.Yes:
                     pass
                 else:
                     return
