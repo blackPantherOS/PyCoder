@@ -1,4 +1,5 @@
 import re
+import string
 from PyQt6 import QtCore, QtGui
 from PyQt6.Qsci import QsciScintilla
 
@@ -737,6 +738,8 @@ class BaseScintilla(QsciScintilla):
                 regexp = QtCore.QRegularExpression(f"[^{re.escape(wc)}]")
 
           match = regexp.match(text, index - 1)
+          punctuation = string.punctuation + "()"
+          word = ""
           if not match.hasMatch() and index > 0:
                 match = regexp.match(text, index - 1)
           elif match.hasMatch():
@@ -745,11 +748,15 @@ class BaseScintilla(QsciScintilla):
                     start -= 1
                 end = match.capturedEnd()
                 end -= 1
+                # vector: fix me too complicated this:
+                #if end < len(text) and text[end] in punctuation:
+                #    end -= 1
+                #if end > 1 and text[end - 1] == ")" and text[end] == " ":
+                #      end -= 1
                 while end < len(text) and text[end] in wc:
                     end += 1
                 word = text[start:end]
-          else:
-                word = ""
+
           return word
 
     def clearAllIndicators(self, indicator):
