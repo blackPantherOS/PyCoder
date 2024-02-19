@@ -120,7 +120,7 @@ class WorkSpace(QtWidgets.QDialog):
 
         self.created = False
 
-        self.exec_()
+        self.exec()
 
     def completeWorkspace(self):
         QtWidgets.QApplication.restoreOverrideCursor()
