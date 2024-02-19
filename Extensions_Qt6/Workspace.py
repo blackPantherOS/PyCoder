@@ -76,7 +76,7 @@ class WorkSpace(QtWidgets.QDialog):
 
     def __init__(self, parent=None):
         QtWidgets.QDialog.__init__(self, parent,
-                               QtCore.Qt.Window | QtCore.Qt.WindowCloseButtonHint)
+                               QtCore.Qt.WindowType.Window | QtCore.Qt.WindowType.WindowCloseButtonHint)
 
         self.setWindowTitle("Workspace")
         self.setWindowIcon(
