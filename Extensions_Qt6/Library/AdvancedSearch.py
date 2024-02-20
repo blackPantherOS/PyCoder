@@ -29,7 +29,10 @@ class FinderThread(QtCore.QThread):
             txt = re.escape(self.text)
         if self.wo:
             txt = "\\b{0}\\b".format(txt)
-        flags = re.UNICODE | re.LOCALE
+            
+        flags = re.UNICODE
+        if not isinstance(self.text, str):  # Ellenőrizzük, hogy a minta nem string típusú
+            flags |= re.LOCALE
         if not self.cs:
             flags |= re.IGNORECASE
         try:
