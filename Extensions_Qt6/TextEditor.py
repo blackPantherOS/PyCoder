@@ -221,7 +221,7 @@ class TextEditor(BaseScintilla):
         self.cutAct.setEnabled(state)
         self.deleteAct.setEnabled(state)
 
-        self.contextMenu.exec_(event.globalPos())
+        self.contextMenu.exec(event.globalPos())
 
     def undoActModifier(self):
         state = self.isUndoAvailable()

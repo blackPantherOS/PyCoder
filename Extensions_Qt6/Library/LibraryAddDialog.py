@@ -77,7 +77,7 @@ class LibraryAddDialog(QtWidgets.QDialog):
 
         self.accepted = False
 
-        self.exec_()
+        self.exec()
 
     def showComments(self):
         if self.moreWidget.isVisible():

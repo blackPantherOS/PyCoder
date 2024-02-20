@@ -59,7 +59,7 @@ class GetName(QtWidgets.QDialog):
         self.resize(300, 20)
         self.enableAcceptButton()
 
-        self.exec_()
+        self.exec()
 
     def enableAcceptButton(self):
         text = self.nameLine.text().strip()

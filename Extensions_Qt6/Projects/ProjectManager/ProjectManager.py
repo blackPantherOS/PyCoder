@@ -63,7 +63,7 @@ class ProjectManager(QtWidgets.QWidget):
             self.build.build()
 
     def configureProject(self):
-        self.configDialog.exec_()
+        self.configDialog.exec()
 
     def openBuild(self):
         self.build.openDir()

@@ -195,7 +195,7 @@ class FileExplorer(QtWidgets.QTreeView):
         self.contextMenu.addMenu(self.shortcutsMenu)
         self.contextMenu.addAction(self.manageShortcutsAct)
 
-        self.contextMenu.exec_(event.globalPos())
+        self.contextMenu.exec(event.globalPos())
 
     def createActions(self):
         self.homeAct = QtGui.QAction(

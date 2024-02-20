@@ -51,7 +51,7 @@ class TextSnapshot(BaseScintilla):
         state = self.hasSelectedText()
 
         self.copyAct.setEnabled(state)
-        self.contextMenu.exec_(event.globalPos())
+        self.contextMenu.exec(event.globalPos())
 
     def selectAllText(self):
         self.selectAll()

@@ -28,7 +28,7 @@ class UsageDialog(QtWidgets.QDialog):
         for item in itemsList:
             self.view.addTopLevelItem(item)
 
-        self.exec_()
+        self.exec()
 
     def showLine(self, item):
         if item.parent() is None:

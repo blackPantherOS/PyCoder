@@ -127,7 +127,7 @@ class ConfirmReplaceDialog(QtWidgets.QDialog):
         hbox.addStretch(1)
 
         self.replaced = False
-        self.exec_()
+        self.exec()
 
     def replace(self):
         QtWidgets.QApplication.setOverrideCursor(QtCore.Qt.CursorShape.WaitCursor)
@@ -173,7 +173,7 @@ class FoundFilesView(QtWidgets.QTreeWidget):
             item = selected[0]
             if item.parent() is None:
                 self.viewAct.setEnabled(False)
-        self.contextMenu.exec_(event.globalPos())
+        self.contextMenu.exec(event.globalPos())
 
     def createActions(self):
         self.viewAct = QtGui.QAction(

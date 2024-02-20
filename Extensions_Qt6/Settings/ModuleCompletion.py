@@ -49,7 +49,7 @@ class ModuleCompletion(QtWidgets.QTreeWidget):
         self.selectedItem = selected[0]
         self.selectedParent = self.selectedItem.parent()
 
-        self.contextMenu.exec_(event.globalPos())
+        self.contextMenu.exec(event.globalPos())
 
     def addLibrary(self):
         return

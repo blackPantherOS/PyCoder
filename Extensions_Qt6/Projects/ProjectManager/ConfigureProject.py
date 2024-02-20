@@ -46,7 +46,7 @@ class SelectBox(QtWidgets.QDialog):
         self.resize(400, 20)
         self.enableAcceptButton()
 
-        self.exec_()
+        self.exec()
 
     def enableAcceptButton(self):
         if self.itemBox.currentIndex() == 0:
@@ -104,7 +104,7 @@ class GetText(QtWidgets.QDialog):
         self.resize(400, 20)
         self.enableAcceptButton()
 
-        self.exec_()
+        self.exec()
 
     def enableAcceptButton(self):
         text = self.nameLine.text().strip()

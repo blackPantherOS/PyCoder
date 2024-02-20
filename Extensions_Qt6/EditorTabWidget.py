@@ -68,7 +68,7 @@ class EditorTabBar(QtWidgets.QTabBar):
         self.favouritesAct.setEnabled(state)
         self.reloadTabAct.setEnabled(state)
 
-        self.menu.exec_(event.globalPos())
+        self.menu.exec(event.globalPos())
 
     def createActions(self):
         self.closeTabAct = QtGui.QAction(
@@ -1084,7 +1084,7 @@ class EditorTabWidget(QtWidgets.QTabWidget):
         printer = QtPrintSupport.QPrinter()
 
         dlg = QtPrintSupport.QPrintDialog(printer, self)
-        if dlg.exec_() != QtWidgets.QDialog.Accepted:
+        if dlg.exec() != QtWidgets.QDialog.Accepted:
             return
         document.print_(printer)
 

@@ -145,7 +145,7 @@ class Keymap(QtWidgets.QDialog):
             return
         shortcut = GetShortcut(self)
         shortcut.setShortcut(QtGui.QKeySequence(item.text(1)).toString())
-        shortcut.exec_()
+        shortcut.exec()
         if shortcut.accepted:
             if self.validateShortcut(shortcut.keysequence):
                 item = self.shortcutsView.currentItem()

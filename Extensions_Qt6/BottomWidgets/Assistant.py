@@ -193,7 +193,7 @@ class Pep8View(QtWidgets.QTreeWidget):
             fixable = item.data(9, 2)
             # self.fixAct.setEnabled(fixable)
             # self.fixAllAct.setEnabled(fixable)
-            self.contextMenu.exec_(event.globalPos())
+            self.contextMenu.exec(event.globalPos())
 
     def fixErrors(self):
         # just in case autopep8 check has not been done already

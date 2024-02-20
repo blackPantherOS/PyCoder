@@ -29,7 +29,7 @@ class CodeSnapshot(BaseScintilla):
         state = self.hasSelectedText()
         self.copyAct.setEnabled(state)
 
-        self.contextMenu.exec_(event.globalPos())
+        self.contextMenu.exec(event.globalPos())
 
     def createContextMenu(self):
         self.copyAct = QtGui.QAction(

@@ -740,7 +740,7 @@ class RunWidget(BaseScintilla):
 
     def contextMenuEvent(self, event):
         if self.isReadOnly():
-            self.contextMenu.exec_(event.globalPos())
+            self.contextMenu.exec(event.globalPos())
         else:
             event.ignore()
 

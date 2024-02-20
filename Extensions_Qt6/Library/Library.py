@@ -105,7 +105,7 @@ class GetName(QtWidgets.QDialog):
 
         self.accepted = False
 
-        self.exec_()
+        self.exec()
 
     def enableAcceptButton(self):
         text = self.nameLine.text().strip()
@@ -399,7 +399,7 @@ class Library(QtWidgets.QMainWindow):
 
     def editComment(self):
         edit = EditComment(self.commentViewer.toPlainText(), self)
-        edit.exec_()
+        edit.exec()
 
         if edit.accepted:
             comment = edit.commentEdit.toPlainText()
@@ -571,7 +571,7 @@ class Library(QtWidgets.QMainWindow):
         printer = QtPrintSupport.QPrinter()
 
         dlg = QtPrintSupport.QPrintDialog(printer, self)
-        if dlg.exec_() != QtWidgets.QDialog.Accepted:
+        if dlg.exec() != QtWidgets.QDialog.Accepted:
             return
         document.print_(printer)
 
