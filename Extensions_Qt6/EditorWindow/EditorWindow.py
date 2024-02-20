@@ -141,6 +141,7 @@ class EditorWindow(QtWidgets.QWidget):
         self.sideSplitter = QtWidgets.QSplitter()
         self.sideSplitter.setObjectName("sidebarItem")
         # vector self.sideSplitter.setOrientation(0)
+        self.sideSplitter.setOrientation(QtCore.Qt.Orientation.Horizontal)
         self.hSplitter.addWidget(self.sideSplitter)
 
         self.sideSplitter.addWidget(self.outline)
@@ -274,7 +275,7 @@ class EditorWindow(QtWidgets.QWidget):
 
         # remember layout
         if projectPathDict['root'] in self.useData.OPENED_PROJECTS:
-            settings = QtCore.QSettings("Clean Code Inc.", "PyCoder")
+            settings = QtCore.QSettings("PyCoder", "PyCoder")
             settings.beginGroup(projectPathDict['root'])
             self.hSplitter.restoreState(settings.value('hsplitter'))
             self.vSplitter.restoreState(settings.value('vsplitter'))
@@ -674,7 +675,7 @@ class EditorWindow(QtWidgets.QWidget):
 
     def saveUiState(self):
         name = self.projectPathDict["root"]
-        settings = QtCore.QSettings("Clean Code Inc.", "PyCoder")
+        settings = QtCore.QSettings("PyCoder", "PyCoder")
         settings.beginGroup(name)
         settings.setValue('hsplitter', self.hSplitter.saveState())
         settings.setValue('vsplitter', self.vSplitter.saveState())
