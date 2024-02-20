@@ -1,9 +1,9 @@
-import os
+import os, sys
 import ctypes
 from PyQt6 import QtCore, QtGui, QtWidgets
+import subprocess
 
 from Extensions_Qt6 import StyleSheet
-
 
 class ManageShortcuts(QtWidgets.QLabel):
 
@@ -101,7 +101,7 @@ class ManageShortcuts(QtWidgets.QLabel):
         self.loadShortcuts()
 
     def addShortcut(self):
-        options = QtWidgets.QFileDialog.DontResolveSymlinks | QtWidgets.QFileDialog.ShowDirsOnly
+        options = QtWidgets.QFileDialog.Option.DontResolveSymlinks | QtWidgets.QFileDialog.Option.ShowDirsOnly
         directory = QtWidgets.QFileDialog.getExistingDirectory(self,
                                                            "Select directory", self.useData.getLastOpenedDir(), options)
         if directory:
@@ -347,5 +347,13 @@ class FileExplorer(QtWidgets.QTreeView):
             path_index = indexList[0]
             file_path = \
                 os.path.normpath(self.fileSystemModel.filePath(path_index))
-        ctypes.windll.shell32.ShellExecuteW(None, 'open', 'explorer.exe',
-                                            '/n,/select, ' + file_path, None, 1)
+        if sys.platform.startswith('win'):
+            ctypes.windll.shell32.ShellExecuteW(None, 'open', 'explorer.exe',
+                                        '/n,/select, ' + file_path, None, 1)
+        else:
+            if subprocess.run(['which', 'qdbus'], stdout=subprocess.PIPE).returncode == 0:
+                subprocess.run(['qdbus', 'org.freedesktop.FileManager1', '/org/freedesktop/FileManager1', 'org.freedesktop.FileManager1.ShowItems', file_path, '""'])
+            elif subprocess.run(['which', 'gdbus'], stdout=subprocess.PIPE).returncode == 0:
+                subprocess.run(['gdbus', 'call', '-e', '-d', 'org.freedesktop.FileManager1', '-o', '/org/freedesktop/FileManager1', '-m', 'org.freedesktop.FileManager1.ShowItems', file_path, "''"])
+            else:
+                subprocess.run(['xdg-open', file_path])
