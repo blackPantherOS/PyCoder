@@ -333,7 +333,7 @@ class UseData(QtCore.QObject):
 
         self.CUSTOM_SHORTCUTS = {'Ide': {}, 'Editor': {}}
 
-        config_path = os.path.expanduser("~/.config/pycoder")
+        config_path = os.path.expanduser("~/.config/PyCoder")
         config_file = "settings.ini"
         settings_file_path = os.path.join(config_path, config_file)
 
@@ -390,6 +390,7 @@ class UseData(QtCore.QObject):
                 sys.exit()
         self.appPathDict = {
             "logfile": os.path.join(self.workspaceDir, "LOG.txt"),
+            #"logfile": os.path.join("./", "LOG.txt"),
             "snippetsdir": os.path.join(self.workspaceDir, "Snippets"),
             "librarydir": os.path.join(self.workspaceDir, "Library"),
             "projectsdir": os.path.join(self.workspaceDir, "Projects"),
@@ -608,7 +609,7 @@ class UseData(QtCore.QObject):
 
     def saveSettings(self):
 
-        config_path = os.path.expanduser("~/.config/pycoder")
+        config_path = os.path.expanduser("~/.config/PyCoder")
         config_file = "settings.ini"
         settings_file_path = os.path.join(config_path, config_file)
 
