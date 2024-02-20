@@ -785,28 +785,28 @@ class RunWidget(BaseScintilla):
         """
         line, index = self.getCursorPosition()
         key = event.key()
-        ctrl = event.modifiers() & QtCore.Qt.ControlModifier
-        alt = event.modifiers() & QtCore.Qt.AltModifier
-        shift_down = event.modifiers() & QtCore.Qt.ShiftModifier
+        ctrl = event.modifiers() & QtCore.Qt.KeyboardModifier.ControlModifier
+        alt = event.modifiers() & QtCore.Qt.KeyboardModifier.AltModifier
+        shift_down = event.modifiers() & QtCore.Qt.KeyboardModifier.ShiftModifier
         if ctrl:
             pass
         elif alt:
             pass
-        elif key == QtCore.Qt.Key_Backspace:
+        elif key == QtCore.Qt.Key.Key_Backspace:
             if self.getCursorPosition() == self.blocking_cursor_pos:
                 pass
             else:
                 QsciScintilla.keyPressEvent(self, event)
-        elif key == QtCore.Qt.Key_Left:
+        elif key == QtCore.Qt.Key.Key_Left:
             if self.getCursorPosition() == self.blocking_cursor_pos:
                 pass
             else:
                 QsciScintilla.keyPressEvent(self, event)
-        elif key == QtCore.Qt.Key_Up:
+        elif key == QtCore.Qt.Key.Key_Up:
             self.scrollVertical(-1)
-        elif key == QtCore.Qt.Key_Down:
+        elif key == QtCore.Qt.Key.Key_Down:
             self.scrollVertical(1)
-        elif key == QtCore.Qt.Key_Return:
+        elif key == QtCore.Qt.Key.Key_Return:
             # get input text
             text = self.getText(
                 self.blocking_cursor_pos, self.position("eof"))
