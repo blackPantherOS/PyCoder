@@ -469,7 +469,10 @@ class EditorTabWidget(QtWidgets.QTabWidget):
     def getCloneEditor(self, index=None):
         if index is None:
             index = self.currentIndex()
-        return self.widget(index).widget(0).getEditor(1)
+        if self.widget(index) is not None:
+            return self.widget(index).widget(0).getEditor(1)
+        else:
+            return None
 
     def getSnapshot(self, index=None):
         if index is None:
@@ -966,8 +969,33 @@ class EditorTabWidget(QtWidgets.QTabWidget):
         elif reply == QtWidgets.QMessageBox.StandardButton.Discard:
             if self.count() == 1:
                 self.newFile()
-            self.removeTabBackup(tabIndex)
-            self.removeTab(tabIndex)
+            else:
+                self.removeTabBackup(tabIndex)
+                self.removeTab(tabIndex)
+
+    def getCurrentFilePath(self):
+        indexList = self.selectedIndexes()
+        path_index = indexList[0]
+        path = \
+            os.path.normpath(self.fileSystemModel.filePath(path_index))
+        return path
+
+    def getCurrentDirectory(self):
+        indexList = self.selectedIndexes()
+        if len(indexList) == 0:
+            path = self.root
+        else:
+            path_index = indexList[0]
+            if self.fileSystemModel.isDir(path_index):
+                pass
+            else:
+                path_index = path_index.parent()
+            path = \
+                os.path.normpath(self.fileSystemModel.filePath(path_index))
+        return path
+
+    def newFile(self):
+        pass
 
     def _save(self):
         self.save()
