@@ -31,7 +31,7 @@ class About(QtWidgets.QDialog):
         self.setFixedSize(500, 350)
         form = QtWidgets.QFormLayout()
         form.setContentsMargins(10, 10, 10, 10)
-        form.addRow("<b>Version</b>", QtWidgets.QLabel("0.2.0"))
+        form.addRow("<b>Version</b>", QtWidgets.QLabel("0.5.1"))
         form.addRow("<b>Author</b>", QtWidgets.QLabel("blackPanther Project"))
         form.addRow("<b>Email</b>", QtWidgets.QLabel("info@blackpanther.hu"))
 
