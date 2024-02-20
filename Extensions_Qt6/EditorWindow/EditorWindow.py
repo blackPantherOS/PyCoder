@@ -53,7 +53,7 @@ class EditorWindow(QtWidgets.QWidget):
 
         self.standardToolbar = QtWidgets.QToolBar("Standard")
         self.standardToolbar.setMovable(False)
-        self.standardToolbar.setContextMenuPolicy(QtCore.Qt.ContextMenuPolicy.NoContextMenu)
+        #self.standardToolbar.setContextMenuPolicy(QtCore.Qt.ContextMenuPolicy.NoContextMenu)
         self.standardToolbar.setMaximumHeight(26)
         self.standardToolbar.setObjectName("StandardToolBar")
         mainLayout.addWidget(self.standardToolbar)
@@ -140,18 +140,20 @@ class EditorWindow(QtWidgets.QWidget):
 
         self.sideSplitter = QtWidgets.QSplitter()
         self.sideSplitter.setObjectName("sidebarItem")
-        # vector self.sideSplitter.setOrientation(0)
         self.sideSplitter.setOrientation(QtCore.Qt.Orientation.Horizontal)
         self.hSplitter.addWidget(self.sideSplitter)
 
-        self.sideSplitter.addWidget(self.outline)
+        #vector self.sideSplitter.addWidget(self.outline)
 
         self.sideBottomTab = QtWidgets.QTabWidget()
         self.sideBottomTab.setObjectName("sideBottomTab")
         self.sideSplitter.addWidget(self.sideBottomTab)
-
+    
         self.sideBottomTab.addTab(self.projectManager.projectView, QtGui.QIcon(
             os.path.join("Resources", "images", "tree")), "Project")
+
+        self.sideBottomTab.addTab(self.outline, QtGui.QIcon(
+            os.path.join("Resources", "images", "tree")), "Classes")
 
         self.fileExplorer = FileExplorer(
             self.useData, self.projectData['shortcuts'], self.messagesWidget, self.editorTabWidget)
