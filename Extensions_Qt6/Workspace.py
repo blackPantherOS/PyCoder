@@ -46,13 +46,13 @@ class GetPathLine(QtWidgets.QWidget):
         # directory by default
         if sys.platform == 'win32':
             path = os.path.join(homePath,
-                                "My Documents", "PyCoderProjects")
+                                "My Documents")
         elif sys.platform == 'darwin':
             path = os.path.join(homePath,
-                                "Documents", "PyCoderProjects")
+                                "Documents")
         else:
             path = os.path.join(homePath,
-                                "Projects", "PyCoderProjects")
+                                "Projects")
         path = os.path.normpath(path)
         self.destinationLine.setText(path)
 
