@@ -477,11 +477,10 @@ class ProjectTree(QtWidgets.QTreeView):
                                                     "Package creation failed!")
 
     def addExistingFiles(self):
-        options = QtWidgets.QFileDialog.Options()
         files = QtWidgets.QFileDialog.getOpenFileNames(self,
                                                   "Select Files", QtCore.QDir.homePath(
                                                   ),
-            "All Files (*);;Text Files (*.txt)", options)[0]
+            "All Files (*);;Text Files (*.txt)")[0]
         if files:
             destDir = self.getCurrentDirectory()
             pathList = []
@@ -503,7 +502,7 @@ class ProjectTree(QtWidgets.QTreeView):
             self.progressWidget.showBusy(True, "Preparing to copy...")
 
     def addExistingDirectory(self):
-        options = QtWidgets.QFileDialog.DontResolveSymlinks | QtWidgets.QFileDialog.ShowDirsOnly
+        options = QtWidgets.QFileDialog.Option.DontUseNativeDialog | QtWidgets.QFileDialog.Option.DontResolveSymlinks | QtWidgets.QFileDialog.Option.ShowDirsOnly
         directory = QtWidgets.QFileDialog.getExistingDirectory(self,
                                                           "Select Directory", QtCore.QDir.homePath(
                                                           ), options)
