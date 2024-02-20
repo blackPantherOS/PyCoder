@@ -425,7 +425,7 @@ globalStyle = """
             border: none;
             background: #E7E7E7;
             height: 10px;
-        }
+        } 
 
         QScrollBar::handle:vertical{
             margin-top: 15px;
@@ -510,7 +510,7 @@ globalStyle = """
         QPushButton {
             min-width: 70px;
             min-height: 20px;
-            color: black;
+            color: black; 
             background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
                 stop: 0 #F1F1F1, stop: 1 #DFDFDF);
             border-radius: 2px;
@@ -674,7 +674,7 @@ mainMenuStyle = """
 
                 QPushButton {
                     padding: 2px 6px 2px 6px;
-                    color: #000;
+                    /* color: #fff;*/
                     margin-left:5px;
                     margin-right:5px;
                     text-shadow: 2px 2px #ff0000;
@@ -694,7 +694,7 @@ mainMenuStyle = """
                 }
 
                 QPushButton:checked {
-                    color: ffeb50;
+                    color: #82ff86;
                 }
 
                 """
