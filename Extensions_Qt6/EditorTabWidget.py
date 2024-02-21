@@ -981,30 +981,6 @@ class EditorTabWidget(QtWidgets.QTabWidget):
                 self.removeTabBackup(tabIndex)
                 self.removeTab(tabIndex)
 
-    def getCurrentFilePath(self):
-        indexList = self.selectedIndexes()
-        path_index = indexList[0]
-        path = \
-            os.path.normpath(self.fileSystemModel.filePath(path_index))
-        return path
-
-    def getCurrentDirectory(self):
-        indexList = self.selectedIndexes()
-        if len(indexList) == 0:
-            path = self.root
-        else:
-            path_index = indexList[0]
-            if self.fileSystemModel.isDir(path_index):
-                pass
-            else:
-                path_index = path_index.parent()
-            path = \
-                os.path.normpath(self.fileSystemModel.filePath(path_index))
-        return path
-
-    def newFile(self):
-        pass
-
     def _save(self):
         self.save()
 

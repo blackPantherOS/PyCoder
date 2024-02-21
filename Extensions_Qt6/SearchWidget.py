@@ -1,6 +1,5 @@
 import os
 from PyQt6 import QtCore, QtGui, QtWidgets
-from PyQt6.QtGui import QKeyEvent
 
 class SearchWidget(QtWidgets.QLabel):
 
@@ -22,9 +21,8 @@ class SearchWidget(QtWidgets.QLabel):
         self.matchWholeWord = False
         self.matchRegExp = False
         self.wrapAround = False
-        self.shift_pressed = False
-        self.hide()
 
+        self.hide()
 
     def createFindWidget(self):
         self.textFinderWidget = QtWidgets.QWidget()
