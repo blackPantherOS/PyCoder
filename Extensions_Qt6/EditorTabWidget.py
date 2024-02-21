@@ -137,8 +137,16 @@ class EditorTabBar(QtWidgets.QTabBar):
 
     def openFileLocation(self):
         filePath = self.editorTabWidget.getEditorData('filePath')
-        ctypes.windll.shell32.ShellExecuteW(None, 'open', 'explorer.exe',
-                                            '/n,/select, ' + filePath, None, 1)
+        if sys.platform.startswith('win'):
+            ctypes.windll.shell32.ShellExecuteW(None, 'open', 'explorer.exe',
+                                        '/n,/select, ' + filePath, None, 1)
+        else:
+            if subprocess.run(['which', 'qdbus'], stdout=subprocess.PIPE).returncode == 0:
+                subprocess.run(['qdbus', 'org.freedesktop.FileManager1', '/org/freedesktop/FileManager1', 'org.freedesktop.FileManager1.ShowItems', filePath, '""'])
+            elif subprocess.run(['which', 'gdbus'], stdout=subprocess.PIPE).returncode == 0:
+                subprocess.run(['gdbus', 'call', '-e', '-d', 'org.freedesktop.FileManager1', '-o', '/org/freedesktop/FileManager1', '-m', 'org.freedesktop.FileManager1.ShowItems', filePath, "''"])
+            else:
+                subprocess.run(['xdg-open', filePath])
 
     def cloneTab(self):
         index = self.currentIndex()

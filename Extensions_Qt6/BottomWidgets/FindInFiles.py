@@ -376,9 +376,17 @@ class FindInFiles(QtWidgets.QWidget):
         else:
             path = item.parent().text(0)
         path = os.path.normpath(path)
-        ctypes.windll.shell32.ShellExecuteW(None, 'open', 'explorer.exe',
-                                            '/n,/select, ' + path, None, 1)
-
+        if sys.platform.startswith('win'):
+            ctypes.windll.shell32.ShellExecuteW(None, 'open', 'explorer.exe',
+                                        '/n,/select, ' + path, None, 1)
+        else:
+            if subprocess.run(['which', 'qdbus'], stdout=subprocess.PIPE).returncode == 0:
+                subprocess.run(['qdbus', 'org.freedesktop.FileManager1', '/org/freedesktop/FileManager1', 'org.freedesktop.FileManager1.ShowItems', path, '""'])
+            elif subprocess.run(['which', 'gdbus'], stdout=subprocess.PIPE).returncode == 0:
+                subprocess.run(['gdbus', 'call', '-e', '-d', 'org.freedesktop.FileManager1', '-o', '/org/freedesktop/FileManager1', '-m', 'org.freedesktop.FileManager1.ShowItems', path, "''"])
+            else:
+                subprocess.run(['xdg-open', path])
+                
     def setPath(self):
         options = QtWidgets.QFileDialog.Option.DontResolveSymlinks | QtWidgets.QFileDialog.Option.ShowDirsOnly
         directory = QtWidgets.QFileDialog.getExistingDirectory(self,
