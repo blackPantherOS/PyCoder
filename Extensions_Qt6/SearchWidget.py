@@ -1,6 +1,6 @@
 import os
 from PyQt6 import QtCore, QtGui, QtWidgets
-
+from PyQt6.QtGui import QKeyEvent
 
 class SearchWidget(QtWidgets.QLabel):
 
@@ -22,8 +22,9 @@ class SearchWidget(QtWidgets.QLabel):
         self.matchWholeWord = False
         self.matchRegExp = False
         self.wrapAround = False
-
+        self.shift_pressed = False
         self.hide()
+
 
     def createFindWidget(self):
         self.textFinderWidget = QtWidgets.QWidget()
@@ -45,6 +46,8 @@ class SearchWidget(QtWidgets.QLabel):
                 QtGui.QIcon(os.path.join("Resources", "images", "findDown")),
                 "Find Next", self, triggered=self.findNext))
         hbox.addWidget(self.findDownButton)
+
+        #vector bellow solved: self.findLine.returnPressed.connect(self.findNext)
 
         self.findUpButton = QtWidgets.QToolButton()
         self.findUpButton.setAutoRaise(True)
@@ -89,6 +92,15 @@ class SearchWidget(QtWidgets.QLabel):
         self.textFinderWidget.setLayout(hbox)
         hbox.setStretch(1, 1)
         self.mainLayout.addWidget(self.textFinderWidget)
+
+    def keyPressEvent(self, e):
+        if e.modifiers() == QtCore.Qt.KeyboardModifier.ShiftModifier and e.key() == QtCore.Qt.Key.Key_Return:
+            self.findPrevious()
+            return
+        elif e.key() == QtCore.Qt.Key.Key_Return:
+            self.findNext()
+        else:
+            pass
 
     def createReplaceWidget(self):
         self.replacerWidget = QtWidgets.QWidget()
