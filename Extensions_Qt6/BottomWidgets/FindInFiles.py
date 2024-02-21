@@ -380,7 +380,7 @@ class FindInFiles(QtWidgets.QWidget):
                                             '/n,/select, ' + path, None, 1)
 
     def setPath(self):
-        options = QtWidgets.QFileDialog.DontResolveSymlinks | QtWidgets.QFileDialog.ShowDirsOnly
+        options = QtWidgets.QFileDialog.Option.DontResolveSymlinks | QtWidgets.QFileDialog.Option.ShowDirsOnly
         directory = QtWidgets.QFileDialog.getExistingDirectory(self,
                                                            "Select Folder", self.useData.getLastOpenedDir(), options)
         if directory:
@@ -413,7 +413,10 @@ class FindInFiles(QtWidgets.QWidget):
             text = re.escape(self.text)
         if self.matchWholeWord:
             text = "\\b{0}\\b".format(text)
-        flags = re.UNICODE | re.LOCALE
+
+        flags = re.UNICODE
+        if not isinstance(self.text, str):  # Ellenőrizzük, hogy a minta nem string típusú
+            flags |= re.LOCALE
         if not self.matchCase:
             flags |= re.IGNORECASE
         try:
