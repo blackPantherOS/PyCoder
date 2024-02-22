@@ -11,7 +11,7 @@ PyCoder seeks to simplify the process of development in python3 by means of:
 1. Utilization of very powerful open source libraries
 1. Implementation of carefully chosen features
 1. Support for other file formats that commonly accompany python development
-1. Python, Xml, Css, Html edit support 
+1. Python, Xml, Css, Html, Txt, etc. edit support 
 
 ###  Features:
 1. Builds source code into executable with Cx_Freeze (PyInstaller planned)
@@ -47,7 +47,7 @@ Then perhaps:
 
 ### Latest version:
 
-** 0.5.0
+** <a href='https://github.com/blackPantherOS/PyCoder/releases'>0.5.x</a>
   
 ### Icon
 ![Alt text](pycoder.svg "PyCoder Icon")
