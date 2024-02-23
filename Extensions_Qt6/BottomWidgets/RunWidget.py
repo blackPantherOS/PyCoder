@@ -752,8 +752,9 @@ class RunWidget(BaseScintilla):
         return line
 
     def mouseDoubleClickEvent(self, event):
-        x = event.x()
-        y = event.y()
+        pos = event.pos()
+        x = pos.x()
+        y = pos.y()
 
         line = self.getHoveredLine(x, y)
         lineText = self.text(line)
