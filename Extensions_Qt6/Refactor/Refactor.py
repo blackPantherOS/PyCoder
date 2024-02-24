@@ -376,7 +376,7 @@ class Refactor(QtWidgets.QWidget):
         offset = self.getOffset()
         path = self.editorTabWidget.getEditorData("filePath")
         project = self.getProject()
-        resource = project.get_file(path)
+        resource = libutils.path_to_resource(project, path)
         saved = self.editorTabWidget.saveProject()
         if saved:
             self.inlineThread.inline(project, resource, offset)
@@ -395,7 +395,7 @@ class Refactor(QtWidgets.QWidget):
         offset = self.getOffset()
         path = self.editorTabWidget.getEditorData("filePath")
         project = self.getProject()
-        resource = project.get_file(path)
+        resource = libutils.path_to_resource(project, path)
         saved = self.editorTabWidget.saveProject()
         if saved:
             self.localToFieldThread.convert(project, resource, offset)
