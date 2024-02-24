@@ -84,7 +84,7 @@ class FindUsageThread(QtCore.QThread):
         self.error = None
         self.foundList = []
         try:
-            resource = self.ropeProject.get_file(self.path)
+            resource = libutils.path_to_resource(self.ropeProject, self.path)
             result = find_occurrences(self.ropeProject, resource, self.offset)
             self.itemsDict = {}
             if len(result) == 0:
@@ -418,7 +418,7 @@ class Refactor(QtWidgets.QWidget):
             offset = self.getOffset()
             path = self.editorTabWidget.getEditorData("filePath")
             project = self.getProject()
-            resource = project.get_file(path)
+            resource = libutils.path_to_resource(project, path)
             try:
                 result = find_definition(project,
                                          self.editorTabWidget.getSource(), offset, resource)
@@ -462,6 +462,7 @@ class Refactor(QtWidgets.QWidget):
 
     def findOccurrences(self):
         self.objectName = self.editorTabWidget.get_current_word()
+
         if self.objectName == '':
             self.editorTabWidget.showNotification(
                 "No word under cursor.")
