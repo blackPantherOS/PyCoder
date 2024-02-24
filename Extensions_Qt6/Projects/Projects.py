@@ -395,7 +395,7 @@ class Projects(QtWidgets.QWidget):
                 "backupdir": os.path.join(path, "temp", "Backup", "Files"),
                 "backupfile": os.path.join(path, "temp", "Backup", "bak"),
                 "sourcedir": os.path.join(path, "src"),
-                "ropeFolder": os.path.join(path, "Rope"),
+                "ropeFolder": "Rope",
                 "buildprofile": os.path.join(path, "Build", "profile.xml"),
                 "ropeprofile": os.path.join(path, "Rope", "profile.xml"),
                 "projectmainfile": os.path.join(path, "project.xml"),
