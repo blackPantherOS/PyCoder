@@ -261,8 +261,10 @@ class Refactor(QtWidgets.QWidget):
 
         self.ropeProject = Project(
             projectroot=self.root, ropefolder=ropeFolder, **prefs)
-        self.ropeProject.prefs.add('python_path', 'c:/Python33')
-        self.ropeProject.prefs.add('source_folders', 'c:/Python33/Lib')
+
+        if sys.platform.startswith('win'):
+            self.ropeProject.prefs.add('python_path', 'c:/Python33')
+            self.ropeProject.prefs.add('source_folders', 'c:/Python33/Lib')
         self.ropeProject.validate()
 
         self.noProject = Project(projectroot="temp", ropefolder=None)
