@@ -9,10 +9,10 @@
 # Project         : PyCoder
 # Module          : Development IDE
 # File            : PyCoder6.py
-# Version         : 0.5.3
+# Version         : 0.5.4
 # Authors         : Charles K. Barcza & Miklos Horvath - info@blackpanther.hu
 # Created On      : Fri Jan 17 2020
-# Last updated    : Thu Feb 21 2024
+# Last updated    : Thu Feb 25 2024
 # Credits         : Miklos Horvath - Fixes and suggestions, Harrison Amoatey - the Qt4 coding
 # Purpose         : LightWare Python IDE based on Qt6
 #---------------------------------------------------------------
