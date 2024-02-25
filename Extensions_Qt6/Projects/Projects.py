@@ -29,6 +29,7 @@ class CreateProjectThread(QtCore.QThread):
             file.close()
 
             ropeFolder = os.path.join(self.projectPath, "Rope")
+            print("Rope:",ropeFolder )
             os.mkdir(ropeFolder)
             shutil.copy(os.path.join("Resources", "default_config.py"),
                         os.path.join(ropeFolder, "config.py"))
@@ -395,7 +396,7 @@ class Projects(QtWidgets.QWidget):
                 "backupdir": os.path.join(path, "temp", "Backup", "Files"),
                 "backupfile": os.path.join(path, "temp", "Backup", "bak"),
                 "sourcedir": os.path.join(path, "src"),
-                "ropeFolder": "Rope",
+                "ropeFolder": "../Rope",
                 "buildprofile": os.path.join(path, "Build", "profile.xml"),
                 "ropeprofile": os.path.join(path, "Rope", "profile.xml"),
                 "projectmainfile": os.path.join(path, "project.xml"),
