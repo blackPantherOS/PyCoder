@@ -1,14 +1,12 @@
-from PyQt6 import QtCore, QtGui, QtWidgets
-
+from PyQt6 import QtCore, QtGui, QtWidgets, QtXml
 
 class ModuleCompletion(QtWidgets.QTreeWidget):
-
     def __init__(self, useData, parent=None):
         QtWidgets.QTreeWidget.__init__(self, parent)
 
         self.useData = useData
-
         self.setHeaderLabel("Modules")
+
         for i, v in self.useData.libraryDict.items():
             item = QtWidgets.QTreeWidgetItem(self)
             item.setCheckState(0, QtCore.Qt.CheckState.Checked)
@@ -43,48 +41,84 @@ class ModuleCompletion(QtWidgets.QTreeWidget):
         self.contextMenu.addAction(self.addModuleAct)
         self.contextMenu.addAction(self.removeModuleAct)
 
+        self.addItemAct.setEnabled(False)
+        self.addModuleAct.setEnabled(False)
+        self.removeItemAct.setEnabled(False)
+        self.removeModuleAct.setEnabled(False)
+
     def contextMenuEvent(self, event):
         selected = self.selectedItems()
-        print("Selected...")
-        self.selectedItem = selected[0]
-        self.selectedParent = self.selectedItem.parent()
+        if selected:
+            self.selectedItem = selected[0]
+            self.selectedParent = self.selectedItem.parent()
+            self.addItemAct.setEnabled(True)
+            self.addModuleAct.setEnabled(True)
+            self.removeItemAct.setEnabled(True)
+            self.removeModuleAct.setEnabled(True)
+        else:
+            #self.addItemAct.setEnabled(True)
+            self.addModuleAct.setEnabled(True)
 
         self.contextMenu.exec(event.globalPos())
 
     def addLibrary(self):
-        return
-        if self.selectedParent is None:
-            parent = self.selectedItem
-        else:
-            parent = self.selectedParent
-        newItem = QtWidgets.QTreeWidgetItem()
-        newItem.setFlags(QtCore.Qt.ItemIsEditable |
-                         QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
-        parent.insertChild(self.cu, newItem)
-        self.editItem(newItem)
+        if hasattr(self, 'selectedParent'):
+            if self.selectedParent is None:
+                parent = self.selectedItem
+            else:
+                parent = self.selectedParent
+            newItem = QtWidgets.QTreeWidgetItem()
+            newItem.setFlags(newItem.flags() |
+                             QtCore.Qt.ItemFlag.ItemIsEditable |
+                             QtCore.Qt.ItemFlag.ItemIsSelectable | 
+                             QtCore.Qt.ItemFlag.ItemIsEnabled)
+            parent.insertChild(0, newItem)
+            self.editItem(newItem)
+            QtWidgets.QTreeWidgetItem.setHidden(parent, False)
 
-    def removeLibrary(self):
-        if self.selectedParent != None:
-            itemText = self.selectedItem.text(0)
-            parentText = self.selectedParent.text(0)
-            self.useData.libraryDict[parentText][0].remove(itemText)
-            self.setItemHidden(self.selectedItem, True)
+        else:
+            print("Unfinished function!")
 
     def addModule(self):
-        return
-        if self.selectedParent is None:
-            parent = self.selectedItem
+        if hasattr(self, 'selectedParent'):
+            if self.selectedParent is None:
+                parent = self.selectedItem
+            else:
+                parent = self.selectedParent
         else:
-            parent = self.selectedParent
+            parent = None
+
         newItem = QtWidgets.QTreeWidgetItem()
-        newItem.setFlags(QtCore.Qt.ItemIsEditable |
-                         QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
-        parent.insertChild(self.cu, newItem)
+        newItem.setFlags(newItem.flags() |
+                         QtCore.Qt.ItemFlag.ItemIsEditable |
+                         QtCore.Qt.ItemFlag.ItemIsSelectable | 
+                         QtCore.Qt.ItemFlag.ItemIsEnabled)
+        if parent is not None:
+            parent.insertChild(0, newItem)
+        else:
+            parentText = "RenameIt"
+            newItem.setText(0, parentText) 
+            newItem.setCheckState(0, QtCore.Qt.CheckState.Checked)
+            self.addTopLevelItem(newItem)
+            #self.selectedItem = newItem
+            #parent = self.selectedItem
+
         self.editItem(newItem)
+        #QtWidgets.QTreeWidgetItem.setHidden(parent, False)
+        print("Unfinished function!")
+
+    def removeLibrary(self):
+        if hasattr(self, 'selectedItem') and self.selectedItem is not None:
+            if self.selectedParent is not None:
+                itemText = self.selectedItem.text(0)
+                parentText = self.selectedParent.text(0)
+                self.useData.libraryDict[parentText][0].remove(itemText)
+                QtWidgets.QTreeWidgetItem.setHidden(self.selectedItem, True)
 
     def removeModule(self):
-        if self.selectedParent != None:
+        if hasattr(self, 'selectedParent') and self.selectedParent is not None:
             itemText = self.selectedItem.text(0)
             parentText = self.selectedParent.text(0)
             self.useData.libraryDict[parentText][0].remove(itemText)
-            self.setItemHidden(self.selectedItem, True)
+            QtWidgets.QTreeWidgetItem.setHidden(self.selectedItem, True)
+
