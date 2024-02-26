@@ -599,13 +599,14 @@ class Library(QtWidgets.QMainWindow):
         self.codeViewer.selectAll()
 
     def export(self):
-        options = QtWidgets.QFileDialog.Options()
+        #vector: crashfix options = QtWidgets.QFileDialog.Options()
         fileName, _ = QtWidgets.QFileDialog.getSaveFileName(self,
                                                          "Export Library",
                                                          os.path.join(
                                                              self.useData.getLastOpenedDir(),
                                                              "PyCoder_Library" + '_' + QtCore.QDateTime().currentDateTime().toString().replace(' ', '_').replace(':', '-') + '.pcdlib'),
-                                                         "PyCoder Library (*.pcdlib);", options=options)
+                                                         "PyCoder Library (*.pcdlib);")
+
         if fileName:
             self.useData.saveLastOpenedDir(os.path.split(fileName)[0])
             try:
