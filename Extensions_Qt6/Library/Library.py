@@ -2,7 +2,6 @@ import os
 import shutil
 # FIXME QtXml is no longer supported.
 from PyQt6 import QtCore, QtGui, QtPrintSupport, QtWidgets, QtXml
-#from PyQt6.QtCore import Qt
 
 from Extensions_Qt6.Library.LibraryAddDialog import LibraryAddDialog
 from Extensions_Qt6.Library.AdvancedSearch import AdvancedSearch
