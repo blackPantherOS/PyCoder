@@ -109,6 +109,15 @@ class EditorWindow(QtWidgets.QWidget):
             self.externalLauncher, self)
         vbox.addWidget(self.editorTabWidget)
 
+        # vector: better looks for editor widget at first start 
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+
+        self.editorTabWidget.setSizePolicy(sizePolicy)
+        self.editorTabWidget.setMinimumWidth(500)
+        self.editorTabWidget.setMinimumHeight(600)
+
         self.manageFavourites.openFile.connect(self.editorTabWidget.loadfile)
 
         self.editorTabWidget.updateRecentFilesList.connect(
@@ -148,7 +157,7 @@ class EditorWindow(QtWidgets.QWidget):
         self.sideBottomTab = QtWidgets.QTabWidget()
         self.sideBottomTab.setObjectName("sideBottomTab")
         self.sideSplitter.addWidget(self.sideBottomTab)
-    
+
         self.sideBottomTab.addTab(self.projectManager.projectView, QtGui.QIcon(
             os.path.join("Resources", "images", "tree")), "Project")
 

@@ -229,7 +229,10 @@ class ProjectTree(QtWidgets.QTreeView):
         self.fileSystemModel.setNameFilterDisables(False)
         self.fileSystemModel.setIconProvider(iconProvider)
         self.setModel(self.fileSystemModel)
-        self.setColumnWidth(0, 300)
+        # vector: better looks for sidebar
+        self.setColumnWidth(0, 150)
+        self.setColumnWidth(1, 60)
+        self.setColumnWidth(2, 80)
 
         self.createActions()
         self.loadShortcut(self.root)
@@ -404,7 +407,6 @@ class ProjectTree(QtWidgets.QTreeView):
                 QtWidgets.QMessageBox.critical(self, "Error", f"Failed to create backup: {str(e)}")
 
     def getUniqueBackupName(self, directory, basename):
-        # Azonosít egy egyedi .bak nevet a megadott könyvtárban
         backup_path = os.path.join(directory, basename)
         base, ext = os.path.splitext(backup_path)
         count = 1
