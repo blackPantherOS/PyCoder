@@ -38,10 +38,10 @@ class LibraryAddDialog(QtWidgets.QDialog):
         hbox.addWidget(self.selectionButton)
         
         hbox.addStretch(1)
-        
+
         self.showDetailsButton = QtWidgets.QToolButton()
         self.showDetailsButton.setAutoRaise(True)
-        self.showDetailsButton.setToolButtonStyle(2)
+        self.showDetailsButton.setToolButtonStyle(QtCore.Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
         self.showDetailsButton.setText("Comments")
         self.showDetailsButton.setIcon(QtGui.QIcon(
             os.path.join("Resources", "images", "extender-down")))
