@@ -7,3 +7,5 @@ QScintilla>=2.14.1
 tomli>=2.0.1
 typing_extensions>=4.8.0
 zipp>=3.8.0
+rope>=1.12.0
+
