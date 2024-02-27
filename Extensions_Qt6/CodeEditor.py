@@ -527,57 +527,57 @@ class CodeEditor(BaseScintilla):
 
     def createActions(self):
         self.cutAct = QtGui.QAction(
-            "Cut", self,
-            statusTip="Cut selected text", triggered=self.cut)
+            _("Cut"), self,
+            statusTip=_("Cut selected text"), triggered=self.cut)
 
         self.copyAct = QtGui.QAction(
-            "Copy", self,
-            statusTip="Copy selected text", triggered=self.copy)
+            _("Copy"), self,
+            statusTip=_("Copy selected text"), triggered=self.copy)
 
         self.pasteAct = QtGui.QAction(
-            "Paste", self,
-            statusTip="Paste text from clipboard",
+            _("Paste"), self,
+            statusTip=_("Paste text from clipboard"),
             triggered=self.paste)
 
         self.selectToMatchingBraceAct = \
             QtGui.QAction(
-                "Select to Matching Brace", self,
-                statusTip="Select to Matching Brace",
+                _("Select to Matching Brace"), self,
+                statusTip=_("Select to Matching Brace"),
                           triggered=self.selectToMatchingBrace)
 
         self.snippetsAct = \
             QtGui.QAction(
                 QtGui.QIcon(os.path.join("Resources", "images", "edit2")),
-                "Insert Snippet...", self,
-                statusTip="Insert Snippet...",
+                _("Insert Snippet..."), self,
+                statusTip=_("Insert Snippet..."),
                           triggered=self.showSnippets)
 
         self.toggleBookmarkAct = \
             QtGui.QAction(
-                "Toggle Bookmark", self,
-                statusTip="Toggle Bookmark",
+                _("Toggle Bookmark"), self,
+                statusTip=_("Toggle Bookmark"),
                 triggered=self._toggleBookmark)
 
         self.toggleBreakpointAct = \
             QtGui.QAction(
-                "Toggle Line Breakpoint", self,
-                statusTip="Toggle Line Breakpoint",
+                _("Toggle Line Breakpoint"), self,
+                statusTip=_("Toggle Line Breakpoint"),
                 triggered=self.toggleLineBreakpoint)
 
         self.takeSnapshotAct = \
-            QtGui.QAction("Take Snapshot", self,
-                          statusTip="Take Snapshot",
+            QtGui.QAction(_("Take Snapshot"), self,
+                          statusTip=_("Take Snapshot"),
                           triggered=self.takeSnapshot)
 
         self.zoomAct = QtGui.QAction(
             QtGui.QIcon(os.path.join("Resources", "images", "zoom")),
-            "Zoom", self,
-            statusTip="Zoom", triggered=self.showZoomWidget)
+            _("Zoom"), self,
+            statusTip=_("Zoom in/out"), triggered=self.showZoomWidget)
 
         self.indentationGuideAct = \
             QtGui.QAction(
-                "Indentation Guide", self,
-                statusTip="Indentation Guide",
+                _("Indentation Guide"), self,
+                statusTip=_("Indentation Guide"),
                           triggered=self.showIndentationGuide)
         self.indentationGuideAct.setCheckable(True)
 
@@ -597,7 +597,7 @@ class CodeEditor(BaseScintilla):
 
         self.contextMenu.addMenu(self.refactor.refactorMenu)
 
-        self.viewMenu = self.contextMenu.addMenu("View")
+        self.viewMenu = self.contextMenu.addMenu(_("View"))
         self.viewMenu.addAction(self.editorTabWidget.vSplitEditorAct)
         self.viewMenu.addAction(self.editorTabWidget.hSplitEditorAct)
         self.viewMenu.addAction(self.editorTabWidget.noSplitEditorAct)
@@ -754,12 +754,12 @@ class CodeEditor(BaseScintilla):
             snippetList = os.listdir(
                 self.useData.appPathDict["snippetsdir"])
         except:
-            self.notification.showMessage("Could not fetch snippets.")
+            self.notification.showMessage(_("Could not fetch snippets."))
             return
         if len(snippetList) > 0:
             self.showUserList(1, snippetList)
         else:
-            self.notification.showMessage("No snippets available.")
+            self.notification.showMessage(_("No snippets available."))
 
     def clearErrorMarkerAndIndicator(self):
         self.clearAllIndicators(self.syntaxErrorIndicator)
