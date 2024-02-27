@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PyCoder6 0.5.4\n"
 "Report-Msgid-Bugs-To: info@blackpantheros.eu\n"
-"POT-Creation-Date: 2024-02-27 17:19+0100\n"
+"POT-Creation-Date: 2024-02-27 18:11+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: PyCoder6.py:56
-msgid "Language : "
+msgid "Welcome to PyCoder6! The used language for interface is: "
 msgstr ""
 
 #: PyCoder6.py:65
@@ -29,7 +29,7 @@ msgstr ""
 msgid "This application requires Python 3"
 msgstr ""
 
-#: PyCoder6.py:109
+#: PyCoder6.py:109 PyCoder6.py:110
 msgid "Start"
 msgstr ""
 
