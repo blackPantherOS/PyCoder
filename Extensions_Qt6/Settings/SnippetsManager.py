@@ -5,8 +5,7 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 class GetName(QtWidgets.QDialog):
 
     def __init__(self, caption, path, parent=None):
-        QtWidgets.QDialog.__init__(self, parent, QtCore.Qt.Window |
-                               QtCore.Qt.WindowCloseButtonHint)
+        QtWidgets.QDialog.__init__(self, parent, QtCore.Qt.WindowType.Window | QtCore.Qt.WindowType.WindowCloseButtonHint)
 
         self.setWindowTitle(caption)
 
@@ -164,7 +163,7 @@ class SnippetsManager(QtWidgets.QDialog):
 
                 self.loadSnippetList()
                 found = self.snippetsListWidget.findItems(snippet.name,
-                                                          QtCore.Qt.MatchCaseSensitive)
+                                                          QtCore.Qt.MatchFlag.MatchCaseSensitive)
                 item = found[0]
                 self.snippetsListWidget.setCurrentItem(item)
         else:
@@ -178,7 +177,7 @@ class SnippetsManager(QtWidgets.QDialog):
 
             self.loadSnippetList()
             found = self.snippetsListWidget.findItems(snippet.name,
-                                                      QtCore.Qt.MatchCaseSensitive)
+                                                      QtCore.Qt.MatchFlag.MatchCaseSensitive)
             item = found[0]
             self.snippetsListWidget.setCurrentItem(item)
 
@@ -200,7 +199,7 @@ class SnippetsManager(QtWidgets.QDialog):
 
             self.loadSnippetList()
             found = self.snippetsListWidget.findItems(new_name,
-                                                      QtCore.Qt.MatchCaseSensitive)
+                                                      QtCore.Qt.MatchFlag.MatchCaseSensitive)
             item = found[0]
             self.snippetsListWidget.setCurrentItem(item)
 
