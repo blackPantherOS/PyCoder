@@ -22,7 +22,7 @@ class About(QtWidgets.QDialog):
         QtWidgets.QDialog.__init__(self, parent,
                                QtCore.Qt.WindowType.Window | QtCore.Qt.WindowType.WindowCloseButtonHint)
 
-        self.setWindowTitle("About")
+        self.setWindowTitle(_("About"))
 
         mainLayout = QtWidgets.QVBoxLayout()
         mainLayout.setContentsMargins(0, 0, 0, 0)
@@ -31,9 +31,9 @@ class About(QtWidgets.QDialog):
         self.setFixedSize(500, 350)
         form = QtWidgets.QFormLayout()
         form.setContentsMargins(10, 10, 10, 10)
-        form.addRow("<b>Version</b>", QtWidgets.QLabel("0.5.2"))
-        form.addRow("<b>Author</b>", QtWidgets.QLabel("blackPanther Project"))
-        form.addRow("<b>Email</b>", QtWidgets.QLabel("info@blackpanther.hu"))
+        form.addRow(_("<b>Version</b>"), QtWidgets.QLabel("0.6.0"))
+        form.addRow(_("<b>Author</b>"), QtWidgets.QLabel("blackPanther Project"))
+        form.addRow(_("<b>Email</b>"), QtWidgets.QLabel("info@blackpanther.hu"))
 
         mainLayout.addLayout(form)
 
@@ -41,12 +41,12 @@ class About(QtWidgets.QDialog):
         hbox.setContentsMargins(5, 0, 5, 0)
         mainLayout.addLayout(hbox)
 
-        self.label = QtWidgets.QLabel("External Libraries:")
+        self.label = QtWidgets.QLabel(_("External Libraries:"))
         hbox.addWidget(self.label)
 
         hbox.addStretch(1)
 
-        licenseButton = QtWidgets.QPushButton("License")
+        licenseButton = QtWidgets.QPushButton(_("License"))
         licenseButton.setCheckable(True)
         licenseButton.clicked.connect(self.showLicense)
         hbox.addWidget(licenseButton)
@@ -57,7 +57,7 @@ class About(QtWidgets.QDialog):
         table = QtWidgets.QTreeWidget()
         table.setMinimumHeight(150)
         table.setIndentation(0)
-        table.setHeaderLabels(["Name", "Version", "Author"])
+        table.setHeaderLabels([_("Name"), _("Version"), _("Author")])
         table.setColumnWidth(0, 150)
         table.addTopLevelItem(QtWidgets.QTreeWidgetItem(
             ["Rope", rope.VERSION, "Ali Gholami Rudi"]))

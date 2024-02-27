@@ -9,10 +9,10 @@
 # Project         : PyCoder
 # Module          : Development IDE
 # File            : PyCoder6.py
-# Version         : 0.5.4
+# Version         : 0.6.0
 # Authors         : Charles K. Barcza & Miklos Horvath - info@blackpanther.hu
 # Created On      : Fri Jan 17 2020
-# Last updated    : Thu Feb 25 2024
+# Last updated    : Tue Feb 27 2024
 # Credits         : Miklos Horvath - Fixes and suggestions, Harrison Amoatey - the Qt4 coding
 # Purpose         : LightWare Python IDE based on Qt6
 #---------------------------------------------------------------
@@ -20,6 +20,7 @@
 import sys
 import os
 import logging
+import locale
 
 from PyQt6 import QtCore, QtGui, QtWidgets
 from PyQt6.QtCore import QPoint
@@ -34,6 +35,25 @@ from Extensions_Qt6 import StyleSheet
 from Extensions_Qt6.Start import Start
 from Extensions_Qt6.StackSwitcher import StackSwitcher
 
+import gettext
+locale.setlocale(locale.LC_ALL, '')
+traduction = None
+pathname=os.path.dirname(__file__)
+
+try:
+    gettext.find('messages',pathname+'/locales')
+    traduction = gettext.translation('messages',pathname+'/locales')
+    traduction.install();
+except:
+    traduction = gettext
+    gettext.install("pycoder6", pathname+'/locales')
+
+try:
+    language = locale.getlocale()[0].split('_')[0]
+except:
+    language = 'en'
+
+print(_('Language : ') + language)
 
 class PyCoder(QtWidgets.QWidget):
 
@@ -42,7 +62,7 @@ class PyCoder(QtWidgets.QWidget):
 
         self.setWindowIcon(QtGui.QIcon(os.path.join(
         "Resources", "images", "Icon")))
-        self.setWindowTitle("PyCoder - Loading...")
+        self.setWindowTitle(_("PyCoder - Loading..."))
 
         screen = QtWidgets.QApplication.primaryScreen().geometry()
         self.resize(screen.width() - 200, screen.height() - 200)
@@ -62,7 +82,7 @@ class PyCoder(QtWidgets.QWidget):
                             filename=self.useData.appPathDict["logfile"],
                             level=logging.DEBUG)
         if sys.version_info.major < 3:
-            logging.error("This application requires Python 3")
+            logging.error(_("This application requires Python 3"))
             sys.exit(1)
 
         self.library = Library(self.useData)
@@ -86,7 +106,7 @@ class PyCoder(QtWidgets.QWidget):
         self.settingsWidget.colorScheme.styleEditor(self.library.codeViewer)
 
         startWindow = Start(self.useData, self)
-        self.addProject(startWindow, "Start",
+        self.addProject(startWindow, _("Start"),
                         "Start", os.path.join(
                         "Resources", "images", "flag-green"))
 
@@ -110,10 +130,10 @@ class PyCoder(QtWidgets.QWidget):
         self.projectSwitcher.setStyleSheet(StyleSheet.mainMenuStyle)
         hbox.addWidget(self.projectSwitcher)
 
-        self.addPage(self.projectWindowStack, "EDITOR", QtGui.QIcon(
+        self.addPage(self.projectWindowStack, _("EDITOR"), QtGui.QIcon(
             os.path.join("Resources", "images", "hire-me")))
 
-        self.addPage(self.library, "LIBRARY", QtGui.QIcon(
+        self.addPage(self.library, _("LIBRARY"), QtGui.QIcon(
             os.path.join("Resources", "images", "library")))
         self.projectSwitcher.setDefault()
 
@@ -149,21 +169,21 @@ class PyCoder(QtWidgets.QWidget):
     def createActions(self):
         self.aboutAct = QtGui.QAction(
             QtGui.QIcon(os.path.join("Resources", "images", "properties")),
-            "About PyCoder", self, statusTip="About PyCoder",
+            _("About PyCoder"), self, statusTip=_("More info of PyCoder6 "),
             triggered=self.showAbout)
 
         self.showFullScreenAct = \
             QtGui.QAction(
                 QtGui.QIcon(os.path.join(
                 "Resources", "images", "Fullscreen")),
-                "Fullscreen", self,
+                _("Fullscreen"), self,
                 statusTip="Fullscreen",
                           triggered=self.showFullScreenMode)
 
         self.settingsAct = QtGui.QAction(
             QtGui.QIcon(os.path.join("Resources", "images", "config")),
-            "Settings", self,
-            statusTip="Settings", triggered=self.showSettings)
+            _("Settings"), self,
+            statusTip=_("PyCoder Settings"), triggered=self.showSettings)
 
     def addPage(self, pageWidget, name, iconPath):
         self.projectSwitcher.addButton(name=name, icon=iconPath)
@@ -178,7 +198,7 @@ class PyCoder(QtWidgets.QWidget):
     def showProject(self, path):
         if not os.path.exists(path):
             message = QtWidgets.QMessageBox.warning(
-                self, "Open Project", "Project cannot be be found!")
+                self, _("Open Project"), _("Project cannot be be found!"))
         else:
             if path in self.useData.OPENED_PROJECTS:
                 for i in range(self.projectWindowStack.count() - 1):
@@ -204,7 +224,7 @@ class PyCoder(QtWidgets.QWidget):
         window = data[0]
         windowType = data[1]
         if windowType == "Start":
-            self.setWindowTitle("PyCoder - Start")
+            self.setWindowTitle(_("PyCoder - Start"))
         elif windowType == "Project":
             title = window.editorTabWidget.getEditorData("filePath")
             self.updateWindowTitle(title)
@@ -220,7 +240,7 @@ class PyCoder(QtWidgets.QWidget):
 
     def updateWindowTitle(self, title):
         if title is None:
-            title = "PyCoder - " + "Unsaved"
+            title = _("PyCoder - ") + _("Unsaved")
         else:
             window = self.projectTitleBox.itemData(
                 self.projectTitleBox.currentIndex())[0]
