@@ -32,7 +32,7 @@ class ManageShortcuts(QtWidgets.QLabel):
         hbox = QtWidgets.QHBoxLayout()
         mainLayout.addLayout(hbox)
 
-        label = QtWidgets.QLabel("Manage Shortcuts")
+        label = QtWidgets.QLabel(_("Manage Shortcuts"))
         label.setObjectName("toolWidgetNameLabel")
         hbox.addWidget(label)
 
@@ -103,7 +103,7 @@ class ManageShortcuts(QtWidgets.QLabel):
     def addShortcut(self):
         options = QtWidgets.QFileDialog.Option.DontResolveSymlinks | QtWidgets.QFileDialog.Option.ShowDirsOnly
         directory = QtWidgets.QFileDialog.getExistingDirectory(self,
-                                                           "Select directory", self.useData.getLastOpenedDir(), options)
+                                                           _("Select directory"), self.useData.getLastOpenedDir(), options)
         if directory:
             directory = os.path.normpath(directory)
             if directory in self.FILE_EXPLORER_SHORTCUTS:
@@ -178,7 +178,7 @@ class FileExplorer(QtWidgets.QTreeView):
         editorTabWidget.addToolWidget(self.manageShortcuts)
 
         self.createActions()
-        self.shortcutsMenu = QtWidgets.QMenu("Shortcuts")
+        self.shortcutsMenu = QtWidgets.QMenu(_("Shortcuts"))
         self.updateShortcutsActionGroup()
 
     def contextMenuEvent(self, event):
@@ -200,36 +200,36 @@ class FileExplorer(QtWidgets.QTreeView):
     def createActions(self):
         self.homeAct = QtGui.QAction(
             QtGui.QIcon(os.path.join("Resources", "images", "home")),
-            "Home", self,
-            statusTip="Home", triggered=self.refreshFileSytemModel)
+            _("Home"), self,
+            statusTip=_("Home"), triggered=self.refreshFileSytemModel)
 
         self.collapseAllAct = \
             QtGui.QAction(
-                "Collapse All", self,
-                statusTip="Collapse Tree", triggered=self.collapseAll)
+                _("Collapse All"), self,
+                statusTip=_("Collapse Tree"), triggered=self.collapseAll)
 
         self.showAllFilesAct = \
             QtGui.QAction(
-                "Show All Files", self, statusTip="Show All Files",
+                _("Show All Files"), self, statusTip=_("Show All Files"),
                 toggled=self.showAllFiles)
         self.showAllFilesAct.setCheckable(True)
         self.showAllFilesAct.setChecked(True)
 
         self.locateAct = \
-            QtGui.QAction("Locate", self, statusTip="Locate",
+            QtGui.QAction(_("Locate"), self, statusTip=_("Locate"),
                           triggered=self.locate)
 
         self.createShortcutAct = \
             QtGui.QAction(
                 QtGui.QIcon(
                     os.path.join("Resources", "images", "brainstorming")),
-                "Create Shortcut", self, statusTip="Create Shortcut",
+                _("Create Shortcut"), self, statusTip=_("Create Shortcut"),
                 triggered=self.createShortcut)
 
         self.manageShortcutsAct = \
             QtGui.QAction(
                 QtGui.QIcon(os.path.join("Resources", "images", "settings")),
-                "Manage Shortcuts", self, statusTip="Manage Shortcuts",
+                _("Manage Shortcuts"), self, statusTip=_("Manage Shortcuts"),
                 triggered=self.showManageShortcuts)
 
     def showManageShortcuts(self):
@@ -270,7 +270,7 @@ class FileExplorer(QtWidgets.QTreeView):
                 self.shortcutsMenu.addAction(action)
             self.shortcutsMenu.addSeparator()
         else:
-            self.shortcutsMenu.addAction("No Shortcuts")
+            self.shortcutsMenu.addAction(_("No Shortcuts"))
         # TODO findInFiles.updateShortcutsList()
 
     def shortcutActivated(self, action):
@@ -281,8 +281,8 @@ class FileExplorer(QtWidgets.QTreeView):
         if os.path.exists(path):
             self.setRootIndex(self.fileSystemModel.index(path))
         else:
-            message = QtWidgets.QMessageBox.warning(self, "Open",
-                                                "Directory is not available.")
+            message = QtWidgets.QMessageBox.warning(self, _("Open"),
+                                                _("Directory is not available."))
 
     def showAllFiles(self):
         if self.showAllFilesAct.isChecked():
@@ -323,8 +323,8 @@ class FileExplorer(QtWidgets.QTreeView):
                 self.fileSystemModel.filePath(path_index.parent()))
         else:
             pass
-        mess = 'Create shortcut to "{0}"?'.format(path)
-        reply = QtWidgets.QMessageBox.information(self, "Create Shortcut",
+        mess = _('Create shortcut to "{0}"?').format(path)
+        reply = QtWidgets.QMessageBox.information(self, _("Create Shortcut"),
                                               mess, 
                                               QtWidgets.QMessageBox.StandardButton.Yes | 
                                               QtWidgets.QMessageBox.StandardButton.No)
@@ -334,8 +334,8 @@ class FileExplorer(QtWidgets.QTreeView):
                 return
             self.FILE_EXPLORER_SHORTCUTS.append(path)
             self.updateShortcutsActionGroup()
-            self.messagesWidget.addMessage(0, "Shortcuts",
-                                           ["'{0}' added!".format(path)])
+            self.messagesWidget.addMessage(0, _("Shortcuts"),
+                                           [_("'{0}' added!").format(path)])
 
     def locate(self):
         indexList = self.selectedIndexes()

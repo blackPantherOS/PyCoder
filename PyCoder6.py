@@ -53,7 +53,7 @@ try:
 except:
     language = 'en'
 
-print(_('Language : ') + language)
+print(_('Welcome to PyCoder6! The used language for interface is: ') + language)
 
 class PyCoder(QtWidgets.QWidget):
 
@@ -107,7 +107,7 @@ class PyCoder(QtWidgets.QWidget):
 
         startWindow = Start(self.useData, self)
         self.addProject(startWindow, _("Start"),
-                        "Start", os.path.join(
+                        _("Start"), os.path.join(
                         "Resources", "images", "flag-green"))
 
         self.projects = Projects(self.useData, self.busyWidget,

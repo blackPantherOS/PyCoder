@@ -21,7 +21,7 @@ class SetRunParameters(QtWidgets.QLabel):
 
         self.setMinimumSize(400, 220)
 
-        #vector self.setBackgroundRole(QtGui.QPalette.Window)
+        self.setBackgroundRole(QtGui.QPalette.ColorRole.Window)
         self.setAutoFillBackground(True)
         self.setObjectName("containerLabel")
         self.setStyleSheet(StyleSheet.toolWidgetStyle)
@@ -35,7 +35,7 @@ class SetRunParameters(QtWidgets.QLabel):
         hbox = QtWidgets.QHBoxLayout()
         mainLayout.addLayout(hbox)
 
-        label = QtWidgets.QLabel("Run Parameters")
+        label = QtWidgets.QLabel(_("Run Parameters"))
         label.setObjectName("toolWidgetNameLabel")
         hbox.addWidget(label)
 
@@ -52,9 +52,9 @@ class SetRunParameters(QtWidgets.QLabel):
         mainLayout.addLayout(hbox)
 
         self.runTypeBox = QtWidgets.QComboBox()
-        self.runTypeBox.addItem("Run")
-        self.runTypeBox.addItem("Profiler")
-        self.runTypeBox.addItem("Trace")
+        self.runTypeBox.addItem(_("Run"))
+        self.runTypeBox.addItem(_("Profiler"))
+        self.runTypeBox.addItem(_("Trace"))
         if self.projectSettings["RunType"] == 'Profiler':
             self.runTypeBox.setCurrentIndex(1)
         elif self.projectSettings["RunType"] == 'Trace':
@@ -64,10 +64,10 @@ class SetRunParameters(QtWidgets.QLabel):
         hbox.addWidget(self.runTypeBox)
 
         self.traceTypeBox = QtWidgets.QComboBox()
-        self.traceTypeBox.addItem("Calling relationships")
-        self.traceTypeBox.addItem("Functions called")
-        self.traceTypeBox.addItem("Times lines are called")
-        self.traceTypeBox.addItem("View currently running line of code")
+        self.traceTypeBox.addItem(_("Calling relationships"))
+        self.traceTypeBox.addItem(_("Functions called"))
+        self.traceTypeBox.addItem(_("Times lines are called"))
+        self.traceTypeBox.addItem(_("View currently running line of code"))
         self.traceTypeBox.setCurrentIndex(int(
             self.projectSettings["TraceType"]))
         self.traceTypeBox.currentIndexChanged.connect(self.saveArguments)
@@ -76,7 +76,7 @@ class SetRunParameters(QtWidgets.QLabel):
         if self.runTypeBox.currentIndex() != 2:
             self.traceTypeBox.hide()
 
-        self.runWithArgsBox = QtWidgets.QCheckBox("Arguments:")
+        self.runWithArgsBox = QtWidgets.QCheckBox(_("Arguments:"))
         if self.projectSettings["RunWithArguments"] == 'True':
             self.runWithArgsBox.setChecked(True)
         self.runWithArgsBox.toggled.connect(self.saveArguments)
@@ -89,7 +89,7 @@ class SetRunParameters(QtWidgets.QLabel):
 
         hbox = QtWidgets.QHBoxLayout()
 
-        self.clearOutputBox = QtWidgets.QCheckBox("Clear output window")
+        self.clearOutputBox = QtWidgets.QCheckBox(_("Clear output window"))
         if self.projectSettings["ClearOutputWindowOnRun"] == 'True':
             self.clearOutputBox.setChecked(True)
         self.clearOutputBox.toggled.connect(self.saveArguments)
@@ -97,7 +97,7 @@ class SetRunParameters(QtWidgets.QLabel):
 
         hbox.addStretch(1)
 
-        hbox.addWidget(QtWidgets.QLabel("Max Output Size <lines>"))
+        hbox.addWidget(QtWidgets.QLabel(_("Max Output Size <lines>")))
 
         self.bufferSizeBox = QtWidgets.QSpinBox()
         self.bufferSizeBox.setMaximum(999)
@@ -109,14 +109,14 @@ class SetRunParameters(QtWidgets.QLabel):
         mainLayout.addLayout(hbox)
 
         self.runPointBox = QtWidgets.QComboBox()
-        self.runPointBox.addItem("Internal Console")
-        self.runPointBox.addItem("External Console")
+        self.runPointBox.addItem(_("Internal Console"))
+        self.runPointBox.addItem(_("External Console"))
         if self.projectSettings["RunInternal"] == 'False':
             self.runPointBox.setCurrentIndex(1)
         self.runPointBox.currentIndexChanged.connect(self.saveArguments)
         mainLayout.addWidget(self.runPointBox)
 
-        self.useVirtualEnvBox = QtWidgets.QCheckBox("Use Virtual Environment")
+        self.useVirtualEnvBox = QtWidgets.QCheckBox(_("Use Virtual Environment"))
         if self.projectSettings["UseVirtualEnv"] == 'True':
             self.useVirtualEnvBox.setChecked(True)
         self.useVirtualEnvBox.toggled.connect(self.setDefaultInterpreter)
@@ -152,7 +152,7 @@ class SetRunParameters(QtWidgets.QLabel):
                     if index != -1:
                         self.installedPythonVersionBox.setCurrentIndex(index)
         else:
-            self.installedPythonVersionBox.addItem("<No Python installed>")
+            self.installedPythonVersionBox.addItem(_("<No Python installed>"))
 
     def runTypeChanged(self, index):
         if index == 2:
@@ -327,8 +327,8 @@ class RunWidget(BaseScintilla):
         self.runProcess.finished.connect(self.writeExitStatus)
         self.runProcess.finished.connect(self.processEnded)
 
-        self.copyAct = QtGui.QAction("Copy", self,
-                                     statusTip="Copy", triggered=self.copyText)
+        self.copyAct = QtGui.QAction(_("Copy"), self,
+                                     statusTip=_("Copy"), triggered=self.copyText)
         self.contextMenu = QtWidgets.QMenu()
         self.contextMenu.addAction(self.copyAct)
 
@@ -476,19 +476,19 @@ class RunWidget(BaseScintilla):
     def pythonPath(self):
         if self.projectData["DefaultInterpreter"] == "None":
             message = QtWidgets.QMessageBox.critical(
-                self, "Run", "No Python interpreter to run your code. Please install Python.")
+                self, _("Run"), _("No Python interpreter to run your code. Please install Python."))
             return None
         else:
             if os.path.exists(self.projectData["DefaultInterpreter"]):
                 if len(self.useData.SETTINGS["InstalledInterpreters"]) == 0:
                     message = QtWidgets.QMessageBox.critical(
-                        self, "Run", "Python must be installed for virtual environment to work.")
+                        self, _("Run"), _("Python must be installed for virtual environment to work."))
                     return None
                 else:
                     return self.projectData["DefaultInterpreter"]
             else:
                 message = QtWidgets.QMessageBox.critical(
-                    self, "Run", "The current Python interpreter is not available.")
+                    self, _("Run"), _("The current Python interpreter is not available."))
                 return None
 
     def runModule(self, runScript, fileName, run_internal, run_with_args, args):
@@ -664,8 +664,8 @@ class RunWidget(BaseScintilla):
 
     def runProject(self):
         if self.editorTabWidget.errorsInProject():
-            reply = QtWidgets.QMessageBox.warning(self, "Run Project",
-                                              "There are errors in your project. Run anyway?",
+            reply = QtWidgets.QMessageBox.warning(self, _("Run Project"),
+                                              _("There are errors in your project. Run anyway?"),
                                               QtWidgets.QMessageBox.StandardButton.Yes | 
                                               QtWidgets.QMessageBox.StandardButton.No)
             if reply == QtWidgets.QMessageBox.StandardButton.Yes:
@@ -684,13 +684,13 @@ class RunWidget(BaseScintilla):
             filePath = self.editorTabWidget.projectPathDict["mainscript"]
             fileName = self.editorTabWidget.projectPathDict["name"]
             if os.path.exists(filePath) is not True:
-                message = QtWidgets.QMessageBox.warning(self, "Run Project",
-                                                    "Main script is missing: " + fileName)
+                message = QtWidgets.QMessageBox.warning(self, _("Run Project"),
+                                                    _("Main script is missing: ") + fileName)
                 return
         else:
             if self.editorTabWidget.getSource().strip() == '':
-                message = QtWidgets.QMessageBox.warning(self, "Run",
-                                                    "Source code must be present!")
+                message = QtWidgets.QMessageBox.warning(self, _("Run"),
+                                                    _("Source code must be present!"))
                 return
             if rerun is False:
                 self.filePath = self.editorTabWidget.getEditorData("filePath")

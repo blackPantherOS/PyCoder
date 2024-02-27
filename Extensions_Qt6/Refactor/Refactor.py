@@ -28,7 +28,7 @@ class GetName(QtWidgets.QDialog):
 
         mainLayout = QtWidgets.QVBoxLayout()
 
-        mainLayout.addWidget(QtWidgets.QLabel("New name:"))
+        mainLayout.addWidget(QtWidgets.QLabel(_("New name:")))
 
         self.nameLine = QtWidgets.QLineEdit()
         self.nameLine.setText(defaultText)
@@ -43,12 +43,12 @@ class GetName(QtWidgets.QDialog):
 
         hbox.addStretch(1)
 
-        self.acceptButton = QtWidgets.QPushButton("Ok")
+        self.acceptButton = QtWidgets.QPushButton(_("Ok"))
         self.acceptButton.setDisabled(True)
         self.acceptButton.clicked.connect(self.accept)
         hbox.addWidget(self.acceptButton)
 
-        self.cancelButton = QtWidgets.QPushButton("Cancel")
+        self.cancelButton = QtWidgets.QPushButton(_("Cancel"))
         self.cancelButton.clicked.connect(self.cancel)
         hbox.addWidget(self.cancelButton)
 
@@ -88,7 +88,7 @@ class FindUsageThread(QtCore.QThread):
             result = find_occurrences(self.ropeProject, resource, self.offset)
             self.itemsDict = {}
             if len(result) == 0:
-                self.error = "No usages found."
+                self.error = _("No usages found.")
             else:
                 for i in result:
                     line = i.lineno
@@ -287,7 +287,7 @@ class Refactor(QtWidgets.QWidget):
 
         self.createActions()
 
-        self.refactorMenu = QtWidgets.QMenu("Refactor")
+        self.refactorMenu = QtWidgets.QMenu(_("Refactor"))
         self.refactorMenu.addAction(self.renameAttributeAct)
         self.refactorMenu.addAction(self.inlineAct)
         self.refactorMenu.addAction(self.localToFieldAct)
@@ -299,54 +299,54 @@ class Refactor(QtWidgets.QWidget):
         self.findDefAct = \
             QtGui.QAction(
                 QtGui.QIcon(os.path.join("Resources", "images", "map_marker")),
-                "Go-to Definition", self, statusTip="Go-to Definition",
+                _("Go-to Definition"), self, statusTip=_("Go-to where ara available definition"),
                 triggered=self.findDefinition)
 
         self.findOccurrencesAct = \
-            QtGui.QAction("Usages", self, statusTip="Usages",
+            QtGui.QAction(_("Usages"), self, statusTip=_("Search to other usages"),
                           triggered=self.findOccurrences)
 
         self.moduleToPackageAct = \
             QtGui.QAction(
-                "Convert to Package", self, statusTip="Convert to Package",
+                _("Convert to Package"), self, statusTip=_("Convert to Package"),
                 triggered=self.moduleToPackage)
 
         self.renameModuleAct = \
-            QtGui.QAction("Rename", self, statusTip="Rename",
+            QtGui.QAction(_("Rename"), self, statusTip=_("Rename module to..."),
                           triggered=self.renameModule)
 
         self.renameAttributeAct = \
-            QtGui.QAction("Rename", self, statusTip="Rename",
+            QtGui.QAction(_("Rename"), self, statusTip=_("Rename attribute to..."),
                           triggered=self.renameAttribute)
 
         self.inlineAct = \
-            QtGui.QAction("Inline", self, statusTip="Inline",
+            QtGui.QAction(_("Inline"), self, statusTip=_("Inline"),
                           triggered=self.inline)
 
         self.localToFieldAct = \
-            QtGui.QAction("Local-to-Field", self, statusTip="Local-to-Field",
+            QtGui.QAction(_("Local-to-Field"), self, statusTip=_("Local-to-Field"),
                           triggered=self.localToField)
 
     def renameModule(self):
         index = self.editorTabWidget.currentIndex()
         moduleName = self.editorTabWidget.tabText(index)
         moduleName = os.path.splitext(moduleName)[0]
-        newName = GetName("Rename", moduleName, self)
+        newName = GetName(_("Rename"), moduleName, self)
         project = self.getProject()
         if newName.accepted:
             saved = self.editorTabWidget.saveProject()
             if saved:
                 path = self.editorTabWidget.getEditorData("filePath")
                 self.renameThread.rename(newName.text, path, project, None)
-                self.busyWidget.showBusy(True, "Renaming... please wait!")
+                self.busyWidget.showBusy(True, _("Renaming... please wait!"))
 
     def renameAttribute(self):
         objectName = self.editorTabWidget.get_current_word()
         if objectName == '':
             self.editorTabWidget.showNotification(
-                "No word under cursor.")
+                _("No word under cursor."))
             return
-        newName = GetName("Rename", objectName, self)
+        newName = GetName(_("Rename"), objectName, self)
         if newName.accepted:
             project = self.getProject()
             saved = self.editorTabWidget.saveProject()
@@ -354,12 +354,12 @@ class Refactor(QtWidgets.QWidget):
                 offset = self.getOffset()
                 path = self.editorTabWidget.getEditorData("filePath")
                 self.renameThread.rename(newName.text, path, project, offset)
-                self.busyWidget.showBusy(True, "Renaming... please wait!")
+                self.busyWidget.showBusy(True, _("Renaming... please wait!"))
 
     def renameFinished(self):
         self.busyWidget.showBusy(False)
         if self.renameThread.error is not None:
-            message = QtWidgets.QMessageBox.warning(self, "Failed Rename",
+            message = QtWidgets.QMessageBox.warning(self, _("Failed Rename"),
                                                 self.renameThread.error)
             return
         if self.renameThread.offset is None:
@@ -382,12 +382,12 @@ class Refactor(QtWidgets.QWidget):
         saved = self.editorTabWidget.saveProject()
         if saved:
             self.inlineThread.inline(project, resource, offset)
-            self.busyWidget.showBusy(True, "Inlining... please wait!")
+            self.busyWidget.showBusy(True, _("Inlining... please wait!"))
 
     def inlineFinished(self):
         self.busyWidget.showBusy(False)
         if self.inlineThread.error is not None:
-            message = QtWidgets.QMessageBox.warning(self, "Failed Inline",
+            message = QtWidgets.QMessageBox.warning(self, _("Failed Inline"),
                                                 self.inlineThread.error)
             return
         if len(self.inlineThread.changedFiles) > 0:
@@ -402,12 +402,12 @@ class Refactor(QtWidgets.QWidget):
         if saved:
             self.localToFieldThread.convert(project, resource, offset)
             self.busyWidget.showBusy(
-                True, "Converting Local to Field... please wait!")
+                True, _("Converting Local to Field... please wait!"))
 
     def localToFieldFinished(self):
         self.busyWidget.showBusy(False)
         if self.localToFieldThread.error is not None:
-            message = QtWidgets.QMessageBox.warning(self, "Failed Local-to-Field",
+            message = QtWidgets.QMessageBox.warning(self, _("Failed Local-to-Field"),
                                                 self.localToFieldThread.error)
             return
         if len(self.localToFieldThread.changedFiles) > 0:
@@ -426,7 +426,7 @@ class Refactor(QtWidgets.QWidget):
                                          self.editorTabWidget.getSource(), offset, resource)
                 if result is None:
                     self.editorTabWidget.showNotification(
-                        "No definition found.")
+                        _("No definition found."))
                 else:
                     start, end = result.region
                     offset = result.offset
@@ -454,12 +454,12 @@ class Refactor(QtWidgets.QWidget):
         saved = self.editorTabWidget.saveProject()
         if saved:
             self.moduleToPackageThread.convert(path, project)
-            self.busyWidget.showBusy(True, "Converting... please wait!")
+            self.busyWidget.showBusy(True, _("Converting... please wait!"))
 
     def moduleToPackageFinished(self):
         self.busyWidget.showBusy(False)
         if self.moduleToPackageThread.error is not None:
-            message = QtWidgets.QMessageBox.warning(self, "Failed to convert",
+            message = QtWidgets.QMessageBox.warning(self, _("Failed to convert"),
                                                 self.moduleToPackageThread.error)
 
     def findOccurrences(self):
@@ -467,7 +467,7 @@ class Refactor(QtWidgets.QWidget):
 
         if self.objectName == '':
             self.editorTabWidget.showNotification(
-                "No word under cursor.")
+                _("No word under cursor."))
             return
         offset = self.getOffset()
         project = self.getProject()
@@ -475,7 +475,7 @@ class Refactor(QtWidgets.QWidget):
         if saved:
             path = self.editorTabWidget.getEditorData("filePath")
             self.findThread.find(path, project, offset)
-            self.busyWidget.showBusy(True, "Finding usages... please wait!")
+            self.busyWidget.showBusy(True, _("Finding usages... please wait!"))
 
     def findOccurrencesFinished(self):
         self.busyWidget.showBusy(False)
@@ -496,9 +496,9 @@ class Refactor(QtWidgets.QWidget):
                     parentItem.addChild(childItem)
                     foundList.append(parentItem)
             usageDialog = UsageDialog(
-                self.editorTabWidget, "Usages: " + self.objectName, foundList, self)
+                self.editorTabWidget, _("Usages: ") + self.objectName, foundList, self)
         else:
-            self.editorTabWidget.showNotification("No usages found.")
+            self.editorTabWidget.showNotification(_("No usages found."))
 
     def getOffset(self):
         return self.editorTabWidget.getOffset()
