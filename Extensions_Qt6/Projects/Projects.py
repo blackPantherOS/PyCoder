@@ -54,7 +54,7 @@ class CreateProjectThread(QtCore.QThread):
             else:
                 os.mkdir(os.path.join(self.projectPath, "src"))
 
-            if self.projDataDict["type"] == "Desktop Application":
+            if self.projDataDict["type"] == _("Desktop Application"):
                 build = os.path.join(self.projectPath, "Build")
                 os.mkdir(build)
                 os.mkdir(os.path.join(build, "Linux"))
@@ -66,7 +66,7 @@ class CreateProjectThread(QtCore.QThread):
             file = open(self.mainScript, 'w')
             file.close()
 
-            if self.projDataDict["type"] == "Desktop Application":
+            if self.projDataDict["type"] == _("Desktop Application"):
                 self.writeBuildProfile()
             self.writeDefaultSession()
             self.writeProjectData()
@@ -418,8 +418,8 @@ class Projects(QtWidgets.QWidget):
                 project_data = self.readProject(path)
                 if project_data is False:
                     QtWidgets.QApplication.restoreOverrideCursor()
-                    message = QtWidgets.QMessageBox.warning(self, "Open Project",
-                                                        "Failed:\n\n" + path)
+                    message = QtWidgets.QMessageBox.warning(self, _("Open Project"),
+                                                        _("Failed:\n\n") + path)
                     return
                 projectPathDict["name"] = project_data[1]["Name"]
                 projectPathDict["type"] = project_data[1]["Type"]
@@ -463,8 +463,8 @@ class Projects(QtWidgets.QWidget):
                     repr(traceback.format_exception(exc_type, exc_value,
                              exc_traceback)))
                 QtWidgets.QApplication.restoreOverrideCursor()
-                message = QtWidgets.QMessageBox.warning(self, "Failed Open",
-                                                    "Problem opening project: \n\n" + str(err))
+                message = QtWidgets.QMessageBox.warning(self, _("Failed Open"),
+                                                    _("Problem opening project: \n\n") + str(err))
             QtWidgets.QApplication.restoreOverrideCursor()
 
     def closeProject(self):
@@ -477,13 +477,13 @@ class Projects(QtWidgets.QWidget):
 
     def createProject(self, data):
         self.createProjectThread.create(data)
-        self.busyWidget.showBusy(True, "Creating project... please wait!")
+        self.busyWidget.showBusy(True, _("Creating project... please wait!"))
 
     def finalizeNewProject(self):
         self.busyWidget.showBusy(False)
         if self.createProjectThread.error is not False:
-            message = QtWidgets.QMessageBox.warning(self, "New Project",
-                                                "Failed to create project:\n\n" + self.createProjectThread.error)
+            message = QtWidgets.QMessageBox.warning(self, _("New Project"),
+                                                _("Failed to create project:\n\n") + self.createProjectThread.error)
         else:
             projectPath = os.path.normpath(
                 self.createProjectThread.projectPath)  # otherwise an error will occur in rope

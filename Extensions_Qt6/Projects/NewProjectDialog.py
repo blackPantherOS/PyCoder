@@ -44,7 +44,7 @@ class NewProjectDialog(QtWidgets.QDialog):
     def __init__(self, useData, parent=None):
         QtWidgets.QDialog.__init__(self, parent, QtCore.Qt.WindowType.WindowCloseButtonHint)
 
-        self.setWindowTitle('New Project')
+        self.setWindowTitle(_('New Project'))
         self.resize(500, 100)
 
         self.useData = useData
@@ -55,29 +55,29 @@ class NewProjectDialog(QtWidgets.QDialog):
         form = QtWidgets.QFormLayout()
 
         self.nameLine = QtWidgets.QLineEdit()
-        self.nameLine.setText("PythonApp")
+        self.nameLine.setText(_("PythonApp"))
         self.nameLine.textChanged.connect(self.validateFields)
-        form.addRow("Name: ", self.nameLine)
+        form.addRow(_("Name: "), self.nameLine)
 
         self.typeBox = QtWidgets.QComboBox()
-        self.typeBox.addItem("Desktop Application")
-        self.typeBox.addItem("Python Package")
+        self.typeBox.addItem(_("Desktop Application"))
+        self.typeBox.addItem(_("Python Package"))
         self.typeBox.currentIndexChanged.connect(self.showWindowTypeBox)
-        form.addRow("Type: ", self.typeBox)
+        form.addRow(_("Type: "), self.typeBox)
 
         self.windowTypeBox = QtWidgets.QComboBox()
-        self.windowTypeBox.addItem("GUI")
-        self.windowTypeBox.addItem("Console")
+        self.windowTypeBox.addItem(_("GUI"))
+        self.windowTypeBox.addItem(_("Console"))
         form.addRow('', self.windowTypeBox)
 
         self.destinationBox = GetPathLine(
             self.useData, self.useData.appPathDict["projectsdir"])
         self.destinationBox.textChanged.connect(self.validateFields)
-        form.addRow("Destination: ", self.destinationBox)
+        form.addRow(_("Destination: "), self.destinationBox)
 
         self.sourcesLine = GetPathLine(self.useData)
         self.sourcesLine.textChanged.connect(self.validateFields)
-        form.addRow("Import Sources: ", self.sourcesLine)
+        form.addRow(_("Import Sources: "), self.sourcesLine)
 
         mainLayout.addLayout(form)
         mainLayout.addStretch(1)
@@ -85,15 +85,15 @@ class NewProjectDialog(QtWidgets.QDialog):
         hbox = QtWidgets.QHBoxLayout()
         hbox.addStretch(1)
 
-        self.okButton = QtWidgets.QPushButton("Ok")
+        self.okButton = QtWidgets.QPushButton(_("Ok"))
         self.okButton.clicked.connect(self.sendData)
         hbox.addWidget(self.okButton)
 
-        self.cancelButton = QtWidgets.QPushButton("Cancel")
+        self.cancelButton = QtWidgets.QPushButton(_("Cancel"))
         self.cancelButton.clicked.connect(self.close)
         hbox.addWidget(self.cancelButton)
 
-        self.helpButton = QtWidgets.QPushButton("Help")
+        self.helpButton = QtWidgets.QPushButton(_("Help"))
         hbox.addWidget(self.helpButton)
 
         mainLayout.addLayout(hbox)
@@ -101,7 +101,7 @@ class NewProjectDialog(QtWidgets.QDialog):
         self.validateFields()
 
     def showWindowTypeBox(self):
-        if self.typeBox.currentText() == "Desktop Application":
+        if self.typeBox.currentText() == _("Desktop Application"):
             self.windowTypeBox.show()
         else:
             self.windowTypeBox.hide()
@@ -129,9 +129,9 @@ class NewProjectDialog(QtWidgets.QDialog):
         self.okButton.setDisabled(False)
 
     def sendData(self):
-        if self.typeBox.currentText() == "Desktop Application":
+        if self.typeBox.currentText() == _("Desktop Application"):
             mainScript = self.nameLine.text() + '.py'
-        elif self.typeBox.currentText() == "Python Package":
+        elif self.typeBox.currentText() == _("Python Package"):
             mainScript = "__init__.py"
         data = {
             "mainscript": mainScript,

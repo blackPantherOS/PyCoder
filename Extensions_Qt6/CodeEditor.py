@@ -694,8 +694,8 @@ class CodeEditor(BaseScintilla):
         self.moveCursorWordRight()
 
     def takeSnapshot(self):
-        reply = QtWidgets.QMessageBox.warning(self, "Snapshot",
-                                          "Take a snapshot of the current module state?",
+        reply = QtWidgets.QMessageBox.warning(self, _("Snapshot"),
+                                          _("Take a snapshot of the current module state?"),
                                           QtWidgets.QMessageBox.StandardButton.Yes | 
                                           QtWidgets.QMessageBox.StandardButton.No)
         if reply == QtWidgets.QMessageBox.StandardButton.Yes:

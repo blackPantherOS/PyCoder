@@ -39,7 +39,7 @@ class ProjectManager(QtWidgets.QWidget):
 
         self.configDialog = editorTabWidget.configDialog
 
-        if projectPathDict["type"] == "Desktop Application":
+        if projectPathDict["type"] == _("Desktop Application"):
             self.build = Build(
                 buildStatusWidget, messagesWidget, projectPathDict, projectSettings, useData,
                 self.configDialog.buildConfig, editorTabWidget, self)
@@ -52,10 +52,11 @@ class ProjectManager(QtWidgets.QWidget):
 
     def buildProject(self):
         if self.editorTabWidget.errorsInProject():
-            reply = QtWidgets.QMessageBox.warning(self, "Build",
-                                              "There are errors in your project. Build anyway?",
-                                              QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-            if reply == QtWidgets.QMessageBox.Yes:
+            reply = QtWidgets.QMessageBox.warning(self, _("Build"),
+                                              _("There are errors in your project. Build anyway?"),
+                                              QtWidgets.QMessageBox.StandardButton.Yes | 
+                                              QtWidgets.QMessageBox.StandardButton.No)
+            if reply == QtWidgets.QMessageBox.StandardButton.Yes:
                 self.build.build()
             else:
                 return
@@ -77,16 +78,16 @@ class ProjectManager(QtWidgets.QWidget):
         savepath = os.path.join(self.useData.getLastOpenedDir(), name)
         savepath = os.path.normpath(savepath)
         fileName = QtWidgets.QFileDialog.getSaveFileName(self,
-                                                     "Export", savepath,
-                                                     "All files (*)", options)[0]
+                                                     _("Export"), savepath,
+                                                     _("All files (*)"), options)[0]
         if fileName:
             self.useData.saveLastOpenedDir(os.path.split(fileName)[0])
 
             self.exportThread.export(fileName, path)
-            self.busyWidget.showBusy(True, "Exporting project... please wait!")
+            self.busyWidget.showBusy(True, _("Exporting project... please wait!"))
 
     def finishExport(self):
         self.busyWidget.showBusy(False)
         if self.exportThread.error is not None:
             message = QtWidgets.QMessageBox.warning(
-                self, "Export Failed", self.exportThread.error)
+                self, _("Export Failed"), self.exportThread.error)

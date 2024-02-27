@@ -24,7 +24,7 @@ class BuildThread(QtCore.QThread):
         metadata.author = self.profile["author"]
         metadata.name = self.profile["name"]
 
-        if self.profile["base"] == "Console":
+        if self.profile["base"] == _("Console"):
             base = "ConsoleKeepPath"
         else:
             base = "Win32GUI" if sys.platform.startswith("win") else None
@@ -35,29 +35,29 @@ class BuildThread(QtCore.QThread):
         else:
             iconPath = None
 
-        if self.profile["compress"] == 'Compress':
+        if self.profile["compress"] == _('Compress'):
             compress = True
         else:
             compress = False
 
-        if self.profile["optimize"] == "Don't Optimize":
+        if self.profile["optimize"] == _("Don't Optimize"):
             optimizeFlag = 0
-        elif self.profile["optimize"] == 'Optimize':
+        elif self.profile["optimize"] == _('Optimize'):
             optimizeFlag = 1
-        elif self.profile["optimize"] == "Optimize (Remove Doc Strings)":
+        elif self.profile["optimize"] == _("Optimize (Remove Doc Strings)"):
             optimizeFlag = 2
 
-        if self.profile["copydeps"] == 'Copy Dependencies':
+        if self.profile["copydeps"] == _('Copy Dependencies'):
             copyDependentFiles = True
         else:
             copyDependentFiles = False
 
-        if self.profile["appendscripttoexe"] == 'Append Script to Exe':
+        if self.profile["appendscripttoexe"] == _('Append Script to Exe'):
             appendScriptToExe = True
         else:
             appendScriptToExe = False
 
-        if self.profile["appendscripttolibrary"] == 'Append Script to Library':
+        if self.profile["appendscripttolibrary"] == _('Append Script to Library'):
             appendScriptToLibrary = True
         else:
             appendScriptToLibrary = False
@@ -169,10 +169,10 @@ class BuildThread(QtCore.QThread):
                     for name in names:
                         callers = list(badModules[name].keys())
                         callers.sort()
-                        self.missing.append("? {0} imported from {1}".format
+                        self.missing.append(_("? {0} imported from {1}").format
                                             (name, ", ".join(callers)))
                 except AttributeError:
-                    print("The finder in cx_Freeze curren not available.")
+                    print(_("The finder in cx_Freeze curren not available."))
             else:
 
                 self.missing = []
@@ -219,7 +219,7 @@ class BuildThread(QtCore.QThread):
         if not os.path.exists(targetDir):
             os.makedirs(targetDir, exist_ok=True)
 
-        print("Start build to target dir:", targetDir)
+        print(_("Start build to target dir:"), targetDir)
         self.start()
 
 class Cx_Freeze(Freezer):
@@ -301,13 +301,13 @@ class Build(QtWidgets.QWidget):
     def openDir(self):
         if os.path.exists(self.projectPathDict["builddir"]):
             if sys.platform.startswith('win'):
-                os.system('start explorer "{}"'.format(self.projectPathDict["builddir"]))
+                os.system(_('start explorer "{}"').format(self.projectPathDict["builddir"]))
             else:
                 opener = "xdg-open" if sys.platform == "linux" else "open"
                 os.system('{} "{}"'.format(opener, self.projectPathDict["builddir"]))
         else:
-            message = QtWidgets.QMessageBox.critical(self, "Open",
-                                                 "Build folder is missing!")
+            message = QtWidgets.QMessageBox.critical(self, _("Open"),
+                                                 _("Build folder is missing!"))
 
     def cancelBuild(self):
         self.buildThread.exit()

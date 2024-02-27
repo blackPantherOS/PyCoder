@@ -23,6 +23,10 @@ from Extensions_Qt6.BottomWidgets.RunWidget import SetRunParameters
 from Extensions_Qt6.Projects.ProjectManager.ConfigureProject import ConfigureProject
 from Extensions_Qt6 import StyleSheet
 
+import locale
+import gettext
+gettext.install("pycoder6", 'locales')
+
 class EditorTabBar(QtWidgets.QTabBar):
 
     def __init__(self, app, renameFileAct,
@@ -73,31 +77,32 @@ class EditorTabBar(QtWidgets.QTabBar):
     def createActions(self):
         self.closeTabAct = QtGui.QAction(
             QtGui.QIcon(os.path.join("Resources", "images", "cross_")),
-            "Close", self, statusTip="Close Tab", triggered=self.closeTab)
+            _("Close"), self, statusTip=_("Close Tab"), triggered=self.closeTab)
 
-        self.copyPathAct = QtGui.QAction("Copy File Path", self,
-                                         statusTip="Copy File Path", triggered=self.copyPath)
+        self.copyPathAct = QtGui.QAction(_("Copy File Path"), self,
+                                         statusTip=_("Copy Selected File Path"),
+                                         triggered=self.copyPath)
 
         self.openFileLocationAct = \
             QtGui.QAction(
-                "Open File Location", self, statusTip="Open File Location",
+                _("Open File Location"), self, statusTip=_("Open File Location"),
                 triggered=self.openFileLocation)
 
         self.cloneTabAct = \
             QtGui.QAction(
-                "Clone", self, statusTip="Create a copy of current tab",
+                _("Clone"), self, statusTip=_("Create a copy of current tab"),
                 triggered=self.cloneTab)
 
         self.reloadTabAct = \
             QtGui.QAction(
-                "Reload", self, statusTip="Reload",
+                _("Reload"), self, statusTip=_("Reload"),
                 triggered=self.reload)
 
         self.favouritesAct = \
             QtGui.QAction(
                 QtGui.QIcon(os.path.join("Resources", "images", "plus")),
-                "Add to Favourites", self,
-                statusTip="Add to Favourites",
+                _("Add to Favourites"), self,
+                statusTip=_("Add to Favourites"),
                           triggered=self.editorTabWidget.addToFavourites)
 
         self.menu = QtWidgets.QMenu(self)
@@ -117,8 +122,8 @@ class EditorTabBar(QtWidgets.QTabBar):
         self.menu.addAction(self.favouritesAct)
 
     def reload(self):
-        reply = QtWidgets.QMessageBox.warning(self, "Reload",
-                                          "Do you really want to reload?",
+        reply = QtWidgets.QMessageBox.warning(self, _("Reload"),
+                                          _("Do you really want to reload?"),
                                           QtWidgets.QMessageBox.StandardButton.Yes | 
                                           QtWidgets.QMessageBox.StandardButton.No)
         if reply == QtWidgets.QMessageBox.StandardButton.Yes:
@@ -266,7 +271,7 @@ class EditorTabWidget(QtWidgets.QTabWidget):
         self.setKeymap()
         self.backupTimer.start()
 
-        self.newFileMenu = QtWidgets.QMenu("New File")
+        self.newFileMenu = QtWidgets.QMenu(_("New File"))
         self.newFileMenu.addAction(self.newPythonFileAct)
         self.newFileMenu.addAction(self.newXmlFileAct)
         self.newFileMenu.addAction(self.newHtmlFileAct)
@@ -293,30 +298,30 @@ class EditorTabWidget(QtWidgets.QTabWidget):
     def createActions(self):
         self.undoAct = QtGui.QAction(
             QtGui.QIcon(os.path.join("Resources", "images", "undo")),
-            "Undo", self,
-            statusTip="Undo last edit action",
+            _("Undo"), self,
+            statusTip=_("Undo last edit action"),
             triggered=self.undoAction)
 
         self.redoAct = QtGui.QAction(
             QtGui.QIcon(os.path.join("Resources", "images", "redo")),
-            "Redo", self,
-            statusTip="Redo last edit action",
+            _("Redo"), self,
+            statusTip=_("Redo last edit action"),
             triggered=self.redoAction)
 
         self.cutAct = QtGui.QAction(
             QtGui.QIcon(os.path.join("Resources", "images", "cut")),
-            "Cut", self,
-            statusTip="Cut selected text", triggered=self.cutItem)
+            _("Cut"), self,
+            statusTip=_("Cut selected text"), triggered=self.cutItem)
 
         self.copyAct = QtGui.QAction(
             QtGui.QIcon(os.path.join("Resources", "images", "copy")),
-            "Copy", self,
-            statusTip="Copy selected text", triggered=self.copyItem)
+            _("Copy"), self,
+            statusTip=_("Copy selected text"), triggered=self.copyItem)
 
         self.pasteAct = QtGui.QAction(
             QtGui.QIcon(os.path.join("Resources", "images", "paste")),
-            "Paste", self,
-            statusTip="Paste text from clipboard",
+            _("Paste"), self,
+            statusTip=_("Paste text from clipboard"),
             triggered=self.pasteFromClipboard)
 
         #----------------------------------------------------------------------
@@ -325,122 +330,125 @@ class EditorTabWidget(QtWidgets.QTabWidget):
             QtGui.QAction(
                 QtGui.QIcon(
                     os.path.join("Resources", "images", "increase_indent")),
-                "Indent", self,
-                statusTip="Indent Region",
+                _("Indent"), self,
+                statusTip=_("Indent Region"),
                 triggered=self.increaseIndent)
 
         self.dedentAct = \
             QtGui.QAction(
                 QtGui.QIcon(
                     os.path.join("Resources", "images", "decrease_indent")),
-                "Unindent", self,
-                statusTip="Unindent Region",
+                _("Unindent"), self,
+                statusTip=_("Unindent Region"),
                 triggered=self.decreaseIndent)
 
         self.writeLockAct = \
             QtGui.QAction(
                 QtGui.QIcon(os.path.join("Resources", "images", "block")),
-                "Write Lock", self,
-                statusTip="Write Lock",
+                _("Write Lock"), self,
+                statusTip=("Write Lock"),
                           triggered=self.writeLock)
 
         self.findNextBookmarkAct = \
             QtGui.QAction(
                 QtGui.QIcon(
                     os.path.join("Resources", "images", "Arrow2-down")),
-                "Next Bookmark", self, statusTip="Next Bookmark",
+                _("Next Bookmark"), self, statusTip=_("Next Bookmark"),
                 triggered=self.findNextBookmark)
 
         self.findPrevBookmarkAct = \
             QtGui.QAction(
                 QtGui.QIcon(os.path.join("Resources", "images", "Arrow2-up")),
-                "Previous Bookmark", self, statusTip="Previous Bookmark",
+                _("Previous Bookmark"), self, statusTip=_("Previous Bookmark"),
                 triggered=self.findPreviousBookmark)
 
         self.removeBookmarksAct = \
             QtGui.QAction(
                 QtGui.QIcon(os.path.join("Resources", "images", "block__")),
-                "Remove Bookmarks", self, statusTip="Remove Bookmarks",
+                _("Remove Bookmarks"), self, statusTip=_("Remove Bookmarks"),
                 triggered=self.removeBookmarks)
+
         #---------------------------------------------------------------------
+
         self.newPythonFileAct = QtGui.QAction(
             QtGui.QIcon(os.path.join("Resources", "images", "new")),
-            "New Python File", self,
-            statusTip="Create a new python file",
+            _("New [.py]"), self,
+            statusTip=_("Create a new python file"),
             triggered=self._newPythonFile)
 
         self.newXmlFileAct = QtGui.QAction(
             QtGui.QIcon(os.path.join("Resources", "images", "new")),
             "Xml", self,
-            statusTip="Create a new Xml file",
+            statusTip=_("Create a new Xml file"),
             triggered=self._newXmlFile)
 
         self.newHtmlFileAct = QtGui.QAction(
             QtGui.QIcon(os.path.join("Resources", "images", "new")),
             "Html", self,
-            statusTip="Create a new Html file",
+            statusTip=_("Create a new Html file"),
             triggered=self._newHtmlFile)
 
         self.newCssFileAct = QtGui.QAction(
             QtGui.QIcon(os.path.join("Resources", "images", "new")),
             "Css", self,
-            statusTip="Create a new Css file",
+            statusTip=_("Create a new Css file"),
             triggered=self._newCssFile)
 
         self.openFileAct = \
             QtGui.QAction(
                 QtGui.QIcon(os.path.join("Resources", "images", "open_file")),
-                "Open File...", self,
-                statusTip="Open python file",
+                _("Open File..."), self,
+                statusTip=_("Open python file"),
                           triggered=self.openFile)
 
         self.saveAct = QtGui.QAction(
             QtGui.QIcon(os.path.join("Resources", "images", "save_")),
-            "Save", self,
-            statusTip="Save", triggered=self._save)
+            _("Save"), self,
+            statusTip=_("Save file"), triggered=self._save)
 
         self.saveAllAct = \
             QtGui.QAction(
                 QtGui.QIcon(
                     os.path.join("Resources", "images", "disks-black")),
-                "Save All", self,
-                statusTip="Save All",
+                _("Save All"), self,
+                statusTip=_("Save All Changes"),
                           triggered=self.saveAll)
 
-        self.saveAsAct = QtGui.QAction("Save As...", self, statusTip="Save",
-                                       triggered=self.saveAs)
+        self.saveAsAct = QtGui.QAction(_("Save As..."), 
+                                           self, statusTip=_("Save file as..."),
+                                           triggered=self.saveAs)
 
-        self.saveCopyAsAct = QtGui.QAction("Save Copy As...",
-                                           self, statusTip="Save Copy As",
+        self.saveCopyAsAct = QtGui.QAction(_("Save Copy As..."), 
+                                           self, statusTip=_("Save a Copy As..."), 
                                            triggered=self.saveCopyAs)
 
         self.printAct = \
             QtGui.QAction(
                 QtGui.QIcon(
                     os.path.join("Resources", "images", "_0013_Printer")),
-                "Print", self,
-                statusTip="Print", triggered=self.printCode)
+                _("Print"), self,
+                statusTip=_("Print the content"), triggered=self.printCode)
         #----------------------------------------------------------------------
 
         self.vSplitEditorAct = \
             QtGui.QAction(
                 QtGui.QIcon(
                     os.path.join("Resources", "images", "border-horizontal")),
-                "Split Vertical", self,
-                statusTip="Split Vertical", triggered=self.splitVertical)
+                _("Split Vertical"), self,
+                statusTip=_("View Split Vertical"), triggered=self.splitVertical)
 
         self.hSplitEditorAct = \
             QtGui.QAction(
                 QtGui.QIcon(
                     os.path.join("Resources", "images", "border-vertical")),
-                "Split Horizontal", self,
-                statusTip="Split Horizontal", triggered=self.splitHorizontal)
+                _("Split Horizontal"), self,
+                statusTip=_("View Split Horizontal"), triggered=self.splitHorizontal)
 
         self.noSplitEditorAct = \
             QtGui.QAction(
                 QtGui.QIcon(os.path.join("Resources", "images", "border")),
-                "Remove Split", self,
-                statusTip="Remove Split", triggered=self.removeSplit)
+                _("Remove Split"), self,
+                statusTip=_("Remove Editor Split"), triggered=self.removeSplit)
 
     def addToFavourites(self):
         path = self.getEditorData("filePath")
@@ -455,7 +463,7 @@ class EditorTabWidget(QtWidgets.QTabWidget):
                 if path == file:
                     self.updateEditorData("filePath", None, i)
                     self.showNotification(
-                        "File renamed or moved.", i)
+                        _("File renamed or moved."), i)
                     break
 
     def focusedEditor(self, index=None):
@@ -563,6 +571,9 @@ class EditorTabWidget(QtWidgets.QTabWidget):
             key = self.getEditorData("backupKey", i)
             editor = self.getEditor(i)
 
+            if not os.path.exists(self.projectPathDict["backupdir"]):
+                os.makedirs(self.projectPathDict["backupdir"], exist_ok=True)
+
             savePath = os.path.join(self.projectPathDict["backupdir"], key)
 
             file = open(savePath, 'w')
@@ -623,6 +634,9 @@ class EditorTabWidget(QtWidgets.QTabWidget):
             savePath = self.projectPathDict["session"]
         file = open(savePath, "w")
         file.write('<?xml version="1.0" encoding="UTF-8"?>\n')
+        #vector for Debug:xml_content = dom_document.toString()
+        #print("Session dokumentum tartalma:")
+        #print(xml_content)
         file.write(dom_document.toString())
         file.close()
 
@@ -653,7 +667,7 @@ class EditorTabWidget(QtWidgets.QTabWidget):
         while node.isNull() is False:
             try:
                 tag = node.toElement()
-                if backup:
+                if backup and os.path.exists(loadPath):
                     backupKey = tag.attribute("backupKey")
                     basename = tag.attribute("baseName")
                     backupPath = os.path.join(
@@ -664,6 +678,7 @@ class EditorTabWidget(QtWidgets.QTabWidget):
                         backupText = file.read()
                         file.close()
 
+                        # vector: try fix to old method
                         subStack = self.newEditor(currentIindex)
                         editor = subStack.widget(0).widget(0)
                         editor.setText(backupText)
@@ -672,20 +687,25 @@ class EditorTabWidget(QtWidgets.QTabWidget):
 
                         restoredBackups += 1
                     else:
-                        real_mod_time = os.stat(realPath).st_mtime
-                        backup_mod_time = os.stat(backupPath).st_mtime
-                        if real_mod_time > backup_mod_time:
-                            pass
-                        else:
-                            file = open(backupPath, 'r')
-                            backupText = file.read()
-                            file.close()
+                        try:
+                            real_mod_time = os.stat(realPath).st_mtime
+                            backup_mod_time = os.stat(backupPath).st_mtime
+                            if real_mod_time > backup_mod_time:
+                                pass
+                            else:
+                                file = open(backupPath, 'r')
+                                backupText = file.read()
+                                file.close()
 
-                            file = open(realPath, "w")
-                            file.write(backupText)
-                            file.close()
+                                file = open(realPath, "w")
+                                file.write(backupText)
+                                file.close()
 
-                            restoredBackups += 1
+                                restoredBackups += 1
+                        except:
+                            exc_type, exc_value, exc_traceback = sys.exc_info()
+                            logging.error(repr(traceback.format_exception(exc_type, exc_value,
+                                         exc_traceback)))
 
                         path = tag.attribute("path")
                         loaded = self.loadfile(path, False, currentIindex)
@@ -739,7 +759,7 @@ class EditorTabWidget(QtWidgets.QTabWidget):
         self.clearBackups()
         if restoredBackups > 0:
             self.messagesWidget.addMessage(
-                0, "Restored", [str(restoredBackups) + ' file(s) restored from previous crash.'])
+                0, _("Restored"), [str(restoredBackups) + _(' file(s) restored from previous crash.')])
 
     def getSource(self, index=None):
         if index is None:
@@ -872,8 +892,8 @@ class EditorTabWidget(QtWidgets.QTabWidget):
         editor.findPreviousBookmark()
 
     def removeBookmarks(self):
-        reply = QtWidgets.QMessageBox.warning(self, "Remove Bookmarks",
-                                          "Do you really want to remove all bookmarks?",
+        reply = QtWidgets.QMessageBox.warning(self, _("Remove Bookmarks"),
+                                          _("Do you really want to remove all bookmarks?"),
                                           QtWidgets.QMessageBox.StandardButton.Yes | 
                                           QtWidgets.QMessageBox.StandardButton.No)
         if reply == QtWidgets.QMessageBox.StandardButton.Yes:
@@ -967,8 +987,8 @@ class EditorTabWidget(QtWidgets.QTabWidget):
             pass
 
     def requestSaveMess(self, tabIndex):
-        mess = "Save changes to '{0}'?".format(self.tabText(tabIndex))
-        reply = QtWidgets.QMessageBox.information(self, "Save", mess,
+        mess = _("Save changes to '{0}'?").format(self.tabText(tabIndex))
+        reply = QtWidgets.QMessageBox.information(self, _("Save"), mess,
                                               QtWidgets.QMessageBox.StandardButton.Save | 
                                               QtWidgets.QMessageBox.StandardButton.Discard |
                                               QtWidgets.QMessageBox.StandardButton.Cancel)
@@ -1089,7 +1109,7 @@ class EditorTabWidget(QtWidgets.QTabWidget):
     def saveErrorMess(self, mess):
 
         message = QtWidgets.QMessageBox.critical(self,
-                                             "Save", "Error saving file!\n\n" + mess)
+                                             _("Save"), _("Error saving file!\n\n") + mess)
 
     def printCode(self):
         document = self.currentEditor.document()
@@ -1102,9 +1122,9 @@ class EditorTabWidget(QtWidgets.QTabWidget):
 
     def openFile(self):
         fileName = QtWidgets.QFileDialog.getOpenFileName(self,
-                                                     "Select File", self.useData.getLastOpenedDir(
+                                                     _("Select File"), self.useData.getLastOpenedDir(
                                                      ),
-                                                     "All Files (*);;Console (*.py);;No Console (*.pyw);;Xml (*.xml);;Html (*.html);;Css (*.css)")[0]
+                                                     _("All Files (*);;Console (*.py);;No Console (*.pyw);;Xml (*.xml);;Html (*.html);;Css (*.css)"))[0]
         if fileName:
             self.useData.saveLastOpenedDir(os.path.split(fileName)[0])
             self.loadfile(os.path.normpath(fileName))
@@ -1113,15 +1133,15 @@ class EditorTabWidget(QtWidgets.QTabWidget):
         self.newEditor()
 
     def _newXmlFile(self):
-        self.newEditor(fileName="Untitled.xml")
+        self.newEditor(fileName=_("Untitled.xml"))
 
     def _newHtmlFile(self):
-        self.newEditor(fileName="Untitled.html")
+        self.newEditor(fileName=_("Untitled.html"))
 
     def _newCssFile(self):
-        self.newEditor(fileName="Untitled.css")
+        self.newEditor(fileName=_("Untitled.css"))
 
-    def newEditor(self, index=None, fileName="Untitled.py",
+    def newEditor(self, index=None, fileName=_("Untitled.py"),
                   filePath=None, encoding=None):
         extension = os.path.splitext(fileName)[1].lower()
         pyFile = extension in [".py", ".pyw"]
@@ -1293,7 +1313,6 @@ class EditorTabWidget(QtWidgets.QTabWidget):
 
     def get_current_word(self):
         current_word = self.focusedEditor().get_current_word()
-        print("Current word:", current_word)
         return current_word
 
     def getOffset(self):

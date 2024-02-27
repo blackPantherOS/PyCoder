@@ -9,7 +9,7 @@ class GeneralSettings(QtWidgets.QDialog):
     def __init__(self, useData, mainApp, projectWindowStack, parent=None):
         QtWidgets.QDialog.__init__(self, parent, QtCore.Qt.WindowType.WindowCloseButtonHint)
 
-        self.setWindowTitle("Settings")
+        self.setWindowTitle(_("Settings"))
         self.useData = useData
         self.mainApp = mainApp
         self.projectWindowStack = projectWindowStack
@@ -21,7 +21,7 @@ class GeneralSettings(QtWidgets.QDialog):
         mainVbox = QtWidgets.QVBoxLayout()
         mainLayout.addLayout(mainVbox)
 
-        self.autoCompGbox = QtWidgets.QGroupBox("Auto-Completion")
+        self.autoCompGbox = QtWidgets.QGroupBox(_("Auto-Completion"))
         self.autoCompGbox.setFlat(True)
         self.autoCompGbox.setCheckable(True)
         mainVbox.addWidget(self.autoCompGbox)
@@ -32,14 +32,14 @@ class GeneralSettings(QtWidgets.QDialog):
         self.autoCompButtonGroup = QtWidgets.QButtonGroup()
         self.autoCompButtonGroup.setExclusive(True)
 
-        self.autoCompApiBox = QtWidgets.QCheckBox("Project")
+        self.autoCompApiBox = QtWidgets.QCheckBox(_("Project"))
         if (self.useData.SETTINGS["AutoCompletion"] == "Api"):
             self.autoCompApiBox.setChecked(True)
         self.autoCompButtonGroup.addButton(self.autoCompApiBox)
         self.autoCompApiBox.toggled.connect(self.setAutoCompletion)
         vbox.addWidget(self.autoCompApiBox)
 
-        self.autoCompDocBox = QtWidgets.QCheckBox("Current Module")
+        self.autoCompDocBox = QtWidgets.QCheckBox(_("Current Module"))
         if (self.useData.SETTINGS["AutoCompletion"] == "Document"):
             self.autoCompDocBox.setChecked(True)
         self.autoCompButtonGroup.addButton(self.autoCompDocBox)
@@ -54,20 +54,20 @@ class GeneralSettings(QtWidgets.QDialog):
 
         # SEARCH
 
-        gbox = QtWidgets.QGroupBox("Search")
+        gbox = QtWidgets.QGroupBox(_("Search"))
         gbox.setFlat(True)
 
         vbox = QtWidgets.QVBoxLayout()
         gbox.setLayout(vbox)
         mainVbox.addWidget(gbox)
 
-        self.dynamicSearchBox = QtWidgets.QCheckBox("Dynamic Search")
+        self.dynamicSearchBox = QtWidgets.QCheckBox(_("Dynamic Search"))
         if self.useData.SETTINGS["DynamicSearch"] == "True":
             self.dynamicSearchBox.setChecked(True)
         self.dynamicSearchBox.toggled.connect(self.setDynamicSearch)
         vbox.addWidget(self.dynamicSearchBox)
 
-        self.markWordOccurrenceBox = QtWidgets.QCheckBox("Mark Word Occurrence")
+        self.markWordOccurrenceBox = QtWidgets.QCheckBox(_("Mark Word Occurrence"))
         if self.useData.SETTINGS["MarkSearchOccurrence"] == "True":
             self.markWordOccurrenceBox.setChecked(True)
         self.markWordOccurrenceBox.toggled.connect(
@@ -83,18 +83,18 @@ class GeneralSettings(QtWidgets.QDialog):
 
         vbox = QtWidgets.QVBoxLayout()
 
-        gbox = QtWidgets.QGroupBox("Editor")
+        gbox = QtWidgets.QGroupBox(_("Editor"))
         gbox.setFlat(True)
         gbox.setLayout(vbox)
         mainVbox.addWidget(gbox)
 
-        self.showCalltipsBox = QtWidgets.QCheckBox("Calltips")
+        self.showCalltipsBox = QtWidgets.QCheckBox(_("Calltips"))
         if self.useData.SETTINGS["CallTips"] == "True":
             self.showCalltipsBox.setChecked(True)
         self.showCalltipsBox.toggled.connect(self.setShowCalltip)
         vbox.addWidget(self.showCalltipsBox)
 
-        self.showWhiteSpacesBox = QtWidgets.QCheckBox("White Spaces")
+        self.showWhiteSpacesBox = QtWidgets.QCheckBox(_("White Spaces"))
         if self.useData.SETTINGS["ShowWhiteSpaces"] == "True":
             self.showWhiteSpacesBox.setChecked(True)
         self.showWhiteSpacesBox.toggled.connect(self.setShowWhiteSpaces)
@@ -102,7 +102,7 @@ class GeneralSettings(QtWidgets.QDialog):
 
         # ACTIVE LINE
 
-        activeLineBox = QtWidgets.QCheckBox("Active Line")
+        activeLineBox = QtWidgets.QCheckBox(_("Active Line"))
         if self.useData.SETTINGS["ShowCaretLine"] == 'True':
             activeLineBox.setChecked(True)
         else:
@@ -112,7 +112,7 @@ class GeneralSettings(QtWidgets.QDialog):
 
         # LINE NUMBERS
 
-        self.showLineNumbersBox = QtWidgets.QCheckBox("Line Numbers")
+        self.showLineNumbersBox = QtWidgets.QCheckBox(_("Line Numbers"))
         if self.useData.SETTINGS["ShowLineNumbers"] == "True":
             self.showLineNumbersBox.setChecked(True)
         self.showLineNumbersBox.toggled.connect(self.setShowLineNumbers)
@@ -120,7 +120,7 @@ class GeneralSettings(QtWidgets.QDialog):
 
         # BRACE MATCHING
 
-        self.matchBracesBox = QtWidgets.QCheckBox("Match Braces")
+        self.matchBracesBox = QtWidgets.QCheckBox(_("Match Braces"))
         if self.useData.SETTINGS["MatchBraces"] == "True":
             self.matchBracesBox.setChecked(True)
 
@@ -129,7 +129,7 @@ class GeneralSettings(QtWidgets.QDialog):
 
         # FOLDING
 
-        self.foldingBox = QtWidgets.QCheckBox("Folding")
+        self.foldingBox = QtWidgets.QCheckBox(_("Folding"))
         if self.useData.SETTINGS["EnableFolding"] == "True":
             self.foldingBox.setChecked(True)
         self.foldingBox.toggled.connect(self.setFolding)
@@ -137,7 +137,7 @@ class GeneralSettings(QtWidgets.QDialog):
 
         # DOC ON HOVER
 
-        self.docOnHoverBox = QtWidgets.QCheckBox("Doc on hover")
+        self.docOnHoverBox = QtWidgets.QCheckBox(_("Doc on hover"))
         if self.useData.SETTINGS["DocOnHover"] == "True":
             self.docOnHoverBox.setChecked(True)
         self.docOnHoverBox.toggled.connect(self.setDocOnHover)
@@ -145,7 +145,7 @@ class GeneralSettings(QtWidgets.QDialog):
 
         # MiniMap
 
-        self.MiniMapBox = QtWidgets.QCheckBox("Show MiniMap")
+        self.MiniMapBox = QtWidgets.QCheckBox(_("Show MiniMap"))
         if self.useData.SETTINGS["MiniMap"] == "True":
             self.MiniMapBox.setChecked(True)
         self.MiniMapBox.toggled.connect(self.setMiniMap)
@@ -153,7 +153,7 @@ class GeneralSettings(QtWidgets.QDialog):
 
         # MARK OPERATIONAL LINES
 
-        self.markOperationalLinesBox = QtWidgets.QCheckBox("Mark Operation Lines")
+        self.markOperationalLinesBox = QtWidgets.QCheckBox(_("Mark Operation Lines"))
         if self.useData.SETTINGS["MarkOperationalLines"] == "True":
             self.markOperationalLinesBox.setChecked(True)
         self.markOperationalLinesBox.toggled.connect(
@@ -167,7 +167,7 @@ class GeneralSettings(QtWidgets.QDialog):
         mainVbox = QtWidgets.QVBoxLayout()
         mainLayout.addLayout(mainVbox)
 
-        gbox = QtWidgets.QGroupBox("Edge Line")
+        gbox = QtWidgets.QGroupBox(_("Edge Line"))
         gbox.setFlat(True)
         gbox.setCheckable(True)
         mainVbox.addWidget(gbox)
@@ -187,11 +187,11 @@ class GeneralSettings(QtWidgets.QDialog):
         self.positionBox.valueChanged.connect(self.setEdgeColumn)
         vbox.addWidget(self.positionBox)
 
-        vbox.addWidget(QtWidgets.QLabel("Edge Mode"))
+        vbox.addWidget(QtWidgets.QLabel(_("Edge Mode")))
 
         self.edgeModeBox = QtWidgets.QComboBox()
-        self.edgeModeBox.addItem("Line")
-        self.edgeModeBox.addItem("Background")
+        self.edgeModeBox.addItem(_("Line"))
+        self.edgeModeBox.addItem(_("Background"))
         self.edgeModeBox.setCurrentIndex(
             self.edgeModeBox.findText(self.useData.SETTINGS['EdgeMode']))
         self.edgeModeBox.activated.connect(self.setEdgeMode)
@@ -205,7 +205,7 @@ class GeneralSettings(QtWidgets.QDialog):
         mainVbox = QtWidgets.QVBoxLayout()
         mainLayout.addLayout(mainVbox)
 
-        gbox = QtWidgets.QGroupBox("Assistant")
+        gbox = QtWidgets.QGroupBox(_("Assistant"))
         gbox.setFlat(True)
         gbox.setCheckable(True)
         mainVbox.addWidget(gbox)
@@ -216,14 +216,14 @@ class GeneralSettings(QtWidgets.QDialog):
         self.assistantButtonGroup = QtWidgets.QButtonGroup()
         self.assistantButtonGroup.setExclusive(True)
 
-        self.enableAlertsBox = QtWidgets.QCheckBox("Alerts")
+        self.enableAlertsBox = QtWidgets.QCheckBox(_("Alerts"))
         if self.useData.SETTINGS["EnableAlerts"] == "True":
             self.enableAlertsBox.setChecked(True)
         self.assistantButtonGroup.addButton(self.enableAlertsBox)
         self.enableAlertsBox.toggled.connect(self.setAssistant)
         vbox.addWidget(self.enableAlertsBox)
 
-        self.enableStyleGuideBox = QtWidgets.QCheckBox("Style Guide")
+        self.enableStyleGuideBox = QtWidgets.QCheckBox(_("Style Guide"))
         if self.useData.SETTINGS["enableStyleGuide"] == "True":
             self.enableStyleGuideBox.setChecked(True)
         self.assistantButtonGroup.addButton(self.enableStyleGuideBox)
@@ -240,23 +240,23 @@ class GeneralSettings(QtWidgets.QDialog):
 
         # MANAGEMENT
 
-        mainVbox.addWidget(QtWidgets.QLabel("UI"))
+        mainVbox.addWidget(QtWidgets.QLabel(_("UI")))
 
         self.uiBox = QtWidgets.QComboBox()
-        self.uiBox.addItem("Custom")
-        self.uiBox.addItem("Native")
+        self.uiBox.addItem(_("Custom"))
+        self.uiBox.addItem(_("Native"))
         if self.useData.SETTINGS["UI"] == 'Native':
             self.uiBox.setCurrentIndex(1)
         self.uiBox.currentIndexChanged.connect(self.setUI)
         mainVbox.addWidget(self.uiBox)
 
-        self.enableSoundsBox = QtWidgets.QCheckBox("Enable Sounds")
+        self.enableSoundsBox = QtWidgets.QCheckBox(_("Enable Sounds"))
         if self.useData.SETTINGS["SoundsEnabled"] == 'True':
             self.enableSoundsBox.setChecked(True)
         self.enableSoundsBox.toggled.connect(self.setSoundsEnabled)
         mainVbox.addWidget(self.enableSoundsBox)
 
-        self.exportButton = QtWidgets.QPushButton("Export Settings")
+        self.exportButton = QtWidgets.QPushButton(_("Export Settings"))
         self.exportButton.clicked.connect(self.exportSettings)
         mainVbox.addWidget(self.exportButton)
 
@@ -275,21 +275,13 @@ class GeneralSettings(QtWidgets.QDialog):
                 editorTabWidget.adjustToStyleSheet(False)
 
     def exportSettings(self):
-        # crashfix by vector
-        #options = QtWidgets.QFileDialog.Options()
-        #savepath = os.path.join(self.useData.getLastOpenedDir(),
-        #                        "PyCoder_Settings" + '_' + QtCore.QDateTime().currentDateTime().toString().replace(' ', '_').replace(':', '-'))
-        #savepath = os.path.normpath(savepath)
-        #fileName = QtWidgets.QFileDialog.getSaveFileName(self,
-        #                                             "Choose Folder", savepath,
-        #                                             "PyCoder Settings (*)", options)[0]
         options = QtWidgets.QFileDialog.Options()
         savepath = os.path.join(self.useData.getLastOpenedDir(),
-                                "PyCoder_Settings" + '_' + QtCore.QDateTime().currentDateTime().toString().replace(' ', '_').replace(':', '-'))
+                                _("PyCoder_Settings") + '_' + QtCore.QDateTime().currentDateTime().toString().replace(' ', '_').replace(':', '-'))
         savepath = os.path.normpath(savepath)
         fileName, _ = QtWidgets.QFileDialog.getSaveFileName(self,
-                                                         "Choose Folder", savepath,
-                                                         "PyCoder Settings (*)", options=options)
+                                                         _("Choose Folder"), savepath,
+                                                         _("PyCoder Settings (*)"), options=options)
   
         if fileName:
             try:
@@ -341,10 +333,10 @@ class GeneralSettings(QtWidgets.QDialog):
                 editor = editorTabWidget.getEditor(i)
                 if editor.DATA["fileType"] == "python":
                     editor2 = editorTabWidget.getCloneEditor(i)
-                    if self.edgeModeBox.currentText() == "Line":
+                    if self.edgeModeBox.currentText() == _("Line"):
                         editor.setEdgeMode(QsciScintilla.EdgeMode.EdgeLine)
                         editor2.setEdgeMode(QsciScintilla.EdgeMode.EdgeLine)
-                    elif self.edgeModeBox.currentText() == "Background":
+                    elif self.edgeModeBox.currentText() == _("Background"):
                         editor.setEdgeMode(QsciScintilla.EdgeMode.EdgeBackground)
                         editor2.setEdgeMode(QsciScintilla.EdgeMode.EdgeBackground)
 

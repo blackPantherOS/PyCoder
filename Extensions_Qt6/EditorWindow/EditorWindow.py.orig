@@ -53,13 +53,8 @@ class EditorWindow(QtWidgets.QWidget):
 
         self.standardToolbar = QtWidgets.QToolBar("Standard")
         self.standardToolbar.setMovable(False)
-        self.standardToolbar.setIconSize(QtCore.QSize(22,22))
-        # vector: planned for new setting
-        #self.standardToolbar.setToolButtonStyle(QtCore.Qt.ToolButtonStyle.ToolButtonIconOnly)
-        #self.standardToolbar.setToolButtonStyle(QtCore.Qt.ToolButtonStyle.ToolButtonTextUnderIcon)
-        self.standardToolbar.setToolButtonStyle(QtCore.Qt.ToolButtonStyle.ToolButtonFollowStyle)
         #self.standardToolbar.setContextMenuPolicy(QtCore.Qt.ContextMenuPolicy.NoContextMenu)
-        self.standardToolbar.setMaximumHeight(64)
+        self.standardToolbar.setMaximumHeight(26)
         self.standardToolbar.setObjectName("StandardToolBar")
         mainLayout.addWidget(self.standardToolbar)
 
@@ -115,13 +110,13 @@ class EditorWindow(QtWidgets.QWidget):
         vbox.addWidget(self.editorTabWidget)
 
         # vector: better looks for editor widget at first start 
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Expanding)
-        sizePolicy.setHorizontalStretch(1)
-        sizePolicy.setVerticalStretch(2)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
 
         self.editorTabWidget.setSizePolicy(sizePolicy)
         self.editorTabWidget.setMinimumWidth(500)
-        self.editorTabWidget.setMinimumHeight(300)
+        self.editorTabWidget.setMinimumHeight(600)
 
         self.manageFavourites.openFile.connect(self.editorTabWidget.loadfile)
 
@@ -157,25 +152,23 @@ class EditorWindow(QtWidgets.QWidget):
         self.sideSplitter.setOrientation(QtCore.Qt.Orientation.Horizontal)
         self.hSplitter.addWidget(self.sideSplitter)
 
-        #self.sideSplitter.setStretchFactor(1, 0)
         #vector self.sideSplitter.addWidget(self.outline)
 
         self.sideBottomTab = QtWidgets.QTabWidget()
         self.sideBottomTab.setObjectName("sideBottomTab")
         self.sideSplitter.addWidget(self.sideBottomTab)
 
-    
         self.sideBottomTab.addTab(self.projectManager.projectView, QtGui.QIcon(
-            os.path.join("Resources", "images", "tree")), _("Project"))
+            os.path.join("Resources", "images", "tree")), "Project")
 
         self.sideBottomTab.addTab(self.outline, QtGui.QIcon(
-            os.path.join("Resources", "images", "tree")), _("Classes"))
+            os.path.join("Resources", "images", "tree")), "Classes")
 
         self.fileExplorer = FileExplorer(
             self.useData, self.projectData['shortcuts'], self.messagesWidget, self.editorTabWidget)
         self.fileExplorer.fileActivated.connect(self.editorTabWidget.loadfile)
         self.sideBottomTab.addTab(self.fileExplorer, QtGui.QIcon(
-            os.path.join("Resources", "images", "tree")), _("File System"))
+            os.path.join("Resources", "images", "tree")), "File System")
 
         # create menus
         self.mainMenu = QtWidgets.QMenu()
@@ -187,8 +180,8 @@ class EditorWindow(QtWidgets.QWidget):
         self.mainMenu.addAction(self.editorTabWidget.saveCopyAsAct)
         self.mainMenu.addAction(self.editorTabWidget.printAct)
 
-        self.projectMenu = QtWidgets.QMenu(_("Project"))
-        if projectPathDict["type"] == _("Desktop Application"):
+        self.projectMenu = QtWidgets.QMenu("Project")
+        if projectPathDict["type"] == "Desktop Application":
             self.projectMenu.addAction(self.buildAct)
             self.projectMenu.addAction(self.openBuildAct)
         self.projectMenu.addAction(self.configureAct)
@@ -200,7 +193,7 @@ class EditorWindow(QtWidgets.QWidget):
         self.mainMenu.addSeparator()
         self.mainMenu.addAction(self.gotoLineAct)
         self.mainMenu.addAction(self.viewSwitcherAct)
-        helpMenu = self.mainMenu.addMenu(_("Help"))
+        helpMenu = self.mainMenu.addMenu("Help")
         helpMenu.addAction(self.userGuideAct)
         helpMenu.addAction(self.pythonManualsAct)
         helpMenu.addSeparator()
@@ -208,7 +201,7 @@ class EditorWindow(QtWidgets.QWidget):
         helpMenu.addAction(self.checkUpdatesAct)
         self.mainMenu.addSeparator()
         self.mainMenu.addMenu(self.manageFavourites.favouritesMenu)
-        self.recentFilesMenu = self.mainMenu.addMenu(_("Recent Files"))
+        self.recentFilesMenu = self.mainMenu.addMenu("Recent Files")
         self.recentFilesMenu.setIcon(
             QtGui.QIcon(os.path.join("Resources", "images", "history")))
         self.loadRecentFiles()
@@ -230,15 +223,15 @@ class EditorWindow(QtWidgets.QWidget):
             self.editorTabWidget.goToCursorPosition)
         self.statusbar.addPermanentWidget(self.cursorPositionButton)
         #*** lines
-        self.linesLabel = QtWidgets.QLabel(_("Lines: 0"))
+        self.linesLabel = QtWidgets.QLabel("Lines: 0")
         self.linesLabel.setMinimumWidth(50)
         self.statusbar.addPermanentWidget(self.linesLabel)
         #*** encoding
-        self.encodingLabel = QtWidgets.QLabel(_("Coding: utf-8"))
+        self.encodingLabel = QtWidgets.QLabel("Coding: utf-8")
         self.statusbar.addPermanentWidget(self.encodingLabel)
         #*** uptime
         self.uptimeLabel = QtWidgets.QLabel()
-        self.uptimeLabel.setText(_("Uptime: 0min"))
+        self.uptimeLabel.setText("Uptime: 0min")
         self.statusbar.addPermanentWidget(self.uptimeLabel)
 
         self.runWidget = RunWidget(
@@ -247,33 +240,33 @@ class EditorWindow(QtWidgets.QWidget):
             self.editorTabWidget, self.vSplitter,
             self.runProjectAct, self.stopRunAct, self.runFileAct)
         self.addBottomWidget(self.runWidget,
-                             QtGui.QIcon(os.path.join("Resources", "images", "graphic-design")),  _("Output"))
+                             QtGui.QIcon(os.path.join("Resources", "images", "graphic-design")),  "Output")
 
         self.assistantWidget = Assistant(
             self.editorTabWidget, self.bottomStackSwitcher)
         self.addBottomWidget(self.assistantWidget,
-                             QtGui.QIcon(os.path.join("Resources", "images", "flag")), _("Alerts"))
+                             QtGui.QIcon(os.path.join("Resources", "images", "flag")), "Alerts")
 
         bookmarkWidget = BookmarkWidget(
             self.editorTabWidget, self.bottomStackSwitcher)
         self.addBottomWidget(bookmarkWidget,
-                             QtGui.QIcon(os.path.join("Resources", "images", "tag")), _("Bookmarks"))
+                             QtGui.QIcon(os.path.join("Resources", "images", "tag")), "Bookmarks")
 
         tasksWidget = Tasks(self.editorTabWidget, self.bottomStackSwitcher)
         self.addBottomWidget(tasksWidget,
-                             QtGui.QIcon(os.path.join("Resources", "images", "issue")), _("Tasks"))
+                             QtGui.QIcon(os.path.join("Resources", "images", "issue")), "Tasks")
 
         self.addBottomWidget(self.messagesWidget,
-                             QtGui.QIcon(os.path.join("Resources", "images", "speech_bubble")), _("Messages"))
+                             QtGui.QIcon(os.path.join("Resources", "images", "speech_bubble")), "Messages")
 
         self.profiler = Profiler(self.useData, self.bottomStackSwitcher)
         self.addBottomWidget(self.profiler,
-                             QtGui.QIcon(os.path.join("Resources", "images", "settings")), _("Profiler"))
+                             QtGui.QIcon(os.path.join("Resources", "images", "settings")), "Profiler")
         self.runWidget.loadProfile.connect(
             self.profiler.viewProfile)
 
         self.addBottomWidget(self.findInFiles,
-                             QtGui.QIcon(os.path.join("Resources", "images", "attibutes")), _("Find-in-Files"))
+                             QtGui.QIcon(os.path.join("Resources", "images", "attibutes")), "Find-in-Files")
 
         self.bottomStackSwitcher.setDefault()
 
@@ -322,129 +315,129 @@ class EditorWindow(QtWidgets.QWidget):
         self.gotoLineAct = \
             QtGui.QAction(
                 QtGui.QIcon(os.path.join("Resources", "images", "mail_check")),
-                _("Goto Line"), self,
-                statusTip=_("Goto Line"), triggered=self.showGotoLineWidget)
+                "Goto Line", self,
+                statusTip="Goto Line", triggered=self.showGotoLineWidget)
 
         self.viewSwitcherAct = QtGui.QAction(
-            _("Switch Views"), self, statusTip=_("Switch to Overview/Diff View"),
+            "Switch Views", self, statusTip="Switch Views",
             triggered=self.showSnapShotSwitcher)
 
         self.exitAct = \
-            QtGui.QAction(_("Exit"), self, statusTip=_("Exit the application"),
+            QtGui.QAction("Exit", self, statusTip="Exit",
                           triggered=self.projects.closeProgram)
 
         # Menubar Actions ----------------------------------------------------
 
         self.userGuideAct = QtGui.QAction(
-            _("User Guide"), self, statusTip=_("User Guide of Application"),
+            "User Guide", self, statusTip="User Guide",
                                          triggered=self.launchHelp)
 
-        self.pythonManualsAct = QtGui.QAction(_("Python Manuals"), self,
-                                              statusTip=_("Open the Python Manuals"),
+        self.pythonManualsAct = QtGui.QAction("Python Manuals", self,
+                                              statusTip="Python Manuals",
                                               triggered=self.launchPythonHelp)
 
-        self.checkUpdatesAct = QtGui.QAction(_("Check For Updates"), self,
-                                             statusTip=_("Check For Updates"),
+        self.checkUpdatesAct = QtGui.QAction("Check For Updates", self,
+                                             statusTip="Check For Updates",
                                              triggered=self.visitHomepage)
 
-        self.feedbackAct = QtGui.QAction(_("Send Feedback"), self,
-                                         statusTip=_("Send Feedback"),
+        self.feedbackAct = QtGui.QAction("Send Feedback", self,
+                                         statusTip="Send Feedback",
                                         triggered=self.openFeedbackLink)
         #----------------------------------------------------------------------
         self.runFileAct = QtGui.QAction(
             QtGui.QIcon(os.path.join("Resources", "images", "rerun")),
-            _("Run File"), self,
-            statusTip=_("Run current file only"), triggered=self.runFile)
+            "Run File", self,
+            statusTip="Run current file", triggered=self.runFile)
 
         self.runProjectAct = QtGui.QAction(
             QtGui.QIcon(os.path.join("Resources", "images", "run")),
-            _("Run Project"), self,
-            statusTip=_("Run The Full Project"), triggered=self.runProject)
+            "Run Project", self,
+            statusTip="Run Project", triggered=self.runProject)
 
         self.stopRunAct = QtGui.QAction(
             QtGui.QIcon(os.path.join("Resources", "images", "stop")),
-            _("Stop"), self,
-            statusTip=_("Stop execution"),
+            "Stop", self,
+            statusTip="Stop execution",
             triggered=self.stopProcess)
 
         self.runParamAct = QtGui.QAction(
             QtGui.QIcon(os.path.join("Resources", "images", "shell")),
-            _("Set Run"), self,
-            statusTip=_("Set Run Parameters"),
+            "Set Run Parameters", self,
+            statusTip="Set Run Parameters",
             triggered=self.setRunParameters)
 
         #---------------------------------------------------------------------
 
         self.finderAct = QtGui.QAction(
             QtGui.QIcon(os.path.join("Resources", "images", "scope")),
-            _("Find"), self,
-            statusTip=_("Find files or content"), triggered=self.showFinderWidget)
+            "Find", self,
+            statusTip="Find", triggered=self.showFinderWidget)
 
         self.replaceAct = \
             QtGui.QAction(
                 QtGui.QIcon(
                     os.path.join("Resources", "images", "edit-replace")),
-                _("Replace"), self,
-                statusTip=_("Replace"),
+                "Replace", self,
+                statusTip="Replace",
                           triggered=self.showReplaceWidget)
 
         self.findInFilesAct = QtGui.QAction(
             QtGui.QIcon(os.path.join("Resources", "images", "find_in_files")),
-            _("Find-in-Files"), self,
-            statusTip=_("A pattern find-in-files"), triggered=self.showFindInFilesWidget)
+            "Find-in-Files", self,
+            statusTip="Find-in-Files", triggered=self.showFindInFilesWidget)
 
         self.addToLibraryAct = \
             QtGui.QAction(
                 QtGui.QIcon(os.path.join("Resources", "images", "add")),
-                _("Add To Library"), self,
-                statusTip=_("Add current module to Library"),
+                "Add To Library", self,
+                statusTip="Add current module to Library",
                           triggered=self.addToLibrary)
 
         self.clearRecentFilesAct = \
             QtGui.QAction(
                 QtGui.QIcon(os.path.join("Resources", "images", "clear")),
-                _("Clear History"), self, statusTip=_("Clear History"),
+                "Clear History", self, statusTip="Clear History",
                 triggered=self.clearRecentFiles)
 
         self.writePadAct = \
             QtGui.QAction(
                 QtGui.QIcon(os.path.join("Resources", "images", "pencil")),
-                _("Writepad"), self, statusTip=_("Open internal Writepad"),
+                "Writepad", self, statusTip="Writepad",
                 triggered=self.showWritePad)
 
         self.buildAct = \
             QtGui.QAction(
-                _("Build"), self,
-                statusTip=_("Build project to binary"),
+                "Build", self,
+                statusTip="Build",
                 triggered=self.buildProject)
 
         self.openBuildAct = \
             QtGui.QAction(
-                _("Open Build"), self, statusTip=_("Open Build Folder"),
+                "Open Build", self, statusTip="Open Build",
                 triggered=self.openBuild)
 
         self.configureAct = \
             QtGui.QAction(
                 QtGui.QIcon(os.path.join("Resources", "images", "settings")),
-                _("Configuration"), self, statusTip=_("Open Configuration"),
+                "Configuration", self, statusTip="Configuration",
                 triggered=self.showProjectConfiguration)
 
         self.exportProjectAct = \
             QtGui.QAction(
                 QtGui.QIcon(os.path.join("Resources", "images", "archive")),
-                _("Export as Zip..."), self, statusTip=_("Project Export as Zip"),
+                "Export as Zip...", self, statusTip="Export as Zip",
                 triggered=self.exportProject)
 
         self.closeProjectAct = \
             QtGui.QAction(
                 QtGui.QIcon(
                     os.path.join("Resources", "images", "inbox--minus")),
-                _("Close Project"), self, statusTip=_("Close this project"),
+                "Close Project", self, statusTip="Close Project",
                 triggered=self.closeProject)
 
     def visitHomepage(self):
         QtGui.QDesktopServices().openUrl(QtCore.QUrl(
-            """https://github.com/blackPantherOS/PyCoder"""))
+            """https://github.com/fortharris/PyCoder"""))
 
     def showProjectConfiguration(self):
         self.editorTabWidget.showProjectConfiguration()
@@ -506,16 +499,22 @@ class EditorWindow(QtWidgets.QWidget):
         self.standardToolbar.addWidget(self.editorMenuButton)
         self.standardToolbar.addAction(self.editorTabWidget.openFileAct)
         self.standardToolbar.addAction(self.editorTabWidget.newPythonFileAct)
-
         self.standardToolbar.addSeparator()
         self.standardToolbar.addAction(self.editorTabWidget.saveAct)
         self.standardToolbar.addAction(self.editorTabWidget.saveAllAct)
-
-        self.standardToolbar.addSeparator()
         self.standardToolbar.addAction(self.editorTabWidget.undoAct)
         self.editorTabWidget.undoAct.setDisabled(True)
         self.standardToolbar.addAction(self.editorTabWidget.redoAct)
         self.editorTabWidget.redoAct.setDisabled(True)
+        self.standardToolbar.addSeparator()
+        self.standardToolbar.addAction(self.editorTabWidget.cutAct)
+        self.editorTabWidget.cutAct.setDisabled(True)
+        self.standardToolbar.addAction(self.editorTabWidget.copyAct)
+        self.editorTabWidget.copyAct.setDisabled(True)
+        self.standardToolbar.addAction(self.editorTabWidget.pasteAct)
+        self.standardToolbar.addSeparator()
+        self.standardToolbar.addAction(self.editorTabWidget.dedentAct)
+        self.standardToolbar.addAction(self.editorTabWidget.indentAct)
 
         self.standardToolbar.addSeparator()
         self.standardToolbar.addAction(self.runFileAct)
@@ -523,24 +522,13 @@ class EditorWindow(QtWidgets.QWidget):
         self.standardToolbar.addAction(self.stopRunAct)
         self.stopRunAct.setVisible(False)
         self.standardToolbar.addAction(self.runParamAct)
-
         self.standardToolbar.addSeparator()
-        self.standardToolbar.addAction(self.editorTabWidget.dedentAct)
-        self.standardToolbar.addAction(self.editorTabWidget.indentAct)
-
         self.standardToolbar.addAction(self.finderAct)
         self.standardToolbar.addAction(self.replaceAct)
         self.standardToolbar.addAction(self.findInFilesAct)
         self.standardToolbar.addSeparator()
         self.standardToolbar.addAction(self.addToLibraryAct)
         self.standardToolbar.addAction(self.writePadAct)
-
-        self.standardToolbar.addSeparator()
-        self.standardToolbar.addAction(self.editorTabWidget.cutAct)
-        self.editorTabWidget.cutAct.setDisabled(True)
-        self.standardToolbar.addAction(self.editorTabWidget.copyAct)
-        self.editorTabWidget.copyAct.setDisabled(True)
-        self.standardToolbar.addAction(self.editorTabWidget.pasteAct)
 
         self.bookmarkToolbar.addAction(
             self.editorTabWidget.findNextBookmarkAct)
@@ -554,8 +542,8 @@ class EditorWindow(QtWidgets.QWidget):
         if os.path.exists(path):
             self.editorTabWidget.loadfile(path)
         else:
-            message = QtWidgets.QMessageBox.warning(self, _("Open"),
-                                                _("File is unavailable!"))
+            message = QtWidgets.QMessageBox.warning(self, "Open",
+                                                "File is unavailable!")
 
     def loadRecentFiles(self):
         if len(self.projectData['recentfiles']) > 0:
@@ -572,7 +560,7 @@ class EditorWindow(QtWidgets.QWidget):
             self.recentFilesMenu.addSeparator()
             self.recentFilesMenu.addAction(self.clearRecentFilesAct)
         else:
-            self.recentFilesMenu.addAction(_("No Recent Files"))
+            self.recentFilesMenu.addAction("No Recent Files")
 
     def updateRecentFiles(self, filePath):
         if filePath in self.projectData['recentfiles']:
@@ -590,15 +578,15 @@ class EditorWindow(QtWidgets.QWidget):
         self.projectData['recentfiles'] = []
         self.recentFilesMenu.clear()
         self.loadRecentFiles()
-        self.messagesWidget.addMessage(0, _('Recent Files:'),
-                                       [_("Recent files history has been cleared!")])
+        self.messagesWidget.addMessage(0, 'Recent Files:',
+                                       ["Recent files history has been cleared!"])
 
     def addToLibrary(self):
         self.library.addToLibrary(self.editorTabWidget)
 
     def openFeedbackLink(self):
         QtGui.QDesktopServices().openUrl(QtCore.QUrl(
-            """https://github.com/blackPantherOS/PyCoder/issues"""))
+            """https://twitter.com/PyCoderIDE"""))
 
     def updateUptime(self):
         self.uptime += 1
@@ -607,11 +595,11 @@ class EditorWindow(QtWidgets.QWidget):
         elif self.uptime > 60:
             t = int(str(self.uptime / 60).split('.')[0])
             h = str(t) + "hr"
-            m = str(self.uptime - (t * 60)) + _("min")
+            m = str(self.uptime - (t * 60)) + "min"
             new_time = h + m
         else:
-            new_time = str(self.uptime) + _("min")
-        self.uptimeLabel.setText(_("Uptime: ") + new_time)
+            new_time = str(self.uptime) + "min"
+        self.uptimeLabel.setText("Uptime: " + new_time)
 
     def saveAll(self):
         self.editorTabWidget.saveAll()
@@ -652,7 +640,7 @@ class EditorWindow(QtWidgets.QWidget):
 
     def launchHelp(self):
         message = QtWidgets.QMessageBox.warning(
-            self, _("User Guide"), _("Will be available when i am out of beta."))
+            self, "User Guide", "Will be available when i am out of beta.")
 
     def launchPythonHelp(self):
         try:
@@ -662,10 +650,10 @@ class EditorWindow(QtWidgets.QWidget):
             exc_type, exc_value, exc_traceback = sys.exc_info()
             logging.error(repr(traceback.format_exception(exc_type, exc_value,
                          exc_traceback)))
-            message = QtWidgets.QMessageBox.critical(self, _("Python Manuals"),
-                                                 (_("Failed to launch the Python Manuals!\n\n"
+            message = QtWidgets.QMessageBox.critical(self, "Python Manuals",
+                                                 ("Failed to launch the Python Manuals!\n\n"
                                                   "It is either not available for the current python "
-                                                  "version or Python is not installed in your system.")))
+                                                  "version or Python is not installed in your system."))
 
     def setRunParameters(self):
         self.editorTabWidget.showSetRunParameters()
@@ -691,10 +679,10 @@ class EditorWindow(QtWidgets.QWidget):
     def showCursorPosition(self):
         line, index = self.editorTabWidget.currentEditor.getCursorPosition()
         self.cursorPositionButton.setText(
-            _("Line {0} : Column {1}").format(line + 1, index + 1))
+            "Line {0} : Column {1}".format(line + 1, index + 1))
 
     def updateLineCount(self, lines):
-        self.linesLabel.setText(_("Lines: ") + str(lines))
+        self.linesLabel.setText("Lines: " + str(lines))
 
     def saveUiState(self):
         name = self.projectPathDict["root"]
@@ -711,8 +699,8 @@ class EditorWindow(QtWidgets.QWidget):
 
     def closeWindow(self):
         if self.runWidget.currentProcess is not None:
-            mess = _("Close running program?")
-            reply = QtWidgets.QMessageBox.warning(self, _("Close"),
+            mess = "Close running program?"
+            reply = QtWidgets.QMessageBox.warning(self, "Close",
                                               mess, 
                                               QtWidgets.QMessageBox.StandardButton.Yes | 
                                               QtWidgets.QMessageBox.StandardButton.No)
@@ -730,9 +718,9 @@ class EditorWindow(QtWidgets.QWidget):
             for i in range(len(modified)):
                 v = modified.pop(-1)
                 self.editorTabWidget.setCurrentIndex(v)
-                mess = _('Save changes to "{0}"?').format(
+                mess = 'Save changes to "{0}"?'.format(
                     self.editorTabWidget.tabText(v))
-                reply = QtWidgets.QMessageBox.warning(self, _("Close"), mess,
+                reply = QtWidgets.QMessageBox.warning(self, "Close", mess,
                                                   QtWidgets.QMessageBox.StandardButton.Yes | 
                                                   QtWidgets.QMessageBox.StandardButton.No |
                                                   QtWidgets.QMessageBox.StandardButton.Cancel)
