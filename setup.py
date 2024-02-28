@@ -28,12 +28,28 @@ def update_messages():
     os.system("msgcat --use-first po/tmp.pot >po/%s.pot" % (pkgname))
     os.system("rm po/tmp.pot")
 
+    locale_dir = "locales"
+
     for item in os.listdir("po"):
         if item.endswith(".po"):
             os.system("msgmerge -q -o .tmp/temp.po po/%s po/%s.pot" % (item, pkgname))
             os.system("cp .tmp/temp.po po/%s" % item)
 
+            print ("Build locales...")
+
+            filename = item
+            lang = filename.rsplit(".", 1)[0]
+
+            try:
+                #print(os.path.join(locale_dir, "%s/LC_MESSAGES" % lang))
+                os.makedirs(os.path.join(locale_dir, "%s/LC_MESSAGES" % lang))
+            except OSError:
+                pass
+
+            os.system("msgfmt po/%s.po -o locales/%s/LC_MESSAGES/%s.mo" % (lang, lang, pkgname))
+
     os.system("rm -rf .tmp")
+    print ("All locales are updated!")
 
 
 import cx_Freeze
