@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PyCoder6 0.6.0\n"
 "Report-Msgid-Bugs-To: info@blackpantheros.eu\n"
-"POT-Creation-Date: 2024-02-28 12:54+0100\n"
-"PO-Revision-Date: 2024-02-28 12:56+0100\n"
+"POT-Creation-Date: 2024-02-28 18:02+0100\n"
+"PO-Revision-Date: 2024-02-28 17:44+0100\n"
 "Last-Translator: Barcza Károly <kbarcza@blackpanther.hu>\n"
 "Language-Team: blackPanther Project\n"
 "Language: hu_HU\n"
@@ -18,78 +18,79 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 3.2.2\n"
 
-#: PyCoder6.py:57
+#: PyCoder6.py:57 temp/temp8.py:57
 msgid "Welcome to PyCoder6! The used language for interface is: "
 msgstr ""
 "Üdvözöl a PyCoder6! Az interfészhez a következő nyelv van használatban: "
 
-#: PyCoder6.py:66
+#: PyCoder6.py:66 temp/temp8.py:66
 msgid "PyCoder - Loading..."
 msgstr "PyCoder - Betöltés..."
 
-#: PyCoder6.py:75
+#: PyCoder6.py:75 temp/temp8.py:75
 msgid "Primary Monitor:"
 msgstr "Elsődleges monitor:"
 
-#: PyCoder6.py:76
+#: PyCoder6.py:76 temp/temp8.py:76
 msgid "Resolution:"
 msgstr "Felbontás:"
 
-#: PyCoder6.py:92
+#: PyCoder6.py:92 temp/temp8.py:92
 msgid "This application requires Python 3"
 msgstr "Ehhez az alkalmazáshoz Python 3 szükséges"
 
-#: PyCoder6.py:116 PyCoder6.py:117
+#: PyCoder6.py:116 PyCoder6.py:117 temp/temp8.py:116 temp/temp8.py:117
 msgid "Start"
 msgstr "Kezdés"
 
-#: PyCoder6.py:140
+#: PyCoder6.py:140 temp/temp8.py:140
 msgid "EDITOR"
 msgstr "SZERKESZTŐ"
 
-#: PyCoder6.py:143
+#: PyCoder6.py:143 temp/temp8.py:143
 msgid "LIBRARY"
 msgstr "KÖNYTÁR"
 
-#: PyCoder6.py:179
+#: PyCoder6.py:179 temp/temp8.py:179
 msgid "About PyCoder"
 msgstr "PyCoder névjegye"
 
-#: PyCoder6.py:179
+#: PyCoder6.py:179 temp/temp8.py:179
 msgid "More info of PyCoder6 "
 msgstr "További információk a PyCoder6-ról "
 
-#: PyCoder6.py:186
+#: PyCoder6.py:186 temp/temp8.py:186
 msgid "Fullscreen"
 msgstr "Teljesképernyő"
 
-#: PyCoder6.py:192 Extensions_Qt6/Settings/SettingsWidget.py:15
-#: Extensions_Qt6/Settings/GeneralSettings.py:12
+#: PyCoder6.py:192 temp/temp8.py:192
+#: Extensions_Qt6/Settings/SettingsWidget.py:15
+#: Extensions_Qt6/Settings/GeneralSettings.py:13
 msgid "Settings"
 msgstr "Beállítások"
 
-#: PyCoder6.py:193
+#: PyCoder6.py:193 temp/temp8.py:193
 msgid "PyCoder Settings"
 msgstr "PyCoder beállíŧáso"
 
-#: PyCoder6.py:208 Extensions_Qt6/Projects/Projects.py:421
+#: PyCoder6.py:208 temp/temp8.py:208 Extensions_Qt6/Projects/Projects.py:421
 #: Extensions_Qt6/Start.py:130
 msgid "Open Project"
 msgstr "Projekt megnyitása"
 
-#: PyCoder6.py:208
+#: PyCoder6.py:208 temp/temp8.py:208
 msgid "Project cannot be be found!"
 msgstr "Projekt nem található!"
 
-#: PyCoder6.py:234
+#: PyCoder6.py:234 temp/temp8.py:234
 msgid "PyCoder - Start"
 msgstr "PyCoder - Indítás"
 
-#: PyCoder6.py:250
+#: PyCoder6.py:250 temp/temp8.py:250
 msgid "PyCoder - "
 msgstr "PyCoder - "
 
-#: PyCoder6.py:250
+#: PyCoder6.py:250 temp/temp8.py:250
 msgid "Unsaved"
 msgstr "Mentetlen"
 
@@ -99,8 +100,8 @@ msgstr "Új név:"
 
 #: Extensions_Qt6/Refactor/Refactor.py:46
 #: Extensions_Qt6/Projects/NewProjectDialog.py:88
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:33
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:91
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:34
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:92
 #: Extensions_Qt6/Projects/ProjectManager/ProjectView/ProjectView.py:38
 #: Extensions_Qt6/Settings/ColorScheme/ColorScheme.py:36
 msgid "Ok"
@@ -108,8 +109,8 @@ msgstr "Ok"
 
 #: Extensions_Qt6/Refactor/Refactor.py:51
 #: Extensions_Qt6/Projects/NewProjectDialog.py:92
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:38
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:96
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:39
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:97
 #: Extensions_Qt6/Projects/ProjectManager/ProjectView/ProjectView.py:43
 #: Extensions_Qt6/Settings/ColorScheme/ColorScheme.py:41
 #: Extensions_Qt6/Settings/Keymap.py:35
@@ -377,6 +378,7 @@ msgstr "Python fájl megnyitása"
 
 #: Extensions_Qt6/EditorTabWidget.py:406 Extensions_Qt6/EditorTabWidget.py:991
 #: Extensions_Qt6/EditorTabWidget.py:1112
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:686
 #: Extensions_Qt6/Settings/ColorScheme/ColorScheme.py:153
 #: Extensions_Qt6/Settings/ColorScheme/ColorScheme.py:257
 msgid "Save"
@@ -501,7 +503,7 @@ msgstr "Névtelen.py"
 
 #: Extensions_Qt6/EditorWindow/EditorWindow.py:169
 #: Extensions_Qt6/EditorWindow/EditorWindow.py:190
-#: Extensions_Qt6/Settings/GeneralSettings.py:35
+#: Extensions_Qt6/Settings/GeneralSettings.py:36
 msgid "Project"
 msgstr "Projekt"
 
@@ -518,7 +520,7 @@ msgstr "Fájlrendszer"
 #: Extensions_Qt6/Projects/NewProjectDialog.py:104
 #: Extensions_Qt6/Projects/NewProjectDialog.py:132
 #: Extensions_Qt6/Projects/ProjectManager/ProjectManager.py:42
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:944
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:945
 #: Extensions_Qt6/Projects/Projects.py:57
 #: Extensions_Qt6/Projects/Projects.py:69
 msgid "Desktop Application"
@@ -550,7 +552,7 @@ msgid "Output"
 msgstr "Kimenet"
 
 #: Extensions_Qt6/EditorWindow/EditorWindow.py:255
-#: Extensions_Qt6/Settings/GeneralSettings.py:219
+#: Extensions_Qt6/Settings/GeneralSettings.py:220
 msgid "Alerts"
 msgstr "Értesítések"
 
@@ -700,7 +702,7 @@ msgstr "Belső jegyzettömb megnyitása"
 
 #: Extensions_Qt6/EditorWindow/EditorWindow.py:417
 #: Extensions_Qt6/Projects/ProjectManager/ProjectManager.py:55
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:947
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:948
 msgid "Build"
 msgstr "Bináris létrehozása"
 
@@ -747,7 +749,7 @@ msgstr "Menü"
 #: Extensions_Qt6/EditorWindow/EditorWindow.py:557
 #: Extensions_Qt6/FileExplorer.py:284 Extensions_Qt6/Favourites.py:117
 #: Extensions_Qt6/Projects/ProjectManager/Build.py:309
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:287
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:288
 #: Extensions_Qt6/Projects/ProjectManager/ProjectView/ProjectView.py:563
 msgid "Open"
 msgstr "Megnyitás"
@@ -946,19 +948,27 @@ msgid "License"
 msgstr "Licenc"
 
 #: Extensions_Qt6/About.py:60
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:492
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:493
 msgid "Name"
 msgstr "Név"
 
 #: Extensions_Qt6/About.py:60
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:500
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:502
 msgid "Version"
 msgstr "Verziószám"
 
 #: Extensions_Qt6/About.py:60
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:496
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:498
 msgid "Author"
-msgstr "A szerző"
+msgstr "Szerző"
+
+#: Extensions_Qt6/BottomWidgets/Messages.py:13
+msgid "Message"
+msgstr "Üzenet"
+
+#: Extensions_Qt6/BottomWidgets/Messages.py:13
+msgid "Time"
+msgstr "Idő"
 
 #: Extensions_Qt6/BottomWidgets/RunWidget.py:38
 msgid "Run Parameters"
@@ -1108,7 +1118,7 @@ msgid "Manage Favourites"
 msgstr "Kedvencek kezelése"
 
 #: Extensions_Qt6/Favourites.py:55
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:595
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:597
 #: Extensions_Qt6/Settings/ColorScheme/ColorScheme.py:147
 #: Extensions_Qt6/Settings/ColorScheme/ColorScheme.py:327
 msgid "Remove"
@@ -1149,13 +1159,13 @@ msgid "Type: "
 msgstr "Típus: "
 
 #: Extensions_Qt6/Projects/NewProjectDialog.py:69
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:569
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:571
 msgid "GUI"
 msgstr "Kezelőfelület"
 
 #: Extensions_Qt6/Projects/NewProjectDialog.py:70
 #: Extensions_Qt6/Projects/ProjectManager/Build.py:27
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:570
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:572
 msgid "Console"
 msgstr "Konzol"
 
@@ -1168,37 +1178,37 @@ msgid "Import Sources: "
 msgstr "Források importálása: "
 
 #: Extensions_Qt6/Projects/ProjectManager/Build.py:38
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:543
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:545
 msgid "Compress"
 msgstr "Tömörítés"
 
 #: Extensions_Qt6/Projects/ProjectManager/Build.py:43
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:535
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:537
 msgid "Don't Optimize"
 msgstr "Ne optimalizálja"
 
 #: Extensions_Qt6/Projects/ProjectManager/Build.py:45
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:536
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:538
 msgid "Optimize"
 msgstr "Optimalizálás"
 
 #: Extensions_Qt6/Projects/ProjectManager/Build.py:47
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:537
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:539
 msgid "Optimize (Remove Doc Strings)"
 msgstr "Optimalizálás (Doku. -stringek eltávolítása)"
 
 #: Extensions_Qt6/Projects/ProjectManager/Build.py:50
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:548
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:550
 msgid "Copy Dependencies"
 msgstr "Függőségek másolása"
 
 #: Extensions_Qt6/Projects/ProjectManager/Build.py:55
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:555
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:557
 msgid "Append Script to Exe"
 msgstr "Adja a scriptet az Exe-hez"
 
 #: Extensions_Qt6/Projects/ProjectManager/Build.py:60
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:562
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:564
 msgid "Append Script to Library"
 msgstr "Script hozzáadása a könyvtárhoz"
 
@@ -1223,71 +1233,95 @@ msgstr "axplorer indítása \"{}\""
 msgid "Build folder is missing!"
 msgstr "A 'build' mappa hiányzik!"
 
+#: Extensions_Qt6/Projects/ProjectManager/Build.py:328
+#, python-brace-format
+msgid "{0}m{1}s"
+msgstr "{0}perc{1}mp"
+
+#: Extensions_Qt6/Projects/ProjectManager/Build.py:334
+#, python-brace-format
+msgid "Build Completed in {0} [Errors]"
+msgstr "A fordítás elkészült {0} alatt [Hibák]"
+
+#: Extensions_Qt6/Projects/ProjectManager/Build.py:339
+#, python-brace-format
+msgid "Build Completed in {0} [missing modules]"
+msgstr "A fordítás elkészült {0} alatt [hiányzó modulok]"
+
+#: Extensions_Qt6/Projects/ProjectManager/Build.py:343
+#, python-brace-format
+msgid "Build Completed in {0} "
+msgstr "Fordítás elkészült {0} alatt "
+
+#: Extensions_Qt6/Projects/ProjectManager/Build.py:344
+msgid "Build Completed Successfully!"
+msgstr "A fordítás sikeresen befejeződött!"
+
 #: Extensions_Qt6/Projects/ProjectManager/ProjectManager.py:56
 msgid "There are errors in your project. Build anyway?"
 msgstr "Hibák vannak a projektben. Így is elkészítsük a binárist?"
 
-#: Extensions_Qt6/Projects/ProjectManager/ProjectManager.py:81
+#: Extensions_Qt6/Projects/ProjectManager/ProjectManager.py:80
 msgid "Export"
 msgstr "Exportálás"
 
-#: Extensions_Qt6/Projects/ProjectManager/ProjectManager.py:82
+#: Extensions_Qt6/Projects/ProjectManager/ProjectManager.py:81
 msgid "All files (*)"
 msgstr "Minden fájl (*)"
 
-#: Extensions_Qt6/Projects/ProjectManager/ProjectManager.py:87
+#: Extensions_Qt6/Projects/ProjectManager/ProjectManager.py:86
 msgid "Exporting project... please wait!"
 msgstr "Projekt exportálása... kélek várj!"
 
-#: Extensions_Qt6/Projects/ProjectManager/ProjectManager.py:93
+#: Extensions_Qt6/Projects/ProjectManager/ProjectManager.py:92
 msgid "Export Failed"
 msgstr "Az exportálás nem sikerült"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:135
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:136
 msgid "Ignore Syntax Errors"
 msgstr "Szintaxis hibák ignorálása"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:136
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:137
 msgid "Don't Ignore Syntax Errors"
 msgstr "Ne ignorálja a szintaxis hibákat"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:142
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:143
 msgid "Ignore Bad Imports"
 msgstr "Rossz importálások ingorálása"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:143
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:144
 msgid "Don't Ignore Bad Imports"
 msgstr "Ne ignorálja a rossz importálásokat"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:151
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:152
 msgid "Max History Items: "
 msgstr "Előzmények maximális eleme: "
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:162
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:173
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:163
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:174
 msgid "Extensions_Qt6"
 msgstr "Extensions_Qt6"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:163
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:174
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:164
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:175
 msgid "Ignored Resources"
 msgstr "Ignorált források"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:164
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:175
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:165
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:176
 msgid "Custom Folders"
 msgstr "Egyéni mappák"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:173
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:174
 msgid "Specify which files should be considered python files."
 msgstr "Adja meg, hogy mely fájlok tekintendők python-fájloknak."
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:174
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:175
 msgid "Specify which files and folders to ignore in the project."
 msgstr ""
 "Adja meg, hogy mely fájlokat és mappákat hagyja figyelmen kívül a projektben."
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:176
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:177
 msgid ""
 "By default rope searches the project for finding source folders\n"
 "(folders that should be searched for finding modules).\n"
@@ -1308,20 +1342,33 @@ msgstr ""
 " hogy a \"Rope\" milyen platformon fut. \n"
 "Például: src/my_source_folder."
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:282
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:283
 msgid "Version: "
 msgstr "Verzió: "
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:354
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:361
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:381
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:391
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:393
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:400
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:312
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:355
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:362
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:382
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:392
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:394
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:401
 msgid "Install"
 msgstr "Telepítés"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:355
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:316
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:420
+msgid "Upgrade"
+msgstr "Frissítés"
+
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:320
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:430
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:432
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:443
+msgid "Uninstall"
+msgstr "Eltávolítás"
+
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:356
 msgid ""
 "This will install a new virtual environment.\n"
 "\n"
@@ -1331,8 +1378,8 @@ msgstr ""
 "\n"
 "Folytassam?"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:361
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:400
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:362
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:401
 msgid ""
 "There is no Python installation to install against.\n"
 "\n"
@@ -1342,24 +1389,24 @@ msgstr ""
 "\n"
 "Kérlek, győződj meg róla, hogy telepítve van a Python."
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:367
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:406
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:368
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:407
 msgid "Choose Python installation"
 msgstr "Python telepítés kiválasztása"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:381
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:382
 msgid "Install virtual environment completed."
 msgstr "Virtuális környezet telepítése ekészült."
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:384
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:385
 msgid "Failed Install"
 msgstr "Sikertelen telpítás"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:391
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:392
 msgid "No virtual environment to upgrade."
 msgstr "Virtuális környezet a frissítéshez."
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:394
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:395
 msgid ""
 "This will upgrade the current the virtual environment.\n"
 "\n"
@@ -1369,29 +1416,19 @@ msgstr ""
 "\n"
 "Folytassam?"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:419
-msgid "Upgrade"
-msgstr "Frissítés"
-
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:419
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:420
 msgid "Upgrade virtual environment completed."
 msgstr "Virtuális környezet frissítése elkészült."
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:422
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:423
 msgid "Failed Upgrade"
 msgstr "Fissítés sikertelen"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:429
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:431
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:442
-msgid "Uninstall"
-msgstr "Eltávolítás"
-
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:429
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:430
 msgid "No virtual environment to uninstall."
 msgstr "Virtuális környezet az eltávolításhoz."
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:432
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:433
 msgid ""
 "This will uninstall the current virtual environment.\n"
 "\n"
@@ -1401,113 +1438,116 @@ msgstr ""
 "\n"
 "Folytassam?"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:442
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:443
 msgid "Uninstall virtual environment completed."
 msgstr "A virtuális környezet eltávolítása elkészült."
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:445
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:446
 msgid "Failed Uninstall"
 msgstr "Eltávolítás sikertelen"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:504
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:486
+msgid "Version Information"
+msgstr "Verzióinformáció"
+
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:506
 msgid "Description"
 msgstr "Leírás"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:508
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:510
 msgid "Comments"
 msgstr "Megjegyzés"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:512
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:514
 msgid "Company"
 msgstr "Cég"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:516
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:518
 msgid "Copyright"
 msgstr "Minden jog fenntartva"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:519
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:521
 msgid "Trademarks"
 msgstr "Védjegyek"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:523
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:525
 msgid "Product"
 msgstr "Termék"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:529
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:531
 msgid "Options"
 msgstr "Beállítások"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:544
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:542
+msgid "Speed"
+msgstr "Sebesség"
+
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:546
 msgid "Don't Compress"
 msgstr "Ne tömörítse"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:549
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:547
+msgid "Size"
+msgstr "Méret"
+
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:551
 msgid "Don't Copy Dependencies"
 msgstr "Ne másolja a függőségeket"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:556
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:554
+msgid "Depends"
+msgstr "Függőség"
+
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:558
 msgid "Don't Append Script to Exe"
 msgstr "Ne adja hozzá a script-et az exe-hez"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:563
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:561
+msgid "ToExe"
+msgstr "Exe-be"
+
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:565
 msgid "Don't Append Script to Library"
 msgstr "Ne adjon hozzá szkriptet a könyvtárhoz"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:575
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:568
+msgid "ToLibs"
+msgstr "Lib-be"
+
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:577
 msgid "Window Type"
 msgstr "Ablak típusa"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:587
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:589
 msgid "Add"
 msgstr "Hozzáad"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:601
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:603
 msgid "Icon"
 msgstr "Ikon"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:607
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:609
 msgid "Advanced"
 msgstr "Speciális"
 
-# Ne fordítsd le mert akadályozza a program indítását
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:623
-msgid "Includes"
-msgstr ""
-
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:623
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:625
 msgid "List of modules to include"
 msgstr "A beépítendő modulok listája"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:624
-msgid "Excludes"
-msgstr "Kihagyandóak"
-
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:624
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:626
 msgid "List of modules to exclude"
 msgstr "Kihagyandó modulok listája"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:625
-msgid "Constants Modules"
-msgstr "Állandó modulok"
-
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:625
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:627
 msgid "List of constants to include"
 msgstr "A beillesztendő konstansok listája"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:626
-msgid "Packages"
-msgstr "Csomagok"
-
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:626
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:637
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:628
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:639
 msgid "List of packages to include"
 msgstr "Beépítendő csomagok listája"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:627
-msgid "Replace Paths"
-msgstr "Elérési utak cseréje"
-
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:628
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:630
 msgid ""
 "Replace all the paths in modules found in the given paths with the given "
 "replacement string; each value is of the form path=replacement_string; path "
@@ -1518,19 +1558,11 @@ msgstr ""
 "path=replacement_string; Az elérési út * lehet, ami azt jelenti, hogy az "
 "összes még nincs megadva"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:632
-msgid "Include Files"
-msgstr "Beépítendő fájlok"
-
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:632
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:634
 msgid "List of files to include"
 msgstr "Beépítendő fájlok listája"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:633
-msgid "Zip Includes"
-msgstr "Zip beépítés"
-
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:634
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:636
 msgid ""
 "Name of file to add to the zip file or a specification of the form "
 "name=arcname which will specify the archive name to use"
@@ -1539,15 +1571,7 @@ msgstr ""
 "következő formában van megadva: name=archívnév, ami meghatározza az archív "
 "nevét, amelyet használni kell"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:637
-msgid "Namespace Packages"
-msgstr "Névtér csomagok"
-
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:638
-msgid "Bin Includes"
-msgstr "Bináris beépítése"
-
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:639
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:641
 msgid ""
 "Libraries that need not be included becausethey would normally be expected "
 "to be found on the target system orbecause they are part of a package which "
@@ -1557,11 +1581,7 @@ msgstr ""
 "hogy megtalálhatók legyenek a célszámítógépen, vagy azért, mert azok egy "
 "olyan csomag részei, amelynek független telepítésre van szüksége."
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:643
-msgid "Bin Excludes"
-msgstr "Bináris kizárása"
-
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:644
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:646
 msgid ""
 "File names of libraries which must be included for thefrozen executable to "
 "work."
@@ -1569,21 +1589,13 @@ msgstr ""
 "A befagyaszott futtatható állomány működéséhez szükséges könyvtárak "
 "fájlnevei."
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:646
-msgid "Bin Path Includes"
-msgstr "Bináris útvonalak beépítése"
-
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:647
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:649
 msgid "Paths of directories which contain files that should be included."
 msgstr ""
 "Azoknak a könyvtáraknak az elérési útvonalai, amelyek fájljait be kellene "
 "illeszteni."
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:649
-msgid "Bin Path Excludes"
-msgstr "Bináris útvonalak kizárása"
-
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:650
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:652
 msgid ""
 "Paths of directories which contain files that should notbe included, "
 "generally because they contain standard system libraries."
@@ -1592,47 +1604,35 @@ msgstr ""
 "fájlokat, amelyeket nem kellene beilleszteni, általában azért, mert standard "
 "rendszerkönyvtárakat tartalmaznak."
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:731
-msgid "Icon Files (*.ico)"
-msgstr "Ikonfájlok (*.ico)"
-
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:733
-msgid "Icon Files (*.icns)"
-msgstr "Ikon files (*.icns)"
-
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:735
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:736
 msgid "Icon Files (*.png *.svg);;All Files (*)"
 msgstr "Ikonfájlok (*.png *.svg);;Minden fájl (*)"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:737
-msgid "Select Icon"
-msgstr "Válasszon ikont"
-
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:743
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:744
 msgid "Add Icon"
 msgstr "Ikon hozzáadása"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:744
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:745
 msgid "Icon with the same name already exists. Replace?"
 msgstr "Azonos nevű ikon már létezik. Lecseréljem?"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:768
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:769
 msgid "Failed Remove"
 msgstr "Eltávolítás sikertelen"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:880
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:881
 msgid "Save Profile"
 msgstr "Profil mentése"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:880
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:881
 msgid "Saving failed!"
 msgstr "A mentés meghiúsult!"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:929
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:930
 msgid "Project Configuration"
 msgstr "Projektbeállítások"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:951
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:952
 msgid "Virtual Environment"
 msgstr "Virtuális környezet"
 
@@ -1809,7 +1809,7 @@ msgid "Directory not found!"
 msgstr "Mappa nem található!"
 
 #: Extensions_Qt6/Projects/ProjectManager/ProjectView/ProjectView.py:678
-#: Extensions_Qt6/Settings/GeneralSettings.py:57
+#: Extensions_Qt6/Settings/GeneralSettings.py:58
 msgid "Search"
 msgstr "Keresés"
 
@@ -1874,7 +1874,7 @@ msgid "Lexer"
 msgstr "Lexer"
 
 #: Extensions_Qt6/Settings/ColorScheme/ColorScheme.py:104
-#: Extensions_Qt6/Settings/GeneralSettings.py:86
+#: Extensions_Qt6/Settings/GeneralSettings.py:87
 msgid "Editor"
 msgstr "Szerkesztő"
 
@@ -1931,7 +1931,11 @@ msgstr "Elfogadás"
 msgid "Keymap"
 msgstr "Billentyűtérkép"
 
-#: Extensions_Qt6/Settings/Keymap.py:130
+#: Extensions_Qt6/Settings/Keymap.py:90
+msgid "Function"
+msgstr "Függvény"
+
+#: Extensions_Qt6/Settings/Keymap.py:90 Extensions_Qt6/Settings/Keymap.py:130
 msgid "Shortcut"
 msgstr "Gyorsgomb"
 
@@ -1946,115 +1950,118 @@ msgstr ""
 "\n"
 "Lecseréljem?"
 
-#: Extensions_Qt6/Settings/GeneralSettings.py:24
+#: Extensions_Qt6/Settings/Keymap.py:225
+msgid "Default Keymap"
+msgstr "Alap billentyűtérkép"
+
+#: Extensions_Qt6/Settings/Keymap.py:226
+msgid ""
+"Setting keymap to default will wipe away your current keymap.\n"
+"\n"
+"Proceed?"
+msgstr ""
+"A billentyűzetkiosztás alaphelyzetbe állítása törölni fogja az aktuális "
+"billentyűzetkiosztást.\n"
+"\n"
+"Folytatja?"
+
+#: Extensions_Qt6/Settings/GeneralSettings.py:25
 msgid "Auto-Completion"
 msgstr "Auto-kiegészítés"
 
-#: Extensions_Qt6/Settings/GeneralSettings.py:42
+#: Extensions_Qt6/Settings/GeneralSettings.py:43
 msgid "Current Module"
 msgstr "Jelenlegi modul"
 
-#: Extensions_Qt6/Settings/GeneralSettings.py:64
+#: Extensions_Qt6/Settings/GeneralSettings.py:65
 msgid "Dynamic Search"
 msgstr "Dinamikus keresés"
 
-#: Extensions_Qt6/Settings/GeneralSettings.py:70
+#: Extensions_Qt6/Settings/GeneralSettings.py:71
 msgid "Mark Word Occurrence"
 msgstr "Szóelőfordulás jelölése"
 
-#: Extensions_Qt6/Settings/GeneralSettings.py:91
+#: Extensions_Qt6/Settings/GeneralSettings.py:92
 msgid "Calltips"
 msgstr "Hívástippek"
 
-#: Extensions_Qt6/Settings/GeneralSettings.py:97
+#: Extensions_Qt6/Settings/GeneralSettings.py:98
 msgid "White Spaces"
 msgstr "Üres területek"
 
-#: Extensions_Qt6/Settings/GeneralSettings.py:105
+#: Extensions_Qt6/Settings/GeneralSettings.py:106
 msgid "Active Line"
 msgstr "Aktív sor"
 
-#: Extensions_Qt6/Settings/GeneralSettings.py:115
+#: Extensions_Qt6/Settings/GeneralSettings.py:116
 msgid "Line Numbers"
 msgstr "Sorszámok"
 
-#: Extensions_Qt6/Settings/GeneralSettings.py:123
+#: Extensions_Qt6/Settings/GeneralSettings.py:124
 msgid "Match Braces"
 msgstr "Zárójel párok"
 
-#: Extensions_Qt6/Settings/GeneralSettings.py:132
+#: Extensions_Qt6/Settings/GeneralSettings.py:133
 msgid "Folding"
 msgstr "Összehajtás"
 
-#: Extensions_Qt6/Settings/GeneralSettings.py:140
+#: Extensions_Qt6/Settings/GeneralSettings.py:141
 msgid "Doc on hover"
 msgstr "Doku. rámutatáskor"
 
-#: Extensions_Qt6/Settings/GeneralSettings.py:148
+#: Extensions_Qt6/Settings/GeneralSettings.py:149
 msgid "Show MiniMap"
 msgstr "Minitérkép be"
 
-#: Extensions_Qt6/Settings/GeneralSettings.py:156
+#: Extensions_Qt6/Settings/GeneralSettings.py:157
 msgid "Mark Operation Lines"
 msgstr "Műveleti vonalak jelölése"
 
-#: Extensions_Qt6/Settings/GeneralSettings.py:170
+#: Extensions_Qt6/Settings/GeneralSettings.py:171
 msgid "Edge Line"
 msgstr "Záróvonal"
 
-#: Extensions_Qt6/Settings/GeneralSettings.py:190
+#: Extensions_Qt6/Settings/GeneralSettings.py:191
 msgid "Edge Mode"
 msgstr "Záróvonal mód"
 
-#: Extensions_Qt6/Settings/GeneralSettings.py:193
+#: Extensions_Qt6/Settings/GeneralSettings.py:194
 #: Extensions_Qt6/Settings/GeneralSettings.py:336
 msgid "Line"
 msgstr "Vonal"
 
-#: Extensions_Qt6/Settings/GeneralSettings.py:194
+#: Extensions_Qt6/Settings/GeneralSettings.py:195
 #: Extensions_Qt6/Settings/GeneralSettings.py:339
 msgid "Background"
 msgstr "Háttér"
 
-#: Extensions_Qt6/Settings/GeneralSettings.py:208
+#: Extensions_Qt6/Settings/GeneralSettings.py:209
 msgid "Assistant"
 msgstr "Asszisztens"
 
-#: Extensions_Qt6/Settings/GeneralSettings.py:226
+#: Extensions_Qt6/Settings/GeneralSettings.py:227
 msgid "Style Guide"
 msgstr "Stílus útmutató"
 
-#: Extensions_Qt6/Settings/GeneralSettings.py:243
+#: Extensions_Qt6/Settings/GeneralSettings.py:244
 msgid "UI"
 msgstr "Felület"
 
-#: Extensions_Qt6/Settings/GeneralSettings.py:246
+#: Extensions_Qt6/Settings/GeneralSettings.py:247
 msgid "Custom"
 msgstr "Egyéni"
 
-#: Extensions_Qt6/Settings/GeneralSettings.py:247
+#: Extensions_Qt6/Settings/GeneralSettings.py:248
 msgid "Native"
 msgstr "Natív"
 
-#: Extensions_Qt6/Settings/GeneralSettings.py:253
+#: Extensions_Qt6/Settings/GeneralSettings.py:254
 msgid "Enable Sounds"
 msgstr "Hangok engedélyezése"
 
-#: Extensions_Qt6/Settings/GeneralSettings.py:259
+#: Extensions_Qt6/Settings/GeneralSettings.py:260
 msgid "Export Settings"
 msgstr "Beállítások exportálása"
-
-#: Extensions_Qt6/Settings/GeneralSettings.py:280
-msgid "PyCoder_Settings"
-msgstr "PyCoder_beállíŧások"
-
-#: Extensions_Qt6/Settings/GeneralSettings.py:283
-msgid "Choose Folder"
-msgstr "Mappa választása"
-
-#: Extensions_Qt6/Settings/GeneralSettings.py:284
-msgid "PyCoder Settings (*)"
-msgstr "PyCoder beállítások (*)"
 
 #: Extensions_Qt6/ExternalLauncher.py:36 Extensions_Qt6/ExternalLauncher.py:79
 msgid "Manage Launchers"
@@ -2123,6 +2130,57 @@ msgstr "A program honlapja"
 #: Extensions_Qt6/Start.py:167
 msgid "Project Folder"
 msgstr "Projektmappa"
+
+#~ msgid "Excludes"
+#~ msgstr "Kihagyandóak"
+
+#~ msgid "Constants Modules"
+#~ msgstr "Állandó modulok"
+
+#~ msgid "Packages"
+#~ msgstr "Csomagok"
+
+#~ msgid "Replace Paths"
+#~ msgstr "Elérési utak cseréje"
+
+#~ msgid "Include Files"
+#~ msgstr "Beépítendő fájlok"
+
+#~ msgid "Zip Includes"
+#~ msgstr "Zip beépítés"
+
+#~ msgid "Namespace Packages"
+#~ msgstr "Névtér csomagok"
+
+#~ msgid "Bin Includes"
+#~ msgstr "Bináris beépítése"
+
+#~ msgid "Bin Excludes"
+#~ msgstr "Bináris kizárása"
+
+#~ msgid "Bin Path Includes"
+#~ msgstr "Bináris útvonalak beépítése"
+
+#~ msgid "Bin Path Excludes"
+#~ msgstr "Bináris útvonalak kizárása"
+
+#~ msgid "Icon Files (*.ico)"
+#~ msgstr "Ikonfájlok (*.ico)"
+
+#~ msgid "Icon Files (*.icns)"
+#~ msgstr "Ikon files (*.icns)"
+
+#~ msgid "Select Icon"
+#~ msgstr "Válasszon ikont"
+
+#~ msgid "PyCoder_Settings"
+#~ msgstr "PyCoder_beállíŧások"
+
+#~ msgid "Choose Folder"
+#~ msgstr "Mappa választása"
+
+#~ msgid "PyCoder Settings (*)"
+#~ msgstr "PyCoder beállítások (*)"
 
 #~ msgid "Language : "
 #~ msgstr "Nyelvezet: "
