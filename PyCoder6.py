@@ -24,6 +24,7 @@ import locale
 
 from PyQt6 import QtCore, QtGui, QtWidgets
 from PyQt6.QtCore import QPoint
+from PyQt6.QtGui import QIcon
 
 from Extensions_Qt6.UseData import UseData
 from Extensions_Qt6.Library.Library import Library
@@ -69,6 +70,12 @@ class PyCoder(QtWidgets.QWidget):
         size = self.geometry()
         self.move((screen.width() - size.width()) // 2, (screen.height()
         - size.height()) // 2)
+        primary_screen = QtGui.QGuiApplication.primaryScreen()
+        resolution = primary_screen.availableSize()
+        print(_("Primary Monitor:"), primary_screen.manufacturer(), 
+        _("Resolution:"), resolution.width(), "x", resolution.height())
+        self.move(QtGui.QGuiApplication.primaryScreen().availableGeometry().center() 
+        - self.rect().center())
         self.lastWindowGeometry = self.geometry()
 
         mainLayout = QtWidgets.QVBoxLayout(self)
@@ -317,7 +324,7 @@ class PyCoder(QtWidgets.QWidget):
         self.shortFullscreen.activated.connect(self.showFullScreenMode)
 
 app = QtWidgets.QApplication(sys.argv)
-
+QtWidgets.QApplication.setWindowIcon(QIcon('pycoder'))
 splash = QtWidgets.QSplashScreen(
     QtGui.QPixmap(os.path.join("Resources", "images", "splash")))
 splash.show()
