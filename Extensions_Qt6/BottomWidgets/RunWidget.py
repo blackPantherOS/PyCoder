@@ -55,9 +55,9 @@ class SetRunParameters(QtWidgets.QLabel):
         self.runTypeBox.addItem(_("Run"))
         self.runTypeBox.addItem(_("Profiler"))
         self.runTypeBox.addItem(_("Trace"))
-        if self.projectSettings["RunType"] == 'Profiler':
+        if self.projectSettings["RunType"] == _('Profiler') :
             self.runTypeBox.setCurrentIndex(1)
-        elif self.projectSettings["RunType"] == 'Trace':
+        elif self.projectSettings["RunType"] == _('Trace'):
             self.runTypeBox.setCurrentIndex(2)
         self.runTypeBox.currentIndexChanged.connect(self.saveArguments)
         self.runTypeBox.currentIndexChanged.connect(self.runTypeChanged)
@@ -435,7 +435,7 @@ class RunWidget(BaseScintilla):
         self.writeOutput()
         self.writeError()
         if exitStatus == QtCore.QProcess.ExitStatus.NormalExit:
-            self.printout(">>> Exit: {0}\n".format(str(exitCode)), 3)
+            self.printout(_(">>> Exit: {0}\n").format(str(exitCode)), 3)
         else:
             # error will be displayed instead by writeProcessError
             pass
@@ -501,12 +501,12 @@ class RunWidget(BaseScintilla):
         if run_internal:
             self.currentProcess = fileName
             if run_with_args:
-                self.printout(">>> Running: {0} <arguments={1}>\n".format(
+                self.printout(_(">>> Running: {0} <arguments={1}>\n").format(
                     self.currentProcess, args), 4)
                 self.runProcess.start(pythonPath, [
                                       runScript, args], self.openMode)
             else:
-                self.printout(">>> Running: {0} <arguments=None>\n".format(
+                self.printout(_(">>> Running: {0} <arguments=None>\n").format(
                     self.currentProcess), 4)
                 self.runProcess.start(pythonPath, [runScript], self.openMode)
             self.runProcess.waitForStarted()
@@ -531,10 +531,10 @@ class RunWidget(BaseScintilla):
         if run_internal:
             self.currentProcess = fileName
             if run_with_args:
-                self.printout(">>> Trace Execution: {0} <arguments={1}>\n".format(
+                self.printout(_(">>> Trace Execution: {0} <arguments={1}>\n").format(
                     self.currentProcess, args), 4)
             else:
-                self.printout(">>> Trace Execution: {0} <arguments=None>\n".format(
+                self.printout(_(">>> Trace Execution: {0} <arguments=None>\n").format(
                     self.currentProcess), 4)
             if option == 0:
                 # calling relationships
@@ -640,10 +640,10 @@ class RunWidget(BaseScintilla):
         if run_internal:
             self.currentProcess = fileName
             if run_with_args:
-                self.printout(">>> Profiling: {0} <arguments={1}>\n".format(
+                self.printout(_(">>> Profiling: {0} <arguments={1}>\n").format(
                     self.currentProcess, args), 4)
             else:
-                self.printout(">>> Profiling: {0} <arguments=None>\n".format(
+                self.printout(_(">>> Profiling: {0} <arguments=None>\n").format(
                     self.currentProcess), 4)
             self.runProcess.start(pythonPath, p_args)
             self.runProcess.waitForStarted()
@@ -723,16 +723,26 @@ class RunWidget(BaseScintilla):
         elif self.lines() >= bufferSize:
             self.clear()
         runType = self.projectData["RunType"]
-        if runType == "Run":
+
+        if runType == _("Run") or runType == "Run" :
             self.runModule(filePath, fileName, run_internal, run_with_args,
                            args)
-        if runType == "Profiler":
+        elif runType == _("Profiler") or runType == "Profiler":
             self.runProfiler(filePath, fileName, run_internal, run_with_args,
                              args)
-        elif runType == "Trace":
+        elif runType == _("Trace") or runType == "Trace":
             option = int(self.projectData["TraceType"])
             self.runTrace(filePath, fileName, run_internal, run_with_args,
                           args, option)
+        else:
+            message = QtWidgets.QMessageBox.warning(self, _("User action required!"),
+            (_("<h2>User action required.</h2>"
+            "The running mode is using an old parameter (<b>Type: {}</b>), so you need to set it again."
+            "Just open the running parameters dialog and select any other execution mode, and set back again, before running."
+            "<p>The parameters button is available on the toolbar...</p>").format(runType)))
+            runType = "Run"
+            self.runModule(filePath, fileName, run_internal, run_with_args,
+                           args)
 
     def stopProcess(self):
         self.runProcess.kill()
