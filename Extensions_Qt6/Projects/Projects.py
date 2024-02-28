@@ -54,7 +54,7 @@ class CreateProjectThread(QtCore.QThread):
             else:
                 os.mkdir(os.path.join(self.projectPath, "src"))
 
-            if self.projDataDict["type"] == _("Desktop Application"):
+            if self.projDataDict["type"] == _("Desktop Application") or self.projDataDict["type"] == "Desktop Application":
                 build = os.path.join(self.projectPath, "Build")
                 os.mkdir(build)
                 os.mkdir(os.path.join(build, "Linux"))
@@ -66,7 +66,7 @@ class CreateProjectThread(QtCore.QThread):
             file = open(self.mainScript, 'w')
             file.close()
 
-            if self.projDataDict["type"] == _("Desktop Application"):
+            if self.projDataDict["type"] == _("Desktop Application") or self.projDataDict["type"] == "Desktop Application":
                 self.writeBuildProfile()
             self.writeDefaultSession()
             self.writeProjectData()
@@ -121,7 +121,7 @@ class CreateProjectThread(QtCore.QThread):
 
             'ClearOutputWindowOnRun': 'False',
             'LastOpenedPath': '',
-            'RunType': 'Run',
+            'RunType': _('Run'),
             'BufferSize': '900',
             'RunArguments': '',
             'DefaultInterpreter': 'python3',

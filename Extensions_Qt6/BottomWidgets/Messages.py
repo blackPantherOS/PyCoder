@@ -10,7 +10,7 @@ class MessagesWidget(QtWidgets.QTreeWidget):
         self.bottomStackSwitcher = bottomStackSwitcher
         self.vSplitter = vSplitter
 
-        self.setHeaderLabels(["Message", "Time"])
+        self.setHeaderLabels([_("Message"), _("Time")])
         self.setColumnWidth(0, 400)
         self.setColumnWidth(1, 40)
 

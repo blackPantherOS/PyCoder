@@ -188,7 +188,7 @@ class EditorWindow(QtWidgets.QWidget):
         self.mainMenu.addAction(self.editorTabWidget.printAct)
 
         self.projectMenu = QtWidgets.QMenu(_("Project"))
-        if projectPathDict["type"] == _("Desktop Application"):
+        if projectPathDict["type"] == _("Desktop Application") or projectPathDict["type"] == "Desktop Application":
             self.projectMenu.addAction(self.buildAct)
             self.projectMenu.addAction(self.openBuildAct)
         self.projectMenu.addAction(self.configureAct)
@@ -492,7 +492,7 @@ class EditorWindow(QtWidgets.QWidget):
     def createToolbars(self):
 
         self.editorMenuButton = QtWidgets.QToolButton()
-        self.editorMenuButton.setText("Menu")
+        self.editorMenuButton.setText(_("Menu"))
         self.editorMenuButton.setPopupMode(QtWidgets.QToolButton.ToolButtonPopupMode.InstantPopup)
         self.editorMenuButton.setToolButtonStyle(QtCore.Qt.ToolButtonStyle.ToolButtonFollowStyle)
         self.editorMenuButton.setAutoRaise(True)

@@ -3,6 +3,7 @@ import shutil
 from PyQt6 import QtCore, QtGui, QtWidgets
 from PyQt6.Qsci import QsciScintilla
 from Extensions_Qt6 import StyleSheet
+import locales
 
 class GeneralSettings(QtWidgets.QDialog):
 
@@ -275,13 +276,12 @@ class GeneralSettings(QtWidgets.QDialog):
                 editorTabWidget.adjustToStyleSheet(False)
 
     def exportSettings(self):
-        options = QtWidgets.QFileDialog.Options()
         savepath = os.path.join(self.useData.getLastOpenedDir(),
-                                _("PyCoder_Settings") + '_' + QtCore.QDateTime().currentDateTime().toString().replace(' ', '_').replace(':', '-'))
+                                "PyCoder_Settings" + '_' + QtCore.QDateTime().currentDateTime().toString().replace(' ', '_').replace(':', '-'))
         savepath = os.path.normpath(savepath)
         fileName, _ = QtWidgets.QFileDialog.getSaveFileName(self,
-                                                         _("Choose Folder"), savepath,
-                                                         _("PyCoder Settings (*)"), options=options)
+                                                         "Choose Folder", savepath,
+                                                         "PyCoder Settings (*)")
   
         if fileName:
             try:

@@ -8,15 +8,15 @@ class GetShortcut(QtWidgets.QDialog):
     def __init__(self, parent=None):
         QtWidgets.QDialog.__init__(self, parent, QtCore.Qt.WindowType.Window | QtCore.Qt.WindowType.WindowCloseButtonHint)
 
-        self.setWindowTitle("New Shortcut")
+        self.setWindowTitle(_("New Shortcut"))
 
         self.accepted = False
         self.keyValue = None
 
         # Keyword modifiers!
         self.keyword_modifiers = (
-            QtCore.Qt.Key_Control, QtCore.Qt.Key_Meta, QtCore.Qt.Key_Shift,
-            QtCore.Qt.Key_Alt, QtCore.Qt.Key_Menu)
+            QtCore.Qt.Key.Key_Control, QtCore.Qt.Key.Key_Meta, QtCore.Qt.Key.Key_Shift,
+            QtCore.Qt.Key.Key_Alt, QtCore.Qt.Key.Key_Menu)
 
         mainLayout = QtWidgets.QVBoxLayout(self)
 
@@ -28,11 +28,11 @@ class GetShortcut(QtWidgets.QDialog):
         hbox = QtWidgets.QHBoxLayout()
         mainLayout.addLayout(hbox)
 
-        okButton = QtWidgets.QPushButton("Accept")
+        okButton = QtWidgets.QPushButton(_("Accept"))
         okButton.clicked.connect(self.saveShortcut)
         hbox.addWidget(okButton)
 
-        cancelButton = QtWidgets.QPushButton("Cancel")
+        cancelButton = QtWidgets.QPushButton(_("Cancel"))
         cancelButton.clicked.connect(self.close)
         hbox.addWidget(cancelButton)
 
@@ -45,7 +45,7 @@ class GetShortcut(QtWidgets.QDialog):
         self.keyLine.setText(txt)
 
     def eventFilter(self, watched, event):
-        if event.type() == QtCore.QEvent.KeyPress:
+        if event.type() == QtCore.QEvent.Type.KeyPress:
             self.keyPressEvent(event)
             return True
         return False
@@ -55,18 +55,18 @@ class GetShortcut(QtWidgets.QDialog):
         if event.key() in self.keyword_modifiers:
             return
 
-        if event.key() == QtCore.Qt.Key_Backtab and event.modifiers() & QtCore.Qt.ShiftModifier:
-            self.keyValue = QtCore.Qt.Key_Tab
+        if event.key() == QtCore.Qt.Key.Key_Backtab and event.modifiers() & QtCore.Qt.KeyboardModifier.ShiftModifier:
+            self.keyValue = QtCore.Qt.Key.Key_Tab
         else:
             self.keyValue = event.key()
-        if event.modifiers() & QtCore.Qt.ShiftModifier:
-            self.keyValue += QtCore.Qt.SHIFT
-        if event.modifiers() & QtCore.Qt.ControlModifier:
-            self.keyValue += QtCore.Qt.CTRL
-        if event.modifiers() & QtCore.Qt.AltModifier:
-            self.keyValue += QtCore.Qt.ALT
-        if event.modifiers() & QtCore.Qt.MetaModifier:
-            self.keyValue += QtCore.Qt.META
+        if event.modifiers() & QtCore.Qt.KeyboardModifier.ShiftModifier:
+            self.keyValue += QtCore.Qt.Key.SHIFT
+        if event.modifiers() & QtCore.Qt.KeyboardModifier.ControlModifier:
+            self.keyValue += QtCore.Qt.Key.CTRL
+        if event.modifiers() & QtCore.Qt.KeyboardModifier.AltModifier:
+            self.keyValue += QtCore.Qt.Key.ALT
+        if event.modifiers() & QtCore.Qt.KeyboardModifier.MetaModifier:
+            self.keyValue += QtCore.Qt.Key.META
         # set the keys
         self.setShortcut(QtGui.QKeySequence(self.keyValue).toString())
 
@@ -76,7 +76,7 @@ class Keymap(QtWidgets.QDialog):
     def __init__(self, useData, projectWindowStack, parent):
         QtWidgets.QDialog.__init__(self, parent, QtCore.Qt.WindowType.WindowCloseButtonHint)
 
-        self.setWindowTitle('Keymap')
+        self.setWindowTitle(_('Keymap'))
         self.resize(500, 400)
 
         self.parent = parent
@@ -87,7 +87,7 @@ class Keymap(QtWidgets.QDialog):
         self.setLayout(mainLayout)
 
         self.shortcutsView = QtWidgets.QTreeWidget()
-        self.shortcutsView.setHeaderLabels(["Function", "Shortcut"])
+        self.shortcutsView.setHeaderLabels([_("Function"), _("Shortcut")])
         self.shortcutsView.setColumnWidth(0, 450)
         self.shortcutsView.setSortingEnabled(True)
         self.shortcutsView.sortByColumn(0, QtCore.Qt.SortOrder.AscendingOrder)
@@ -99,11 +99,11 @@ class Keymap(QtWidgets.QDialog):
         mainLayout.addLayout(hbox)
 
         hbox.addStretch(1)
-        load_defaults_button = QtWidgets.QPushButton(self.tr("Default"))
+        load_defaults_button = QtWidgets.QPushButton(self.tr(_("Default")))
         load_defaults_button.clicked.connect(self.setDefaultShortcuts)
         hbox.addWidget(load_defaults_button)
 
-        self.applyButton = QtWidgets.QPushButton("Apply")
+        self.applyButton = QtWidgets.QPushButton(_("Apply"))
         self.applyButton.clicked.connect(self.save)
         hbox.addWidget(self.applyButton)
 
@@ -127,8 +127,8 @@ class Keymap(QtWidgets.QDialog):
                 if item.text(1) == keystr:
                     if currentItem != item:
                         reply = QtWidgets.QMessageBox.warning(self,
-                                                          'Shortcut',
-                                                          "Shortcut already in use by '{0}'\n\nReplace it?".format(
+                                                          _('Shortcut'),
+                                                          _("Shortcut already in use by '{0}'\n\nReplace it?").format(
                                                               item.text(0)),
                                                           QtWidgets.QMessageBox.StandardButton.Yes, 
                                                           QtWidgets.QMessageBox.StandardButton.No)
@@ -167,7 +167,6 @@ class Keymap(QtWidgets.QDialog):
         self.saveKeymap()
 
     def saveKeymap(self, path=None):
-        # FIXME QtXml is no longer supported.
         dom_document = QtXml.QDomDocument("keymap")
 
         keymap = dom_document.createElement("keymap")
@@ -223,8 +222,8 @@ class Keymap(QtWidgets.QDialog):
             mainItem.setExpanded(True)
 
     def setDefaultShortcuts(self):
-        reply = QtWidgets.QMessageBox.warning(self, "Default Keymap",
-                                          "Setting keymap to default will wipe away your current keymap.\n\nProceed?",
+        reply = QtWidgets.QMessageBox.warning(self, _("Default Keymap"),
+                                          _("Setting keymap to default will wipe away your current keymap.\n\nProceed?"),
                                           QtWidgets.QMessageBox.StandardButton.Yes | 
                                           QtWidgets.QMessageBox.StandardButton.No)
         if reply == QtWidgets.QMessageBox.StandardButton.Yes:

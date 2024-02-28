@@ -1,13 +1,11 @@
 import os
 import sys
 import shutil
-
 # FIXME QtXml is no longer supported.
 from PyQt6 import QtCore, QtGui, QtWidgets, QtXml
 
 from Extensions_Qt6.Projects.ProjectManager.ProjectView.ProjectView import IconProvider
 from venv import EnvBuilder
-
 from Extensions_Qt6 import StyleSheet
 
 class SelectBox(QtWidgets.QDialog):
@@ -308,15 +306,15 @@ class VenvSetup(QtWidgets.QWidget):
         hbox = QtWidgets.QHBoxLayout()
         mainLayout.addLayout(hbox)
 
-        self.installVenvButton = QtWidgets.QPushButton("Install")
+        self.installVenvButton = QtWidgets.QPushButton(_("Install"))
         self.installVenvButton.clicked.connect(self.install)
         hbox.addWidget(self.installVenvButton)
 
-        self.upgradeVenvButton = QtWidgets.QPushButton("Upgrade")
+        self.upgradeVenvButton = QtWidgets.QPushButton(_("Upgrade"))
         self.upgradeVenvButton.clicked.connect(self.upgrade)
         hbox.addWidget(self.upgradeVenvButton)
 
-        self.uninstallVenvButton = QtWidgets.QPushButton("Uninstall")
+        self.uninstallVenvButton = QtWidgets.QPushButton(_("Uninstall"))
         self.uninstallVenvButton.clicked.connect(self.uninstall)
         hbox.addWidget(self.uninstallVenvButton)
 
@@ -474,7 +472,7 @@ class BuildConfig(QtWidgets.QWidget):
                       "Namespace Packages": []}
 
         self.profileData = self.load()
-        
+
         self.tabWidget = QtWidgets.QTabWidget()
         self.tabWidget.setObjectName("buildTab")
         mainLayout.addWidget(self.tabWidget)
@@ -482,7 +480,7 @@ class BuildConfig(QtWidgets.QWidget):
         versionWidget = QtWidgets.QWidget()
         self.tabWidget.addTab(versionWidget,
                         QtGui.QIcon(os.path.join("Resources", "images", "arrow-045")),
-                            "Version Information")
+                            _("Version Information"))
 
         versionLayout = QtWidgets.QFormLayout()
         versionWidget.setLayout(versionLayout)
@@ -490,6 +488,7 @@ class BuildConfig(QtWidgets.QWidget):
         self.itemLine = QtWidgets.QLineEdit()
         self.itemLine.setText(self.profileData["name"])
         versionLayout.addRow(_("Name"), self.itemLine)
+        #print("NAME", self.profileData["name"])
 
         self.authorLine = QtWidgets.QLineEdit()
         self.authorLine.setText(self.profileData["author"])
@@ -537,33 +536,33 @@ class BuildConfig(QtWidgets.QWidget):
         self.optimizeBox.addItem(_("Optimize (Remove Doc Strings)"))
         self.optimizeBox.setCurrentIndex(
             self.optimizeBox.findText(self.profileData["optimize"]))
-        optionsLayout.addRow('', self.optimizeBox)
+        optionsLayout.addRow(_('Speed'), self.optimizeBox)
 
         self.compressBox = QtWidgets.QComboBox()
         self.compressBox.addItem(_("Compress"))
         self.compressBox.addItem(_("Don't Compress"))
-        optionsLayout.addRow('',  self.compressBox)
+        optionsLayout.addRow(_('Size'),  self.compressBox)
 
         self.copyDepsBox = QtWidgets.QComboBox()
         self.copyDepsBox.addItem(_("Copy Dependencies"))
         self.copyDepsBox.addItem(_("Don't Copy Dependencies"))
         self.copyDepsBox.setCurrentIndex(
             self.copyDepsBox.findText(self.profileData["copydeps"]))
-        optionsLayout.addRow('', self.copyDepsBox)
+        optionsLayout.addRow(_('Depends'), self.copyDepsBox)
 
         self.appendScriptToExeBox = QtWidgets.QComboBox()
         self.appendScriptToExeBox.addItem(_("Append Script to Exe"))
         self.appendScriptToExeBox.addItem(_("Don't Append Script to Exe"))
         self.appendScriptToExeBox.setCurrentIndex(
             self.appendScriptToExeBox.findText(self.profileData["appendscripttoexe"]))
-        optionsLayout.addRow('', self.appendScriptToExeBox)
+        optionsLayout.addRow(_('ToExe'), self.appendScriptToExeBox)
 
         self.appendScriptToLibraryBox = QtWidgets.QComboBox()
         self.appendScriptToLibraryBox.addItem(_("Append Script to Library"))
         self.appendScriptToLibraryBox.addItem(_("Don't Append Script to Library"))
         self.appendScriptToLibraryBox.setCurrentIndex(
             self.appendScriptToLibraryBox.findText(self.profileData["appendscripttolibrary"]))
-        optionsLayout.addRow('', self.appendScriptToLibraryBox)
+        optionsLayout.addRow(_('ToLibs'), self.appendScriptToLibraryBox)
 
         self.windowTypeBox = QtWidgets.QComboBox()
         self.windowTypeBox.addItem(_("GUI"))
@@ -620,33 +619,33 @@ class BuildConfig(QtWidgets.QWidget):
         advancedLayout.addWidget(self.listWidget)
 
         self.helpDict = {
-            _("Includes"): _("List of modules to include"),
-            _("Excludes"): _("List of modules to exclude"),
-            _("Constants Modules"): _("List of constants to include"),
-            _("Packages"): _("List of packages to include"),
-            _("Replace Paths"): (
+            "Includes": _("List of modules to include"),
+            "Excludes": _("List of modules to exclude"),
+            "Constants Modules": _("List of constants to include"),
+            "Packages": _("List of packages to include"),
+            "Replace Paths": (
                 _("Replace all the paths in modules found in the given paths "
                 "with the given replacement string; each value "
                 "is of the form path=replacement_string; path can be * "
                 "which means all paths not already specified")),
-            _("Include Files"): _("List of files to include"),
-            _("Zip Includes"): (
+            "Include Files": _("List of files to include"),
+            "Zip Includes": (
                 _("Name of file to add to the zip file or a specification of "
                 "the form name=arcname which will specify the archive name "
                 "to use")),
-            _("Namespace Packages"): _("List of packages to include"),
-            _("Bin Includes"): (
+            "Namespace Packages": _("List of packages to include"),
+            "Bin Includes": (
                 _("Libraries that need not be included because"
                 "they would normally be expected to be found on the target system or"
                 "because they are part of a package which requires independent"
                 "installation anyway.")),
-            _("Bin Excludes"): (
+            "Bin Excludes": (
                 _("File names of libraries which must be included for the"
                 "frozen executable to work.")),
-            _("Bin Path Includes"): (
+            "Bin Path Includes": (
                 _("Paths of directories which contain files that should "
                 "be included.")),
-            _("Bin Path Excludes"): (
+            "Bin Path Excludes": (
                 _("Paths of directories which contain files that should not"
                 "be included, generally because they contain standard system libraries.")),
             }
@@ -681,7 +680,7 @@ class BuildConfig(QtWidgets.QWidget):
         hbox = QtWidgets.QHBoxLayout()
         mainLayout.addLayout(hbox)
 
-        self.saveButton = QtWidgets.QPushButton("Save")
+        self.saveButton = QtWidgets.QPushButton(_("Save"))
         self.saveButton.clicked.connect(self.save)
         hbox.addWidget(self.saveButton)
 
@@ -726,16 +725,15 @@ class BuildConfig(QtWidgets.QWidget):
         self.enableAddButton()
 
     def addIcon(self):
-        options = QtWidgets.QFileDialog.Options()
         if sys.platform == "win32":
-            file_filter = _("Icon Files (*.ico)")
+            file_filter = "Icon Files (*.ico)"
         elif sys.platform == "darwin":
-            file_filter = _("Icon Files (*.icns)")
+            file_filter = "Icon Files (*.icns)"
         else:
             file_filter = _("Icon Files (*.png *.svg);;All Files (*)")
         filePath, _ = QtWidgets.QFileDialog.getOpenFileName(self,
-                                                    _("Select Icon"), self.useData.getLastOpenedDir(),
-                                                    file_filter, options=options)
+                                                    "Select Icon", self.useData.getLastOpenedDir(),
+                                                    file_filter)
         if filePath:
             destPath = os.path.join(self.projectPathDict['iconsdir'],
                                     os.path.basename(filePath))
@@ -912,7 +910,7 @@ class ConfigureProject(QtWidgets.QLabel):
     def __init__(self, projectPathDict, projectSettings, useData, parent=None):
         QtWidgets.QLabel.__init__(self, parent)
 
-        #vector self.setBackgroundRole(QtGui.QPalette.Window)
+        self.setBackgroundRole(QtGui.QPalette.ColorRole.Window)
         self.setAutoFillBackground(True)
         self.setObjectName("containerLabel")
         self.setStyleSheet(StyleSheet.toolWidgetStyle)
@@ -941,7 +939,7 @@ class ConfigureProject(QtWidgets.QLabel):
 
         self.tabWidget = QtWidgets.QTabWidget()
 
-        if projectPathDict["type"] == _("Desktop Application"):
+        if projectPathDict["type"] == _("Desktop Application") or projectPathDict["type"] == "Desktop Application":
             self.buildConfig = BuildConfig(projectPathDict, useData)
             self.tabWidget.addTab(self.buildConfig,
                                   QtGui.QIcon(os.path.join("Resources", "images", "build")), _("Build"))

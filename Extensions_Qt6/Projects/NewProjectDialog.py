@@ -101,7 +101,7 @@ class NewProjectDialog(QtWidgets.QDialog):
         self.validateFields()
 
     def showWindowTypeBox(self):
-        if self.typeBox.currentText() == _("Desktop Application"):
+        if self.typeBox.currentText() == _("Desktop Application") or self.typeBox.currentText() == "Desktop Application":
             self.windowTypeBox.show()
         else:
             self.windowTypeBox.hide()
@@ -129,7 +129,7 @@ class NewProjectDialog(QtWidgets.QDialog):
         self.okButton.setDisabled(False)
 
     def sendData(self):
-        if self.typeBox.currentText() == _("Desktop Application"):
+        if self.typeBox.currentText() == _("Desktop Application") or self.typeBox.currentText() == "Desktop Application":
             mainScript = self.nameLine.text() + '.py'
         elif self.typeBox.currentText() == _("Python Package"):
             mainScript = "__init__.py"

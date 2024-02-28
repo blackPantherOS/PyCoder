@@ -39,7 +39,7 @@ class ProjectManager(QtWidgets.QWidget):
 
         self.configDialog = editorTabWidget.configDialog
 
-        if projectPathDict["type"] == _("Desktop Application"):
+        if projectPathDict["type"] == _("Desktop Application") or projectPathDict["type"] == "Desktop Application":
             self.build = Build(
                 buildStatusWidget, messagesWidget, projectPathDict, projectSettings, useData,
                 self.configDialog.buildConfig, editorTabWidget, self)
@@ -74,12 +74,11 @@ class ProjectManager(QtWidgets.QWidget):
         name = curren_window.projectPathDict["name"]
         path = curren_window.projectPathDict["root"]
 
-        options = QtWidgets.QFileDialog.Options()
         savepath = os.path.join(self.useData.getLastOpenedDir(), name)
         savepath = os.path.normpath(savepath)
         fileName = QtWidgets.QFileDialog.getSaveFileName(self,
                                                      _("Export"), savepath,
-                                                     _("All files (*)"), options)[0]
+                                                     _("All files (*)"))[0]
         if fileName:
             self.useData.saveLastOpenedDir(os.path.split(fileName)[0])
 

@@ -325,20 +325,20 @@ class Build(QtWidgets.QWidget):
         if elapsed >= 60000:
             min = int(elapsed / 60000)
             sec = int((elapsed - (60000 * min)) / 1000)
-            elapsed = "{0}m{1}s".format(str(min), str(sec))
+            elapsed = _("{0}m{1}s").format(str(min), str(sec))
         else:
             elapsed = str(round(elapsed / 1000, 1)) + 's'
         self.busyWidget.showBusy(False)
         if self.buildThread.error:
             self.messagesWidget.addMessage(
-                1, "Build Completed in {0} [Errors]".format(str(elapsed)), 
+                1, _("Build Completed in {0} [Errors]").format(str(elapsed)), 
                     [self.buildThread.error])
         else:
             if len(self.buildThread.missing) > 0:
                 self.messagesWidget.addMessage(
-                    1, "Build Completed in {0} [missing modules]".format(elapsed), 
+                    1, _("Build Completed in {0} [missing modules]").format(elapsed), 
                         self.buildThread.missing)
             else:
                 self.messagesWidget.addMessage(
-                    0, "Build Completed in {0} ".format(elapsed), 
-                        ["Build Completed Successfully!"])
+                    0, _("Build Completed in {0} ").format(elapsed), 
+                        [_("Build Completed Successfully!")])
