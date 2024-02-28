@@ -791,12 +791,12 @@ class EditorTabWidget(QtWidgets.QTabWidget):
         self.currentEditor.copyActModifier()
 
         if self.getEditorData("filePath") is None:
-            self.updateWindowTitle.emit("Unsaved")
-            self.updateEncodingLabel.emit("Coding: {0}".format(
+            self.updateWindowTitle.emit(_("Unsaved"))
+            self.updateEncodingLabel.emit(_("Coding: {0}").format(
                 self.getEditorData("codingFormat")))
         else:
             self.updateWindowTitle.emit(self.getEditorData("filePath"))
-            self.updateEncodingLabel.emit("Coding: {0}".format(
+            self.updateEncodingLabel.emit(_("Coding: {0}").format(
                 self.getEditorData("codingFormat")))
 
         self.enableBookmarkButtons(self.currentEditor.bookmarksExist())
@@ -1115,8 +1115,11 @@ class EditorTabWidget(QtWidgets.QTabWidget):
         document = self.currentEditor.document()
         printer = QtPrintSupport.QPrinter()
 
+
         dlg = QtPrintSupport.QPrintDialog(printer, self)
-        if dlg.exec() != QtWidgets.QDialog.Accepted:
+        dlg.setOption(QtPrintSupport.QPrintOption.DontUseNativeDialog)
+        dlgret = dlg.exec()
+        if dlg.exec() != QtWidgets.QDialog.accepted:
             return
         document.print_(printer)
 

@@ -134,7 +134,7 @@ class SetRunParameters(QtWidgets.QLabel):
 
         hbox.addStretch(1)
 
-        label = QtWidgets.QLabel("Installed Python")
+        label = QtWidgets.QLabel(_("Installed Python"))
         hbox.addWidget(label)
 
         self.setLayout(mainLayout)

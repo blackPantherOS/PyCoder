@@ -4,12 +4,10 @@ import re
 import codecs
 import traceback
 import logging
-# FIXME QtXml is no longer supported.
-from PyQt6 import QtCore, QtXml
+from PyQt6 import QtCore, QtXml, QtWidgets
 from PyQt6.Qsci import QsciScintilla
 
 from Extensions_Qt6.Workspace import WorkSpace
-
 
 def textEncoding(bb):
     """ Get the encoding used to encode a file.
@@ -455,19 +453,27 @@ class UseData(QtCore.QObject):
             tag = dom_document.createElement(i)
             modules.appendChild(tag)
             tag.setAttribute("use", str(v[1]))
+            print("TAG:", tag, " Use:",str(v[1]))
 
             for subModule in v[0]:
                 item = dom_document.createElement("item")
+                #print("SubModule1:", item)
                 tag.appendChild(item)
 
                 t = dom_document.createTextNode(subModule)
+                #print("SubModule2:", t)
                 item.appendChild(t)
 
         try:
             file = open(self.appPathDict["modules"], "w")
             file.write('<?xml version="1.0" encoding="UTF-8"?>\n')
             file.write(dom_document.toString())
+            xml_content = dom_document.toString()
+            print("DOM dokumentum tartalma:")
+            #print(xml_content)
             file.close()
+            print("Fájl mentve:", self.appPathDict["modules"])
+
         except:
             exc_type, exc_value, exc_traceback = sys.exc_info()
             logging.error(repr(traceback.format_exception(exc_type, exc_value,
@@ -623,6 +629,31 @@ class UseData(QtCore.QObject):
         file.close()
 
     def readFile(self, fileName):
+        try:
+            file = open(fileName, 'rb')
+            bb = file.read()
+            file.close()
+            encoding = textEncoding(bb)
+    
+            file = open(fileName, 'r')
+            text = file.read()
+            file.close()
+    
+            ending = lineEnding(text)
+        except Exception as e:
+            message = QtWidgets.QMessageBox.warning(
+                None, "Cannot open", "Non-editable file type."
+                "<p>These types of files are usually archives, binaries, "
+                "and other unsupported formats..</p>")
+
+            #error_message = f"Cannot open file: {str(e)}"
+            #QtWidgets.QMessageBox.warning(self, "Error", error_message)
+            #text, encoding, ending = "", None, None
+            pass
+
+        return text, encoding, ending
+
+    def readFile_old(self, fileName):
         file = open(fileName, 'rb')
         bb = file.read()
         file.close()

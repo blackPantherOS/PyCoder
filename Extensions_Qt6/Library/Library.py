@@ -26,7 +26,7 @@ class EditComment(QtWidgets.QDialog):
         QtWidgets.QDialog.__init__(self, parent, QtCore.Qt.WindowType.Window | QtCore.Qt.WindowType.WindowCloseButtonHint)
 
         self.resize(400, 200)
-        self.setWindowTitle("Edit Comment")
+        self.setWindowTitle(_("Edit Comment"))
 
         mainLayout = QtWidgets.QVBoxLayout()
 
@@ -37,11 +37,11 @@ class EditComment(QtWidgets.QDialog):
         hbox = QtWidgets.QHBoxLayout()
         hbox.addStretch(1)
 
-        self.okButton = QtWidgets.QPushButton("OK")
+        self.okButton = QtWidgets.QPushButton(_("OK"))
         self.okButton.clicked.connect(self.accept)
         hbox.addWidget(self.okButton)
 
-        self.cancelButton = QtWidgets.QPushButton("Cancel")
+        self.cancelButton = QtWidgets.QPushButton(_("Cancel"))
         self.cancelButton.clicked.connect(self.close)
         hbox.addWidget(self.cancelButton)
 
@@ -67,7 +67,7 @@ class GetName(QtWidgets.QDialog):
         self.path = path
 
         mainLayout = QtWidgets.QVBoxLayout()
-        mainLayout.addWidget(QtWidgets.QLabel("Name:"))
+        mainLayout.addWidget(QtWidgets.QLabel(_("Name:")))
 
         self.nameLine = QtWidgets.QLineEdit()
         if defaultText is not None:
@@ -86,12 +86,12 @@ class GetName(QtWidgets.QDialog):
 
         hbox.addStretch(1)
 
-        self.acceptButton = QtWidgets.QPushButton("Ok")
+        self.acceptButton = QtWidgets.QPushButton(_("Ok"))
         self.acceptButton.setDisabled(True)
         self.acceptButton.clicked.connect(self.accept)
         hbox.addWidget(self.acceptButton)
 
-        self.cancelButton = QtWidgets.QPushButton("Cancel")
+        self.cancelButton = QtWidgets.QPushButton(_("Cancel"))
         self.cancelButton.clicked.connect(self.close)
         hbox.addWidget(self.cancelButton)
 
@@ -113,10 +113,10 @@ class GetName(QtWidgets.QDialog):
         else:
             preExistNames = os.listdir(self.path)
             if text in preExistNames:
-                self.statusLabel.setText("Unavailable")
+                self.statusLabel.setText(_("Unavailable"))
                 self.acceptButton.setDisabled(True)
             else:
-                self.statusLabel.setText("Available")
+                self.statusLabel.setText(_("Available"))
                 self.acceptButton.setDisabled(False)
 
     def accept(self):
@@ -168,10 +168,6 @@ class Library(QtWidgets.QMainWindow):
         self.codeViewer = CodeViewer()
         self.mainSplitter.addWidget(self.codeViewer)
 
-        #self.subSplitter = QtWidgets.QSplitter(QtWidgets.QSplitter.Orientation.Vertical)
-        #self.subSplitter = QtWidgets.QSplitter(QtCore.Qt.Vertical)
-        #self.subSplitter = QtWidgets.QSplitter(Qt.Vertical)
-        #self.subSplitter = QtWidgets.QSplitter(QtCore.Qt.Vertical)
         self.subSplitter = QtWidgets.QSplitter(QtCore.Qt.Orientation.Vertical)
 
         widget = QtWidgets.QWidget()
@@ -190,7 +186,7 @@ class Library(QtWidgets.QMainWindow):
         self.snippetsListWidget = QtWidgets.QTreeWidget()
         self.snippetsListWidget.setAutoScroll(False)
         self.snippetsListWidget.setRootIsDecorated(True)
-        self.snippetsListWidget.setHeaderLabels(["Name", "Size"])
+        self.snippetsListWidget.setHeaderLabels([_("Name"), _("Size")])
         self.snippetsListWidget.setColumnWidth(0, 300)
         self.snippetsListWidget.itemPressed.connect(self.viewLibraryItem)
         self.snippetsListWidget.itemPressed.connect(self.selectionChanged)
@@ -208,9 +204,9 @@ class Library(QtWidgets.QMainWindow):
         snippetsWidget.setLayout(snippetsVbox)
 
         self.tabWidget.addTab(snippetsWidget,
-                              QtGui.QIcon(os.path.join("Resources", "images", "envelope")), "Modules")
+                              QtGui.QIcon(os.path.join("Resources", "images", "envelope")), _("Modules"))
         self.tabWidget.addTab(self.advancedSearch,
-                              QtGui.QIcon(os.path.join("Resources", "images", "search")), "Search")
+                              QtGui.QIcon(os.path.join("Resources", "images", "search")), _("Search"))
 
         vbox.addWidget(self.tabWidget)
         widget.setLayout(vbox)
@@ -222,7 +218,7 @@ class Library(QtWidgets.QMainWindow):
         self.showDetailsButton = QtWidgets.QToolButton()
         self.showDetailsButton.setAutoRaise(True)
         self.showDetailsButton.setToolButtonStyle(QtCore.Qt.ToolButtonStyle.ToolButtonFollowStyle)
-        self.showDetailsButton.setText("More")
+        self.showDetailsButton.setText(_("More"))
         self.showDetailsButton.setIcon(QtGui.QIcon(
             os.path.join("Resources", "images", "extender-up")))
         self.showDetailsButton.clicked.connect(self.showComments)
@@ -241,13 +237,13 @@ class Library(QtWidgets.QMainWindow):
         layout = QtWidgets.QVBoxLayout()
         layout.setContentsMargins(0, 5, 5, 0)
 
-        layout.addWidget(QtWidgets.QLabel("Comments:"))
+        layout.addWidget(QtWidgets.QLabel(_("Comments:")))
 
         self.commentViewer = QtWidgets.QPlainTextEdit()
         self.commentViewer.setReadOnly(True)
         layout.addWidget(self.commentViewer)
 
-        layout.addWidget(QtWidgets.QLabel("Source:"))
+        layout.addWidget(QtWidgets.QLabel(_("Source:")))
 
         self.sourceLine = QtWidgets.QLineEdit()
         self.sourceLine.setReadOnly(True)
@@ -324,40 +320,40 @@ class Library(QtWidgets.QMainWindow):
         self.editCommentAct = \
             QtGui.QAction(
                 QtGui.QIcon(os.path.join("Resources", "images", "edit")),
-                "Edit Comment", self,
-                statusTip="Edit Comment", triggered=self.editComment)
+                _("Edit Comment"), self,
+                statusTip=_("Edit Comment"), triggered=self.editComment)
 
         self.removeAct = \
             QtGui.QAction(
                 QtGui.QIcon(os.path.join("Resources", "images", "remove")),
-                "Remove", self,
-                statusTip="Remove", triggered=self.removeItem)
+                _("Remove"), self,
+                statusTip=_("Remove"), triggered=self.removeItem)
 
         self.renameAct = \
             QtGui.QAction(
                 QtGui.QIcon(
                     os.path.join("Resources", "images", "ui-text-field")),
-                "Rename", self,
-                statusTip="Rename", triggered=self.rename)
+                _("Rename"), self,
+                statusTip=_("Rename"), triggered=self.rename)
 
         self.printAct = \
             QtGui.QAction(
                 QtGui.QIcon(
                     os.path.join("Resources", "images", "_0013_Printer")),
-                "Print", self,
-                statusTip="Print", triggered=self.printFile)
+                _("Print"), self,
+                statusTip=_("Print"), triggered=self.printFile)
 
         self.exportAct = \
             QtGui.QAction(
                 QtGui.QIcon(os.path.join("Resources", "images", "archive")),
-                "Export Library", self,
-                statusTip="Export Library", triggered=self.export)
+                _("Export Library"), self,
+                statusTip=_("Export Library"), triggered=self.export)
 
         self.toggleSidebarViewAct = \
             QtGui.QAction(
                 QtGui.QIcon(os.path.join("Resources", "images", "out")),
-                "Toggle Sidebar View", self,
-                statusTip="Toggle Sidebar View", triggered=self.viewSideBar)
+                _("Toggle Sidebar View"), self,
+                statusTip=_("Toggle Sidebar View"), triggered=self.viewSideBar)
 
     def gotoAlpha(self):
         alpha = self.alphaSearchBox.currentText()
@@ -446,7 +442,7 @@ class Library(QtWidgets.QMainWindow):
     def showComments(self):
         if self.commentViewer.isVisible():
             self.detailsWidget.hide()
-            self.showDetailsButton.setText("More")
+            self.showDetailsButton.setText(_("More"))
             self.showDetailsButton.setIcon(QtGui.QIcon(
                 os.path.join("Resources", "images", "extender-up")))
         else:
@@ -506,7 +502,7 @@ class Library(QtWidgets.QMainWindow):
             self.removeAct.setDisabled(False)
             self.renameAct.setDisabled(False)
             self.printAct.setDisabled(False)
-        self.libraryCountLabel.setText(str(count) + " items")
+        self.libraryCountLabel.setText(str(count) + _(" items"))
 
     def viewLibraryItem(self, item):
         if item.type() == 0:
@@ -552,7 +548,7 @@ class Library(QtWidgets.QMainWindow):
     def removeItem(self):
         mess = 'Remove "{0}" from library?'.format(
             self.currentSnippetItem.text(0))
-        reply = QtWidgets.QMessageBox.warning(self, "Remove", mess,
+        reply = QtWidgets.QMessageBox.warning(self, _("Remove"), mess,
                                           QtWidgets.QMessageBox.StandardButton.Yes | 
                                           QtWidgets.QMessageBox.StandardButton.No)
         if reply == QtWidgets.QMessageBox.StandardButton.Yes:
@@ -562,15 +558,15 @@ class Library(QtWidgets.QMainWindow):
                 os.remove(path)
                 self.loadLibrary()
             except:
-                message = QtWidgets.QMessageBox.warning(self, "Remove",
-                                                    "Failed to remove item!")
+                message = QtWidgets.QMessageBox.warning(self, _("Remove"),
+                                                    _("Failed to remove item!"))
 
     def printFile(self):
         document = self.codeViewer.document()
         printer = QtPrintSupport.QPrinter()
 
         dlg = QtPrintSupport.QPrintDialog(printer, self)
-        if dlg.exec() != QtWidgets.QDialog.Accepted:
+        if dlg.exec() != QtWidgets.QDialog.accepted:
             return
         document.print_(printer)
 
@@ -582,7 +578,7 @@ class Library(QtWidgets.QMainWindow):
         head = c[0]
         extension = c[1]
 
-        newName = GetName("Rename", self.useData.appPathDict["librarydir"],
+        newName = GetName(_("Rename"), self.useData.appPathDict["librarydir"],
                           head, self)
         if newName.accepted:
             text = newName.name.strip()
@@ -591,14 +587,13 @@ class Library(QtWidgets.QMainWindow):
                 os.rename(old_path, new_path)
                 self.loadLibrary()
             except Exception as err:
-                message = QtWidgets.QMessageBox.warning(self, "Rename",
-                                                    "Renaming failed!\n\n{0}".format(str(err)))
+                message = QtWidgets.QMessageBox.warning(self, _("Rename"),
+                                                    _("Renaming failed!\n\n{0}").format(str(err)))
 
     def selectAll(self):
         self.codeViewer.selectAll()
 
     def export(self):
-        #vector: crashfix options = QtWidgets.QFileDialog.Options()
         fileName, _ = QtWidgets.QFileDialog.getSaveFileName(self,
                                                          "Export Library",
                                                          os.path.join(
@@ -617,7 +612,7 @@ class Library(QtWidgets.QMainWindow):
                 mess = str(err.args[1])
                 QtWidgets.QApplication.restoreOverrideCursor()
                 message = QtWidgets.QMessageBox.critical(self,
-                                                         "Export Library", mess)
+                                                         _("Export Library"), mess)
             QtWidgets.QApplication.restoreOverrideCursor()
         else:
             return False
@@ -625,16 +620,16 @@ class Library(QtWidgets.QMainWindow):
 
     def addToLibrary(self, editorTabWidget):
         if editorTabWidget.getSource().strip() == '':
-            message = QtWidgets.QMessageBox.warning(self, "Library Add",
-                                                "Source code must be present to add to library!")
+            message = QtWidgets.QMessageBox.warning(self, _("Library Add"),
+                                                _("Source code must be present to add to library!"))
             return
         add = LibraryAddDialog(editorTabWidget, self)
         if add.accepted:
             path = os.path.join(self.useData.appPathDict[
                                 "librarydir"], add.name)
             if os.path.exists(path):
-                mess = "File already exists in Library.\n\nReplace it?"
-                reply = QtWidgets.QMessageBox.warning(self, "Library Add",
+                mess = _("File already exists in Library.\n\nReplace it?")
+                reply = QtWidgets.QMessageBox.warning(self, _("Library Add"),
                                                   mess, QtWidgets.QMessageBox.StandardButton.Yes | 
                                                   QtWidgets.QMessageBox.StandardButton.No)
                 if reply == QtWidgets.QMessageBox.StandardButton.Yes:
@@ -683,5 +678,5 @@ class Library(QtWidgets.QMainWindow):
                 self.loadLibrary()
                 self.close()
             except Exception as err:
-                message = QtWidgets.QMessageBox.warning(self, "Library Add",
-                                                    "Adding to Library failed!\n\n{0}".format(str(err)))
+                message = QtWidgets.QMessageBox.warning(self, _("Library Add"),
+                                                    _("Adding to Library failed!\n\n{0}").format(str(err)))

@@ -216,7 +216,7 @@ class FileExplorer(QtWidgets.QTreeView):
         self.showAllFilesAct.setChecked(True)
 
         self.locateAct = \
-            QtGui.QAction(_("Locate"), self, statusTip=_("Locate"),
+            QtGui.QAction(_("Locate"), self, statusTip=_("Locate this item in filemanager"),
                           triggered=self.locate)
 
         self.createShortcutAct = \
