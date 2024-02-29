@@ -301,28 +301,33 @@ class EditorTabWidget(QtWidgets.QTabWidget):
             _("Undo"), self,
             statusTip=_("Undo last edit action"),
             triggered=self.undoAction)
-
+        self.undoAct.setToolTip(_("Undo last edit action"))
+        
         self.redoAct = QtGui.QAction(
             QtGui.QIcon(os.path.join("Resources", "images", "redo")),
             _("Redo"), self,
             statusTip=_("Redo last edit action"),
             triggered=self.redoAction)
+        self.redoAct.setToolTip(_("Reddo last edit action"))
 
         self.cutAct = QtGui.QAction(
             QtGui.QIcon(os.path.join("Resources", "images", "cut")),
             _("Cut"), self,
             statusTip=_("Cut selected text"), triggered=self.cutItem)
+        self.cutAct.setToolTip(_("Cut selected text"))
 
         self.copyAct = QtGui.QAction(
             QtGui.QIcon(os.path.join("Resources", "images", "copy")),
             _("Copy"), self,
             statusTip=_("Copy selected text"), triggered=self.copyItem)
+        self.copyAct.setToolTip(_("Copy selected text"))
 
         self.pasteAct = QtGui.QAction(
             QtGui.QIcon(os.path.join("Resources", "images", "paste")),
             _("Paste"), self,
             statusTip=_("Paste text from clipboard"),
             triggered=self.pasteFromClipboard)
+        self.pasteAct.setToolTip(_("Paste content from clipboard"))
 
         #----------------------------------------------------------------------
 
@@ -333,6 +338,7 @@ class EditorTabWidget(QtWidgets.QTabWidget):
                 _("Indent"), self,
                 statusTip=_("Indent Region"),
                 triggered=self.increaseIndent)
+        self.indentAct.setToolTip(_("Indent Region"))
 
         self.dedentAct = \
             QtGui.QAction(
@@ -341,6 +347,7 @@ class EditorTabWidget(QtWidgets.QTabWidget):
                 _("Unindent"), self,
                 statusTip=_("Unindent Region"),
                 triggered=self.decreaseIndent)
+        self.dedentAct.setToolTip(_("Unindent Region"))
 
         self.writeLockAct = \
             QtGui.QAction(
@@ -348,6 +355,7 @@ class EditorTabWidget(QtWidgets.QTabWidget):
                 _("Write Lock"), self,
                 statusTip=("Write Lock"),
                           triggered=self.writeLock)
+        self.writeLockAct.setToolTip(_("Write lock to this tab"))
 
         self.findNextBookmarkAct = \
             QtGui.QAction(
@@ -355,18 +363,21 @@ class EditorTabWidget(QtWidgets.QTabWidget):
                     os.path.join("Resources", "images", "Arrow2-down")),
                 _("Next Bookmark"), self, statusTip=_("Next Bookmark"),
                 triggered=self.findNextBookmark)
+        self.findNextBookmarkAct.setToolTip(_("Find Next Bookmark in this code"))
 
         self.findPrevBookmarkAct = \
             QtGui.QAction(
                 QtGui.QIcon(os.path.join("Resources", "images", "Arrow2-up")),
                 _("Previous Bookmark"), self, statusTip=_("Previous Bookmark"),
                 triggered=self.findPreviousBookmark)
+        self.findPrevBookmarkAct.setToolTip(_("Find Previous Bookmark in this code"))
 
         self.removeBookmarksAct = \
             QtGui.QAction(
                 QtGui.QIcon(os.path.join("Resources", "images", "block__")),
                 _("Remove Bookmarks"), self, statusTip=_("Remove Bookmarks"),
                 triggered=self.removeBookmarks)
+        self.removeBookmarksAct.setToolTip(_("Remove All Placed Bookmarks"))
 
         #---------------------------------------------------------------------
 
@@ -375,24 +386,28 @@ class EditorTabWidget(QtWidgets.QTabWidget):
             _("New [.py]"), self,
             statusTip=_("Create a new python file"),
             triggered=self._newPythonFile)
+        self.newPythonFileAct.setToolTip(_("Create a new python file"))
 
         self.newXmlFileAct = QtGui.QAction(
             QtGui.QIcon(os.path.join("Resources", "images", "new")),
             "Xml", self,
             statusTip=_("Create a new Xml file"),
             triggered=self._newXmlFile)
+        self.newXmlFileAct.setToolTip(_("Create a new Xml file"))
 
         self.newHtmlFileAct = QtGui.QAction(
             QtGui.QIcon(os.path.join("Resources", "images", "new")),
             "Html", self,
             statusTip=_("Create a new Html file"),
             triggered=self._newHtmlFile)
+        self.newHtmlFileAct.setToolTip(_("Create a new Html file"))
 
         self.newCssFileAct = QtGui.QAction(
             QtGui.QIcon(os.path.join("Resources", "images", "new")),
             "Css", self,
             statusTip=_("Create a new Css file"),
             triggered=self._newCssFile)
+        self.newCssFileAct.setToolTip(_("Create a new Css file"))
 
         self.openFileAct = \
             QtGui.QAction(
@@ -400,11 +415,13 @@ class EditorTabWidget(QtWidgets.QTabWidget):
                 _("Open File..."), self,
                 statusTip=_("Open python file"),
                           triggered=self.openFile)
+        self.openFileAct.setToolTip(_("Open file to editing"))
 
         self.saveAct = QtGui.QAction(
             QtGui.QIcon(os.path.join("Resources", "images", "save_")),
             _("Save"), self,
             statusTip=_("Save file"), triggered=self._save)
+        self.saveAct.setToolTip(_("Save current file"))
 
         self.saveAllAct = \
             QtGui.QAction(
@@ -413,7 +430,9 @@ class EditorTabWidget(QtWidgets.QTabWidget):
                 _("Save All"), self,
                 statusTip=_("Save All Changes"),
                           triggered=self.saveAll)
-
+        self.saveAllAct.setToolTip(_("Save All Changes in Current Project"))
+        
+        
         self.saveAsAct = QtGui.QAction(_("Save As..."), 
                                            self, statusTip=_("Save file as..."),
                                            triggered=self.saveAs)

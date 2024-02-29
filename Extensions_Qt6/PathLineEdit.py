@@ -16,14 +16,14 @@ class PathLineEdit(QtWidgets.QLineEdit):
         hbox.addStretch(1)
 
         self.fileButton = QtWidgets.QToolButton()
-        self.fileButton.setToolTip("Insert File Path")
+        self.fileButton.setToolTip(_("Insert File Path"))
         self.fileButton.setAutoRaise(True)
         self.fileButton.setIcon(QtGui.QIcon(os.path.join("Resources", "images", "page")))
         self.fileButton.clicked.connect(self.insertFilePath)
         hbox.addWidget(self.fileButton)
 
         self.dirButton = QtWidgets.QToolButton()
-        self.dirButton.setToolTip("Insert Directory Path")
+        self.dirButton.setToolTip(_("Insert Directory Path"))
         self.dirButton.setAutoRaise(True)
         self.dirButton.setIcon(QtGui.QIcon(os.path.join("Resources", "images", "folder_closed")))
         self.dirButton.clicked.connect(self.insertDirPath)

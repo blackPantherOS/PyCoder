@@ -324,54 +324,63 @@ class EditorWindow(QtWidgets.QWidget):
                 QtGui.QIcon(os.path.join("Resources", "images", "mail_check")),
                 _("Goto Line"), self,
                 statusTip=_("Goto Line"), triggered=self.showGotoLineWidget)
+        self.gotoLineAct.setToolTip(_("Can enter a number and it will jump to there"))
 
         self.viewSwitcherAct = QtGui.QAction(
             _("Switch Views"), self, statusTip=_("Switch to Overview/Diff View"),
             triggered=self.showSnapShotSwitcher)
+        self.viewSwitcherAct.setToolTip(_("Open a switch bar to switch between Overview/Diff View"))
 
         self.exitAct = \
             QtGui.QAction(_("Exit"), self, statusTip=_("Exit the application"),
                           triggered=self.projects.closeProgram)
+        self.exitAct.setToolTip(_("Finish work and close the PyCoder6"))
 
         # Menubar Actions ----------------------------------------------------
 
         self.userGuideAct = QtGui.QAction(
             _("User Guide"), self, statusTip=_("User Guide of Application"),
                                          triggered=self.launchHelp)
+        self.userGuideAct.setToolTip(_("User Guide of Application.."))
 
         self.pythonManualsAct = QtGui.QAction(_("Python Manuals"), self,
                                               statusTip=_("Open the Python Manuals"),
                                               triggered=self.launchPythonHelp)
+        self.pythonManualsAct.setToolTip(_("Open Python manuals if installed on your system"))
 
         self.checkUpdatesAct = QtGui.QAction(_("Check For Updates"), self,
                                              statusTip=_("Check For Updates"),
                                              triggered=self.visitHomepage)
+        self.checkUpdatesAct.setToolTip(_("Check the PyCoder6 updates"))
 
         self.feedbackAct = QtGui.QAction(_("Send Feedback"), self,
                                          statusTip=_("Send Feedback"),
                                         triggered=self.openFeedbackLink)
+        self.feedbackAct.setToolTip(_("Finish work and close the PyCoder6"))
+
         #----------------------------------------------------------------------
         self.runFileAct = QtGui.QAction(
             QtGui.QIcon(os.path.join("Resources", "images", "rerun")),
-            _("Run File"), self,
-            statusTip=_("Run current file only"), triggered=self.runFile)
+            _("Run File"), self, triggered=self.runFile)
+        self.runFileAct.setToolTip(_("Run current file only"))
 
         self.runProjectAct = QtGui.QAction(
             QtGui.QIcon(os.path.join("Resources", "images", "run")),
             _("Run Project"), self,
             statusTip=_("Run The Full Project"), triggered=self.runProject)
+        self.runProjectAct.setToolTip(_("Run the full project.."))
 
         self.stopRunAct = QtGui.QAction(
             QtGui.QIcon(os.path.join("Resources", "images", "stop")),
             _("Stop"), self,
-            statusTip=_("Stop execution"),
-            triggered=self.stopProcess)
+            statusTip=_("Stop execution"),triggered=self.stopProcess)
+        self.stopRunAct.setToolTip(_("Press stop to finish current execution.."))
 
         self.runParamAct = QtGui.QAction(
             QtGui.QIcon(os.path.join("Resources", "images", "shell")),
             _("Set Run"), self,
-            statusTip=_("Set Run Parameters"),
-            triggered=self.setRunParameters)
+            statusTip=_("Set Run Parameters"), triggered=self.setRunParameters)
+        self.runParamAct.setToolTip(_("Set parameters for run. Debug level, etc."))
 
         #---------------------------------------------------------------------
 
@@ -379,6 +388,7 @@ class EditorWindow(QtWidgets.QWidget):
             QtGui.QIcon(os.path.join("Resources", "images", "scope")),
             _("Find"), self,
             statusTip=_("Find files or content"), triggered=self.showFinderWidget)
+        self.finderAct.setToolTip(_("Find files or content"))
 
         self.replaceAct = \
             QtGui.QAction(
@@ -387,11 +397,13 @@ class EditorWindow(QtWidgets.QWidget):
                 _("Replace"), self,
                 statusTip=_("Replace"),
                           triggered=self.showReplaceWidget)
+        self.replaceAct.setToolTip(_("Replace a pattern to another"))
 
         self.findInFilesAct = QtGui.QAction(
             QtGui.QIcon(os.path.join("Resources", "images", "find_in_files")),
             _("Find-in-Files"), self,
             statusTip=_("A pattern find-in-files"), triggered=self.showFindInFilesWidget)
+        self.findInFilesAct.setToolTip(_("A pattern find-in-files"))
 
         self.addToLibraryAct = \
             QtGui.QAction(
@@ -399,41 +411,48 @@ class EditorWindow(QtWidgets.QWidget):
                 _("Add To Library"), self,
                 statusTip=_("Add current module to Library"),
                           triggered=self.addToLibrary)
+        self.addToLibraryAct.setToolTip(_("Add current module to Library"))
 
         self.clearRecentFilesAct = \
             QtGui.QAction(
                 QtGui.QIcon(os.path.join("Resources", "images", "clear")),
                 _("Clear History"), self, statusTip=_("Clear History"),
                 triggered=self.clearRecentFiles)
+        self.clearRecentFilesAct.setToolTip(_("Clear History"))
 
         self.writePadAct = \
             QtGui.QAction(
                 QtGui.QIcon(os.path.join("Resources", "images", "pencil")),
                 _("Writepad"), self, statusTip=_("Open internal Writepad"),
                 triggered=self.showWritePad)
+        self.writePadAct.setToolTip(_("Open internal WritePad"))
 
         self.buildAct = \
             QtGui.QAction(
                 _("Build"), self,
                 statusTip=_("Build project to binary"),
                 triggered=self.buildProject)
+        self.buildAct.setToolTip(_("Build this project to static binary"))
 
         self.openBuildAct = \
             QtGui.QAction(
                 _("Open Build"), self, statusTip=_("Open Build Folder"),
                 triggered=self.openBuild)
+        self.finderAct.setToolTip(_("Open the build folder where placed binary of project"))
 
         self.configureAct = \
             QtGui.QAction(
                 QtGui.QIcon(os.path.join("Resources", "images", "settings")),
                 _("Configuration"), self, statusTip=_("Open Configuration"),
                 triggered=self.showProjectConfiguration)
+        self.finderAct.setToolTip(_("Open Configuration Dialog"))
 
         self.exportProjectAct = \
             QtGui.QAction(
                 QtGui.QIcon(os.path.join("Resources", "images", "archive")),
                 _("Export as Zip..."), self, statusTip=_("Project Export as Zip"),
                 triggered=self.exportProject)
+        self.finderAct.setToolTip(_("Export full project as a zip file..."))
 
         self.closeProjectAct = \
             QtGui.QAction(
@@ -441,6 +460,7 @@ class EditorWindow(QtWidgets.QWidget):
                     os.path.join("Resources", "images", "inbox--minus")),
                 _("Close Project"), self, statusTip=_("Close this project"),
                 triggered=self.closeProject)
+        self.finderAct.setToolTip(_("It only closes the project, files won't be deleted."))
 
     def visitHomepage(self):
         QtGui.QDesktopServices().openUrl(QtCore.QUrl(

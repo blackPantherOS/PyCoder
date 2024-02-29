@@ -29,7 +29,7 @@ class SearchWidget(QtWidgets.QLabel):
 
         hbox = QtWidgets.QHBoxLayout()
         hbox.setContentsMargins(0, 0, 0, 0)
-        hbox.addWidget(QtWidgets.QLabel("Find:"))
+        hbox.addWidget(QtWidgets.QLabel(_("Find:")))
 
         self.findLine = QtWidgets.QLineEdit()
         self.findLine.textEdited.connect(self.find)
@@ -42,7 +42,7 @@ class SearchWidget(QtWidgets.QLabel):
         self.findDownButton.setDefaultAction(
             QtGui.QAction(
                 QtGui.QIcon(os.path.join("Resources", "images", "findDown")),
-                "Find Next", self, triggered=self.findNext))
+                _("Find Next"), self, triggered=self.findNext))
         hbox.addWidget(self.findDownButton)
 
         #vector bellow solved: self.findLine.returnPressed.connect(self.findNext)
@@ -53,28 +53,28 @@ class SearchWidget(QtWidgets.QLabel):
         self.findUpButton.setDefaultAction(
             QtGui.QAction(
                 QtGui.QIcon(os.path.join("Resources", "images", "findUp")),
-                "Find Previous", self,
+                _("Find Previous"), self,
                 triggered=self.findPrevious))
         hbox.addWidget(self.findUpButton)
 
-        self.matchCaseBox = QtWidgets.QCheckBox("MC")
-        self.matchCaseBox.setToolTip("Match Case")
+        self.matchCaseBox = QtWidgets.QCheckBox(_("MC"))
+        self.matchCaseBox.setToolTip(_("Match Case"))
         self.matchCaseBox.stateChanged.connect(self.updateFindOptions)
         hbox.addWidget(self.matchCaseBox)
 
-        self.matchWholeWordBox = QtWidgets.QCheckBox("WW")
-        self.matchWholeWordBox.setToolTip("Whole Word")
+        self.matchWholeWordBox = QtWidgets.QCheckBox(_("WW"))
+        self.matchWholeWordBox.setToolTip(_("Whole Word"))
         self.matchWholeWordBox.stateChanged.connect(
             self.updateFindOptions)
         hbox.addWidget(self.matchWholeWordBox)
 
-        self.matchRegExpBox = QtWidgets.QCheckBox("RE")
-        self.matchRegExpBox.setToolTip("Regular Expression")
+        self.matchRegExpBox = QtWidgets.QCheckBox(_("RE"))
+        self.matchRegExpBox.setToolTip(_("Regular Expression"))
         self.matchRegExpBox.stateChanged.connect(self.updateFindOptions)
         hbox.addWidget(self.matchRegExpBox)
 
-        self.wrapAroundBox = QtWidgets.QCheckBox("WA")
-        self.wrapAroundBox.setToolTip("Wrap Around")
+        self.wrapAroundBox = QtWidgets.QCheckBox(_("WA"))
+        self.wrapAroundBox.setToolTip(_("Wrap Around"))
         self.wrapAroundBox.stateChanged.connect(self.updateFindOptions)
         hbox.addWidget(self.wrapAroundBox)
 
@@ -107,17 +107,17 @@ class SearchWidget(QtWidgets.QLabel):
         hbox.setContentsMargins(0, 0, 0, 0)
         hbox.addStretch(1)
 
-        label = QtWidgets.QLabel("Replace with:")
+        label = QtWidgets.QLabel(_("Replace with:"))
         hbox.addWidget(label)
 
         self.replaceLine = QtWidgets.QLineEdit()
         hbox.addWidget(self.replaceLine)
 
-        self.replaceButton = QtWidgets.QPushButton("Replace")
+        self.replaceButton = QtWidgets.QPushButton(_("Replace"))
         self.replaceButton.clicked.connect(self.replace)
         hbox.addWidget(self.replaceButton)
 
-        self.replaceAllButton = QtWidgets.QPushButton("Replace All")
+        self.replaceAllButton = QtWidgets.QPushButton(_("Replace All"))
         self.replaceAllButton.clicked.connect(self.replaceAll)
         hbox.addWidget(self.replaceAllButton)
 
@@ -173,7 +173,7 @@ class SearchWidget(QtWidgets.QLabel):
         editor = self.editorTabWidget.focusedEditor()
         if text == '':
             self.findLine.setStyleSheet(
-                "QLineEdit {border-bottom: 1px solid lightgrey;}")
+                "QLineEdit {border-bottom: 1px solid lightblue;}")
             editor.clearAllIndicators(editor.searchIndicator)
         else:
             if self.useData.SETTINGS['DynamicSearch'] == 'True':
@@ -182,7 +182,7 @@ class SearchWidget(QtWidgets.QLabel):
                                          self.matchCase, self.matchWholeWord, self.wrapAround, True, 0, 0, True)
                 if found:
                     self.findLine.setStyleSheet(
-                        "QLineEdit {border-bottom: 1px solid lightgrey;}")
+                        "QLineEdit {border-bottom: 1px solid lightgreen;}")
                 else:
                     self.findLine.setStyleSheet(
                         "QLineEdit {border-bottom: 2px solid #FF6666;}")

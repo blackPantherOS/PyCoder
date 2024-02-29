@@ -36,7 +36,7 @@ class Tasks(QtWidgets.QTreeWidget):
         QtWidgets.QTreeWidget.__init__(self, parent)
 
         self.setColumnCount(4)
-        self.setHeaderLabels(["#", "Type", "Line", "Task"])
+        self.setHeaderLabels(["#", _("Type"), _("Line"), _("Task")])
         self.setAutoScroll(True)
 
         self.setColumnWidth(0, 60)
