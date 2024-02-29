@@ -341,10 +341,12 @@ globalStyle = """
 
         QToolTip {
              color: white;
-             border: none;
+             border: 1px solid white;
              opacity: 200;
-             border-radius: 3px;
-             background: #333333;
+             padding: 1px 3px 1px 3px;
+             border-radius: 12px;
+             background: #0177c7;
+             overflow:hidden;
         }
 
         QMenuBar {
@@ -618,20 +620,20 @@ globalStyle = """
 
          QSplitter::handle:horizontal {
              width: 5px;
-             background: #E6E6E6;
+             background: #0177c7;
          }
 
          QSplitter::handle:vertical {
              height: 5px;
-             background: lightgray;
+             background: #0177c7;
          }
 
          QSplitter::handle:hover {
-             background: lightgray;
+             background: #30ffff;
          }
 
          QSplitter::handle:pressed {
-             background: gray;
+             background: #26ff59;
          }
 
          QLineEdit {
