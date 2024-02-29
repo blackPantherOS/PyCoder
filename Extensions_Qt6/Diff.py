@@ -109,7 +109,7 @@ class DiffWindow(BaseScintilla):
 
         QtWidgets.QApplication.setOverrideCursor(QtCore.Qt.CursorShape.WaitCursor)
         lines = 0
-        for line in difflib.unified_diff(a, b, "Deleted", "Added"):
+        for line in difflib.unified_diff(a, b, _("Deleted"), _("Added")):
             if line.startswith('+') or line.startswith('>'):
                 styleType = 1
             elif line.startswith('-') or line.startswith('<'):
@@ -122,7 +122,7 @@ class DiffWindow(BaseScintilla):
             lines += 1
 
         if lines == 0:
-            self.appendText('Nothing has changed.', 0)
+            self.appendText(_('Nothing has changed.'), 0)
 
         QtWidgets.QApplication.restoreOverrideCursor()
 
@@ -136,7 +136,7 @@ class DiffWindow(BaseScintilla):
 
         QtWidgets.QApplication.setOverrideCursor(QtCore.Qt.CursorShape.WaitCursor)
         lines = 0
-        for line in difflib.context_diff(a, b, "Original", "Current"):
+        for line in difflib.context_diff(a, b, _("Original"), _("Current")):
             if line.startswith('+'):
                 styleType = 1
             elif line.startswith('-'):
@@ -151,7 +151,7 @@ class DiffWindow(BaseScintilla):
             lines += 1
 
         if lines == 0:
-            self.appendText('Nothing has changed.', 0)
+            self.appendText(_('Nothing has changed.'), 0)
 
         QtWidgets.QApplication.restoreOverrideCursor()
 
