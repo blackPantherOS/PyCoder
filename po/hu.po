@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PyCoder6 0.6.0\n"
 "Report-Msgid-Bugs-To: info@blackpantheros.eu\n"
-"POT-Creation-Date: 2024-02-28 18:02+0100\n"
-"PO-Revision-Date: 2024-02-28 17:44+0100\n"
+"POT-Creation-Date: 2024-02-29 15:48+0100\n"
+"PO-Revision-Date: 2024-02-29 15:52+0100\n"
 "Last-Translator: Barcza Károly <kbarcza@blackpanther.hu>\n"
 "Language-Team: blackPanther Project\n"
 "Language: hu_HU\n"
@@ -18,79 +18,78 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 3.2.2\n"
 
-#: PyCoder6.py:57 temp/temp8.py:57
+#: PyCoder6.py:57
 msgid "Welcome to PyCoder6! The used language for interface is: "
 msgstr ""
 "Üdvözöl a PyCoder6! Az interfészhez a következő nyelv van használatban: "
 
-#: PyCoder6.py:66 temp/temp8.py:66
+#: PyCoder6.py:66
 msgid "PyCoder - Loading..."
 msgstr "PyCoder - Betöltés..."
 
-#: PyCoder6.py:75 temp/temp8.py:75
+#: PyCoder6.py:75
 msgid "Primary Monitor:"
 msgstr "Elsődleges monitor:"
 
-#: PyCoder6.py:76 temp/temp8.py:76
+#: PyCoder6.py:76
 msgid "Resolution:"
 msgstr "Felbontás:"
 
-#: PyCoder6.py:92 temp/temp8.py:92
+#: PyCoder6.py:92
 msgid "This application requires Python 3"
 msgstr "Ehhez az alkalmazáshoz Python 3 szükséges"
 
-#: PyCoder6.py:116 PyCoder6.py:117 temp/temp8.py:116 temp/temp8.py:117
+#: PyCoder6.py:116 PyCoder6.py:117
 msgid "Start"
 msgstr "Kezdés"
 
-#: PyCoder6.py:140 temp/temp8.py:140
+#: PyCoder6.py:140
 msgid "EDITOR"
 msgstr "SZERKESZTŐ"
 
-#: PyCoder6.py:143 temp/temp8.py:143
+#: PyCoder6.py:143
 msgid "LIBRARY"
 msgstr "KÖNYTÁR"
 
-#: PyCoder6.py:179 temp/temp8.py:179
+#: PyCoder6.py:179
 msgid "About PyCoder"
 msgstr "PyCoder névjegye"
 
-#: PyCoder6.py:179 temp/temp8.py:179
+#: PyCoder6.py:179
 msgid "More info of PyCoder6 "
 msgstr "További információk a PyCoder6-ról "
 
-#: PyCoder6.py:186 temp/temp8.py:186
+#: PyCoder6.py:186
 msgid "Fullscreen"
-msgstr "Teljesképernyő"
+msgstr "Teljes képernyő váltása"
 
-#: PyCoder6.py:192 temp/temp8.py:192
-#: Extensions_Qt6/Settings/SettingsWidget.py:15
+#: PyCoder6.py:192 Extensions_Qt6/Settings/SettingsWidget.py:15
 #: Extensions_Qt6/Settings/GeneralSettings.py:13
 msgid "Settings"
 msgstr "Beállítások"
 
-#: PyCoder6.py:193 temp/temp8.py:193
+#: PyCoder6.py:193
 msgid "PyCoder Settings"
 msgstr "PyCoder beállíŧáso"
 
-#: PyCoder6.py:208 temp/temp8.py:208 Extensions_Qt6/Projects/Projects.py:421
+#: PyCoder6.py:208 Extensions_Qt6/Projects/Projects.py:421
 #: Extensions_Qt6/Start.py:130
 msgid "Open Project"
 msgstr "Projekt megnyitása"
 
-#: PyCoder6.py:208 temp/temp8.py:208
+#: PyCoder6.py:208
 msgid "Project cannot be be found!"
 msgstr "Projekt nem található!"
 
-#: PyCoder6.py:234 temp/temp8.py:234
+#: PyCoder6.py:234
 msgid "PyCoder - Start"
 msgstr "PyCoder - Indítás"
 
-#: PyCoder6.py:250 temp/temp8.py:250
+#: PyCoder6.py:250
 msgid "PyCoder - "
 msgstr "PyCoder - "
 
-#: PyCoder6.py:250 temp/temp8.py:250
+#: PyCoder6.py:250 Extensions_Qt6/EditorTabWidget.py:813
 msgid "Unsaved"
 msgstr "Mentetlen"
 
@@ -100,20 +99,23 @@ msgstr "Új név:"
 
 #: Extensions_Qt6/Refactor/Refactor.py:46
 #: Extensions_Qt6/Projects/NewProjectDialog.py:88
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:34
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:92
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:31
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:89
 #: Extensions_Qt6/Projects/ProjectManager/ProjectView/ProjectView.py:38
 #: Extensions_Qt6/Settings/ColorScheme/ColorScheme.py:36
+#: Extensions_Qt6/Library/Library.py:89
 msgid "Ok"
 msgstr "Ok"
 
 #: Extensions_Qt6/Refactor/Refactor.py:51
+#: Extensions_Qt6/BottomWidgets/FindInFiles.py:123
 #: Extensions_Qt6/Projects/NewProjectDialog.py:92
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:39
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:97
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:36
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:94
 #: Extensions_Qt6/Projects/ProjectManager/ProjectView/ProjectView.py:43
 #: Extensions_Qt6/Settings/ColorScheme/ColorScheme.py:41
-#: Extensions_Qt6/Settings/Keymap.py:35
+#: Extensions_Qt6/Settings/Keymap.py:35 Extensions_Qt6/Library/Library.py:44
+#: Extensions_Qt6/Library/Library.py:94
 msgid "Cancel"
 msgstr "Mégse"
 
@@ -153,6 +155,8 @@ msgstr "Konvertálás csomaggá"
 #: Extensions_Qt6/Settings/ColorScheme/ColorScheme.py:138
 #: Extensions_Qt6/Settings/ColorScheme/ColorScheme.py:280
 #: Extensions_Qt6/Settings/ColorScheme/ColorScheme.py:301
+#: Extensions_Qt6/Library/Library.py:336 Extensions_Qt6/Library/Library.py:337
+#: Extensions_Qt6/Library/Library.py:581 Extensions_Qt6/Library/Library.py:590
 msgid "Rename"
 msgstr "Átnevez"
 
@@ -223,8 +227,8 @@ msgid "Usages: "
 msgstr "Felhasználások: "
 
 #: Extensions_Qt6/EditorTabWidget.py:80
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:715
 #: Extensions_Qt6/EditorWindow/EditorWindow.py:735
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:755
 msgid "Close"
 msgstr "Bezár"
 
@@ -253,6 +257,7 @@ msgid "Create a copy of current tab"
 msgstr "Másolat létrehozása a jelenlegi fülről"
 
 #: Extensions_Qt6/EditorTabWidget.py:98 Extensions_Qt6/EditorTabWidget.py:125
+#: Extensions_Qt6/BottomWidgets/FindInFiles.py:363
 msgid "Reload"
 msgstr "Újratöltés"
 
@@ -274,198 +279,242 @@ msgstr "Új fájl"
 msgid "Undo"
 msgstr "Visszavonás"
 
-#: Extensions_Qt6/EditorTabWidget.py:302
+#: Extensions_Qt6/EditorTabWidget.py:302 Extensions_Qt6/EditorTabWidget.py:304
 msgid "Undo last edit action"
 msgstr "Legutóbbi művelet visszavonása"
 
-#: Extensions_Qt6/EditorTabWidget.py:307
+#: Extensions_Qt6/EditorTabWidget.py:308
 msgid "Redo"
 msgstr "Ismét"
 
-#: Extensions_Qt6/EditorTabWidget.py:308
+#: Extensions_Qt6/EditorTabWidget.py:309
 msgid "Redo last edit action"
 msgstr "Legutóbbi művelet újra"
 
-#: Extensions_Qt6/EditorTabWidget.py:313 Extensions_Qt6/CodeEditor.py:530
+#: Extensions_Qt6/EditorTabWidget.py:311
+msgid "Reddo last edit action"
+msgstr "Legutóbbi művelet újra"
+
+#: Extensions_Qt6/EditorTabWidget.py:315 Extensions_Qt6/CodeEditor.py:531
 msgid "Cut"
 msgstr "Kivágás"
 
-#: Extensions_Qt6/EditorTabWidget.py:314 Extensions_Qt6/CodeEditor.py:531
+#: Extensions_Qt6/EditorTabWidget.py:316 Extensions_Qt6/EditorTabWidget.py:317
+#: Extensions_Qt6/CodeEditor.py:532
 msgid "Cut selected text"
 msgstr "Kiválasztott szöveg kivágása"
 
-#: Extensions_Qt6/EditorTabWidget.py:318 Extensions_Qt6/CodeEditor.py:534
+#: Extensions_Qt6/EditorTabWidget.py:321 Extensions_Qt6/CodeEditor.py:535
 #: Extensions_Qt6/BottomWidgets/RunWidget.py:330
 #: Extensions_Qt6/BottomWidgets/RunWidget.py:331
 #: Extensions_Qt6/Projects/ProjectManager/ProjectView/ProjectView.py:299
 msgid "Copy"
 msgstr "Másolás"
 
-#: Extensions_Qt6/EditorTabWidget.py:319 Extensions_Qt6/CodeEditor.py:535
+#: Extensions_Qt6/EditorTabWidget.py:322 Extensions_Qt6/EditorTabWidget.py:323
+#: Extensions_Qt6/CodeEditor.py:536
 msgid "Copy selected text"
 msgstr "Kiválasztott szöveg másolása"
 
-#: Extensions_Qt6/EditorTabWidget.py:323 Extensions_Qt6/CodeEditor.py:538
+#: Extensions_Qt6/EditorTabWidget.py:327 Extensions_Qt6/CodeEditor.py:539
 #: Extensions_Qt6/Projects/ProjectManager/ProjectView/ProjectView.py:307
 #: Extensions_Qt6/Projects/ProjectManager/ProjectView/ProjectView.py:308
 #: Extensions_Qt6/Projects/ProjectManager/ProjectView/ProjectView.py:429
 msgid "Paste"
 msgstr "Beillesztés"
 
-#: Extensions_Qt6/EditorTabWidget.py:324 Extensions_Qt6/CodeEditor.py:539
+#: Extensions_Qt6/EditorTabWidget.py:328 Extensions_Qt6/CodeEditor.py:540
 msgid "Paste text from clipboard"
 msgstr "Szöveg beillesztése a vágólapról"
 
-#: Extensions_Qt6/EditorTabWidget.py:333
+#: Extensions_Qt6/EditorTabWidget.py:330
+msgid "Paste content from clipboard"
+msgstr "Szöveg beillesztése a vágólapról"
+
+#: Extensions_Qt6/EditorTabWidget.py:338
 msgid "Indent"
 msgstr "Behúzás"
 
-#: Extensions_Qt6/EditorTabWidget.py:334
+#: Extensions_Qt6/EditorTabWidget.py:339 Extensions_Qt6/EditorTabWidget.py:341
 msgid "Indent Region"
 msgstr "Régió behúzása"
 
-#: Extensions_Qt6/EditorTabWidget.py:341
+#: Extensions_Qt6/EditorTabWidget.py:347
 msgid "Unindent"
 msgstr "Behúzatlan"
 
-#: Extensions_Qt6/EditorTabWidget.py:342
+#: Extensions_Qt6/EditorTabWidget.py:348 Extensions_Qt6/EditorTabWidget.py:350
 msgid "Unindent Region"
 msgstr "Régióbehúzás megszüntetése"
 
-#: Extensions_Qt6/EditorTabWidget.py:348
+#: Extensions_Qt6/EditorTabWidget.py:355
 msgid "Write Lock"
 msgstr "Írás zárolása"
 
-#: Extensions_Qt6/EditorTabWidget.py:356
+#: Extensions_Qt6/EditorTabWidget.py:358
+msgid "Write lock to this tab"
+msgstr "Írásvédettség erre a fülre"
+
+#: Extensions_Qt6/EditorTabWidget.py:364
 msgid "Next Bookmark"
 msgstr "Következő könyvjelző"
 
-#: Extensions_Qt6/EditorTabWidget.py:362
+#: Extensions_Qt6/EditorTabWidget.py:366
+msgid "Find Next Bookmark in this code"
+msgstr "Következő könyvjelző keresése ebben a kódban"
+
+#: Extensions_Qt6/EditorTabWidget.py:371
 msgid "Previous Bookmark"
 msgstr "Előző könyvjelző"
 
-#: Extensions_Qt6/EditorTabWidget.py:368 Extensions_Qt6/EditorTabWidget.py:895
+#: Extensions_Qt6/EditorTabWidget.py:373
+msgid "Find Previous Bookmark in this code"
+msgstr "Előző könyvjelző keresése ebben a kódban"
+
+#: Extensions_Qt6/EditorTabWidget.py:378 Extensions_Qt6/EditorTabWidget.py:914
 msgid "Remove Bookmarks"
 msgstr "Könyvjelzők eltávolítása"
 
-#: Extensions_Qt6/EditorTabWidget.py:375
+#: Extensions_Qt6/EditorTabWidget.py:380
+msgid "Remove All Placed Bookmarks"
+msgstr "Az összes elhelyezett könyvjelző eltávolítása"
+
+#: Extensions_Qt6/EditorTabWidget.py:386
 msgid "New [.py]"
 msgstr "Új [.py]"
 
-#: Extensions_Qt6/EditorTabWidget.py:376
+#: Extensions_Qt6/EditorTabWidget.py:387 Extensions_Qt6/EditorTabWidget.py:389
 msgid "Create a new python file"
 msgstr "Új Python fájl létrehozása"
 
-#: Extensions_Qt6/EditorTabWidget.py:382
+#: Extensions_Qt6/EditorTabWidget.py:394 Extensions_Qt6/EditorTabWidget.py:396
 msgid "Create a new Xml file"
 msgstr "Új XML-fájl létrehozása"
 
-#: Extensions_Qt6/EditorTabWidget.py:388
+#: Extensions_Qt6/EditorTabWidget.py:401 Extensions_Qt6/EditorTabWidget.py:403
 msgid "Create a new Html file"
 msgstr "Új Html fájl létrehozása"
 
-#: Extensions_Qt6/EditorTabWidget.py:394
+#: Extensions_Qt6/EditorTabWidget.py:408 Extensions_Qt6/EditorTabWidget.py:410
 msgid "Create a new Css file"
 msgstr "Új Css-fájl létrehozása"
 
-#: Extensions_Qt6/EditorTabWidget.py:400
+#: Extensions_Qt6/EditorTabWidget.py:415
 msgid "Open File..."
 msgstr "Megnyitás..."
 
-#: Extensions_Qt6/EditorTabWidget.py:401
+#: Extensions_Qt6/EditorTabWidget.py:416
 msgid "Open python file"
 msgstr "Python fájl megnyitása"
 
-#: Extensions_Qt6/EditorTabWidget.py:406 Extensions_Qt6/EditorTabWidget.py:991
-#: Extensions_Qt6/EditorTabWidget.py:1112
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:686
+#: Extensions_Qt6/EditorTabWidget.py:418
+msgid "Open file to editing"
+msgstr "Fájl megnyitása szerkesztésre"
+
+#: Extensions_Qt6/EditorTabWidget.py:422 Extensions_Qt6/EditorTabWidget.py:1012
+#: Extensions_Qt6/EditorTabWidget.py:1133
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:683
 #: Extensions_Qt6/Settings/ColorScheme/ColorScheme.py:153
 #: Extensions_Qt6/Settings/ColorScheme/ColorScheme.py:257
 msgid "Save"
 msgstr "Mentés"
 
-#: Extensions_Qt6/EditorTabWidget.py:407
+#: Extensions_Qt6/EditorTabWidget.py:423
 msgid "Save file"
 msgstr "Fájl mentése"
 
-#: Extensions_Qt6/EditorTabWidget.py:413
+#: Extensions_Qt6/EditorTabWidget.py:424
+msgid "Save current file"
+msgstr "Jelenlegi fájl mentése"
+
+#: Extensions_Qt6/EditorTabWidget.py:430
 msgid "Save All"
 msgstr "Ment mindent"
 
-#: Extensions_Qt6/EditorTabWidget.py:414
+#: Extensions_Qt6/EditorTabWidget.py:431
 msgid "Save All Changes"
 msgstr "Minden módosítás mentése"
 
-#: Extensions_Qt6/EditorTabWidget.py:417
+#: Extensions_Qt6/EditorTabWidget.py:433
+msgid "Save All Changes in Current Project"
+msgstr "Minden módosítás mentése a jelenlegi projektben"
+
+#: Extensions_Qt6/EditorTabWidget.py:436
 msgid "Save As..."
 msgstr "Mentés másként..."
 
-#: Extensions_Qt6/EditorTabWidget.py:418
+#: Extensions_Qt6/EditorTabWidget.py:437
 msgid "Save file as..."
 msgstr "Fájl mentése mint..."
 
-#: Extensions_Qt6/EditorTabWidget.py:421
+#: Extensions_Qt6/EditorTabWidget.py:440
 msgid "Save Copy As..."
 msgstr "Másolat mentése mint…"
 
-#: Extensions_Qt6/EditorTabWidget.py:422
+#: Extensions_Qt6/EditorTabWidget.py:441
 msgid "Save a Copy As..."
 msgstr "Egy másolat mentése mint…"
 
-#: Extensions_Qt6/EditorTabWidget.py:429
+#: Extensions_Qt6/EditorTabWidget.py:448 Extensions_Qt6/Library/Library.py:343
+#: Extensions_Qt6/Library/Library.py:344
 msgid "Print"
 msgstr "Nyomtatás"
 
-#: Extensions_Qt6/EditorTabWidget.py:430
+#: Extensions_Qt6/EditorTabWidget.py:449
 msgid "Print the content"
 msgstr "A tartalom nyomtatása"
 
-#: Extensions_Qt6/EditorTabWidget.py:437
+#: Extensions_Qt6/EditorTabWidget.py:456
 msgid "Split Vertical"
 msgstr "Függőleges elválasztó"
 
-#: Extensions_Qt6/EditorTabWidget.py:438
+#: Extensions_Qt6/EditorTabWidget.py:457
 msgid "View Split Vertical"
 msgstr "Nézet függőleges felosztása"
 
-#: Extensions_Qt6/EditorTabWidget.py:444
+#: Extensions_Qt6/EditorTabWidget.py:463
 msgid "Split Horizontal"
 msgstr "Vízszintes megosztás"
 
-#: Extensions_Qt6/EditorTabWidget.py:445
+#: Extensions_Qt6/EditorTabWidget.py:464
 msgid "View Split Horizontal"
 msgstr "Nézet vízszintes felosztása"
 
-#: Extensions_Qt6/EditorTabWidget.py:450
+#: Extensions_Qt6/EditorTabWidget.py:469
 msgid "Remove Split"
 msgstr "Darabolás eltávolítás"
 
-#: Extensions_Qt6/EditorTabWidget.py:451
+#: Extensions_Qt6/EditorTabWidget.py:470
 msgid "Remove Editor Split"
 msgstr "Felosztás eltávolítása"
 
-#: Extensions_Qt6/EditorTabWidget.py:466
+#: Extensions_Qt6/EditorTabWidget.py:485
 msgid "File renamed or moved."
 msgstr "Fájlt átnevezték vagy áthelyezték."
 
-#: Extensions_Qt6/EditorTabWidget.py:762
+#: Extensions_Qt6/EditorTabWidget.py:781
 msgid "Restored"
 msgstr "Helyreállítva"
 
-#: Extensions_Qt6/EditorTabWidget.py:762
+#: Extensions_Qt6/EditorTabWidget.py:781
 msgid " file(s) restored from previous crash."
-msgstr " fájl(ok) helyreállításra kerültek ez előző összeomlásból."
+msgstr " fájl helyreállításra került ez előző összeomlásból."
 
-#: Extensions_Qt6/EditorTabWidget.py:896
+#: Extensions_Qt6/EditorTabWidget.py:814 Extensions_Qt6/EditorTabWidget.py:818
+#, python-brace-format
+msgid "Coding: {0}"
+msgstr "Kódlap: {0}"
+
+#: Extensions_Qt6/EditorTabWidget.py:915
 msgid "Do you really want to remove all bookmarks?"
 msgstr "Valóban törölni szeretné az összes könyvjelzőt?"
 
-#: Extensions_Qt6/EditorTabWidget.py:990
+#: Extensions_Qt6/EditorTabWidget.py:1011
 #, python-brace-format
 msgid "Save changes to '{0}'?"
 msgstr "Elmenti a változásokat ebbe: \"{0}\"?"
 
-#: Extensions_Qt6/EditorTabWidget.py:1112
+#: Extensions_Qt6/EditorTabWidget.py:1133
 msgid ""
 "Error saving file!\n"
 "\n"
@@ -473,11 +522,11 @@ msgstr ""
 "Hiba a fájl mentése közben!\n"
 "\n"
 
-#: Extensions_Qt6/EditorTabWidget.py:1128
+#: Extensions_Qt6/EditorTabWidget.py:1148
 msgid "Select File"
 msgstr "Válasszon fájlt"
 
-#: Extensions_Qt6/EditorTabWidget.py:1130
+#: Extensions_Qt6/EditorTabWidget.py:1150
 msgid ""
 "All Files (*);;Console (*.py);;No Console (*.pyw);;Xml (*.xml);;Html (*."
 "html);;Css (*.css)"
@@ -485,21 +534,30 @@ msgstr ""
 "Minden fájl (*);;Konzol (*.py);;Nem konzol (*.pyw);;Xml (*.xml);;Html (*."
 "html);;Css (*.css)"
 
-#: Extensions_Qt6/EditorTabWidget.py:1139
+#: Extensions_Qt6/EditorTabWidget.py:1159
 msgid "Untitled.xml"
 msgstr "Névtelen.xml"
 
-#: Extensions_Qt6/EditorTabWidget.py:1142
+#: Extensions_Qt6/EditorTabWidget.py:1162
 msgid "Untitled.html"
 msgstr "Névtelen.html"
 
-#: Extensions_Qt6/EditorTabWidget.py:1145
+#: Extensions_Qt6/EditorTabWidget.py:1165
 msgid "Untitled.css"
 msgstr "Névtelen.css"
 
-#: Extensions_Qt6/EditorTabWidget.py:1147
+#: Extensions_Qt6/EditorTabWidget.py:1167
 msgid "Untitled.py"
 msgstr "Névtelen.py"
+
+#: Extensions_Qt6/EditorTabWidget.py:1323
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:577
+#: Extensions_Qt6/FileExplorer.py:284 Extensions_Qt6/Favourites.py:117
+#: Extensions_Qt6/Projects/ProjectManager/Build.py:309
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:285
+#: Extensions_Qt6/Projects/ProjectManager/ProjectView/ProjectView.py:563
+msgid "Open"
+msgstr "Megnyitás"
 
 #: Extensions_Qt6/EditorWindow/EditorWindow.py:169
 #: Extensions_Qt6/EditorWindow/EditorWindow.py:190
@@ -520,7 +578,7 @@ msgstr "Fájlrendszer"
 #: Extensions_Qt6/Projects/NewProjectDialog.py:104
 #: Extensions_Qt6/Projects/NewProjectDialog.py:132
 #: Extensions_Qt6/Projects/ProjectManager/ProjectManager.py:42
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:945
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:942
 #: Extensions_Qt6/Projects/Projects.py:57
 #: Extensions_Qt6/Projects/Projects.py:69
 msgid "Desktop Application"
@@ -576,7 +634,7 @@ msgid "Profiler"
 msgstr "Profilozás"
 
 #: Extensions_Qt6/EditorWindow/EditorWindow.py:276
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:393
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:404
 msgid "Find-in-Files"
 msgstr "Keresés a fájlokban"
 
@@ -585,205 +643,272 @@ msgstr "Keresés a fájlokban"
 msgid "Goto Line"
 msgstr "Sorra ugrás"
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:329
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:327
+msgid "Can enter a number and it will jump to there"
+msgstr "Megadhatunk egy sorszámot és odaugorhatunk"
+
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:330
 msgid "Switch Views"
 msgstr "Nézetváltások"
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:329
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:330
 msgid "Switch to Overview/Diff View"
 msgstr "Váltás áttekintő/Diff nézetre"
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:333
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:332
+msgid "Open a switch bar to switch between Overview/Diff View"
+msgstr "Kapcsolópanel megnyitása az áttekintő/Diff nézetre váltáshoz"
+
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:335
 msgid "Exit"
 msgstr "Kilépés"
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:333
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:335
 msgid "Exit the application"
 msgstr "Kilépés az alkalmazásból"
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:339
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:655
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:337
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:359
+msgid "Finish work and close the PyCoder6"
+msgstr "Munka befejezése és a PyCoder6 bezárása"
+
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:342
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:675
 msgid "User Guide"
 msgstr "Felhasználói útmutató"
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:339
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:342
 msgid "User Guide of Application"
 msgstr "Az alkalmazás kézikönyve"
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:342
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:665
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:344
+msgid "User Guide of Application.."
+msgstr "Az alkalmazás kézikönyve.."
+
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:346
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:685
 msgid "Python Manuals"
 msgstr "Python manuálok"
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:343
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:347
 msgid "Open the Python Manuals"
 msgstr "Python manuálok megnyitása"
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:346
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:347
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:349
+msgid "Open Python manuals if installed on your system"
+msgstr "Python kézikönyvek megnyitása ha telepítve van a rendszerre"
+
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:351
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:352
 msgid "Check For Updates"
 msgstr "Frissítések ellenőrzése"
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:350
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:351
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:354
+msgid "Check the PyCoder6 updates"
+msgstr "PyCoder6 frissítések ellenőrzése"
+
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:356
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:357
 msgid "Send Feedback"
 msgstr "Visszajelzés küldése"
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:356
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:364
 msgid "Run File"
 msgstr "Fájl futtatás"
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:357
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:365
 msgid "Run current file only"
 msgstr "Csak a jelenlegi fájl futtatása"
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:361
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:369
 #: Extensions_Qt6/BottomWidgets/RunWidget.py:667
 #: Extensions_Qt6/BottomWidgets/RunWidget.py:687
 msgid "Run Project"
 msgstr "Projekt futtatás"
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:362
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:370
 msgid "Run The Full Project"
 msgstr "A teljes projekt futtatása"
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:366
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:371
+msgid "Run the full project.."
+msgstr "A teljes projekt futtatása..."
+
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:375
+#: Extensions_Qt6/BottomWidgets/FindInFiles.py:283
 msgid "Stop"
 msgstr "Megállítás"
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:367
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:376
 msgid "Stop execution"
 msgstr "Végrehajtás megállítása"
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:372
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:377
+msgid "Press stop to finish current execution.."
+msgstr "Nyomja meg a stop gombot a jelenlegi futtatás befejezéséhez.."
+
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:381
 msgid "Set Run"
 msgstr "Paraméterek"
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:373
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:382
 msgid "Set Run Parameters"
 msgstr "Futtatási paraméterek beállítása"
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:380
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:383
+msgid "Set parameters for run. Debug level, etc."
+msgstr "Állítsa be a futtatáshoz a paramétereket. Hibakeresési szint, stb."
+
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:389
+#: Extensions_Qt6/BottomWidgets/FindInFiles.py:290
 msgid "Find"
 msgstr "Keresés"
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:381
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:390
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:391
 msgid "Find files or content"
 msgstr "Fájlok vagy tartalom keresése"
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:387
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:388
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:397
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:398
+#: Extensions_Qt6/BottomWidgets/FindInFiles.py:112
+#: Extensions_Qt6/BottomWidgets/FindInFiles.py:119
+#: Extensions_Qt6/BottomWidgets/FindInFiles.py:319
+#: Extensions_Qt6/SearchWidget.py:116
 msgid "Replace"
 msgstr "Csere"
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:394
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:400
+msgid "Replace a pattern to another"
+msgstr "Cseréljen ki egy mintát egy másikra"
+
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:405
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:406
 msgid "A pattern find-in-files"
 msgstr "Egy minta keresése a fájlokban"
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:399
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:411
 msgid "Add To Library"
 msgstr "Hozzáadás a könyvtárhoz"
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:400
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:412
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:414
 msgid "Add current module to Library"
 msgstr "A jelenlegi modul hozzáadása a könyvtárhoz"
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:406
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:419
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:421
 msgid "Clear History"
 msgstr "Az előzmények törlése"
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:412
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:426
 msgid "Writepad"
 msgstr "Jegyzettömb"
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:412
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:426
 msgid "Open internal Writepad"
 msgstr "Belső jegyzettömb megnyitása"
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:417
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:428
+msgid "Open internal WritePad"
+msgstr "Belső jegyzettömb megnyitása"
+
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:432
 #: Extensions_Qt6/Projects/ProjectManager/ProjectManager.py:55
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:948
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:945
 msgid "Build"
 msgstr "Bináris létrehozása"
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:418
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:433
 msgid "Build project to binary"
 msgstr "Egy bináris fordítása a projektből"
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:423
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:435
+msgid "Build this project to static binary"
+msgstr "Egy statikus bináris fordítása a projektből"
+
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:439
 msgid "Open Build"
 msgstr "Bináris megnyitása"
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:423
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:439
 msgid "Open Build Folder"
 msgstr "A binárist tartalmazó mappa megnyitása"
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:429
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:441
+msgid "Open the build folder where placed binary of project"
+msgstr "Nyissa meg az építési mappát, ahol a projekt binárisa található"
+
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:446
 msgid "Configuration"
 msgstr "Beállítás"
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:429
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:446
 msgid "Open Configuration"
 msgstr "Beállítások megnyitása"
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:435
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:448
+msgid "Open Configuration Dialog"
+msgstr "Beállítóablak megnyitása"
+
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:453
 msgid "Export as Zip..."
 msgstr "Exportálás mint Zip..."
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:435
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:453
 msgid "Project Export as Zip"
 msgstr "A projekt exportálása mint Zip"
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:442
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:455
+msgid "Export full project as a zip file..."
+msgstr "A teljes projekt exportálása mint zip fájl..."
+
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:461
 msgid "Close Project"
 msgstr "Projekt bezárása"
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:442
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:461
 msgid "Close this project"
 msgstr "Bezárom ezt a projektet"
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:495
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:463
+msgid "It only closes the project, files won't be deleted."
+msgstr "Ez csak bezárja a projektet, a fájlok nem lesznek törölve."
+
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:515
 msgid "Menu"
 msgstr "Menü"
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:557
-#: Extensions_Qt6/FileExplorer.py:284 Extensions_Qt6/Favourites.py:117
-#: Extensions_Qt6/Projects/ProjectManager/Build.py:309
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:288
-#: Extensions_Qt6/Projects/ProjectManager/ProjectView/ProjectView.py:563
-msgid "Open"
-msgstr "Megnyitás"
-
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:558
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:578
 msgid "File is unavailable!"
 msgstr "Fájl elérhetetlen!"
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:575
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:595
 msgid "No Recent Files"
 msgstr "Nincsenek legutóbb használt fájlok"
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:593
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:613
 msgid "Recent Files:"
 msgstr "Legutóbbi fájlok:"
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:594
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:614
 msgid "Recent files history has been cleared!"
 msgstr "A legutóbbi fájlok előzményei törölve lettek!"
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:610
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:613
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:630
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:633
 msgid "min"
 msgstr "perc"
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:614
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:634
 msgid "Uptime: "
 msgstr "Futásidő: "
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:655
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:675
 msgid "Will be available when i am out of beta."
 msgstr "Akkor lesz elérhető, ha kilépek a bétából."
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:666
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:686
 msgid ""
 "Failed to launch the Python Manuals!\n"
 "\n"
@@ -795,75 +920,84 @@ msgstr ""
 "A jelenlegi python-verzióhoz vagy nem érhető el, vagy nincs telepítve a "
 "rendszerére."
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:694
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:714
 #, python-brace-format
 msgid "Line {0} : Column {1}"
-msgstr "Sor {0} : Oszlop{1}"
+msgstr "{0}. sor / {1}. oszlopa"
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:697
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:717
 msgid "Lines: "
-msgstr "Sor: "
+msgstr "Összes sor: "
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:714
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:734
 msgid "Close running program?"
 msgstr "Bezárja a futó programot?"
 
-#: Extensions_Qt6/EditorWindow/EditorWindow.py:733
+#: Extensions_Qt6/EditorWindow/EditorWindow.py:753
 #, python-brace-format
 msgid "Save changes to \"{0}\"?"
 msgstr "Elmenti a változásokat ebbe: \"{0}\"?"
 
-#: Extensions_Qt6/CodeEditor.py:544 Extensions_Qt6/CodeEditor.py:545
+#: Extensions_Qt6/CodeEditor.py:545 Extensions_Qt6/CodeEditor.py:546
 msgid "Select to Matching Brace"
 msgstr "Kijelölés a zárójel párjáig"
 
-#: Extensions_Qt6/CodeEditor.py:551 Extensions_Qt6/CodeEditor.py:552
+#: Extensions_Qt6/CodeEditor.py:552 Extensions_Qt6/CodeEditor.py:553
 msgid "Insert Snippet..."
 msgstr "Snippet beszúrása..."
 
-#: Extensions_Qt6/CodeEditor.py:557 Extensions_Qt6/CodeEditor.py:558
+#: Extensions_Qt6/CodeEditor.py:558 Extensions_Qt6/CodeEditor.py:559
 msgid "Toggle Bookmark"
 msgstr "Könyvjelző elhelyezése"
 
-#: Extensions_Qt6/CodeEditor.py:563 Extensions_Qt6/CodeEditor.py:564
+#: Extensions_Qt6/CodeEditor.py:564 Extensions_Qt6/CodeEditor.py:565
 msgid "Toggle Line Breakpoint"
 msgstr "Vonaltöréspont váltása"
 
-#: Extensions_Qt6/CodeEditor.py:568 Extensions_Qt6/CodeEditor.py:569
+#: Extensions_Qt6/CodeEditor.py:569 Extensions_Qt6/CodeEditor.py:570
 msgid "Take Snapshot"
 msgstr "Pillanatkép készítés"
 
-#: Extensions_Qt6/CodeEditor.py:574
+#: Extensions_Qt6/CodeEditor.py:575
 msgid "Zoom"
 msgstr "Nagyítóeszköz"
 
-#: Extensions_Qt6/CodeEditor.py:575
+#: Extensions_Qt6/CodeEditor.py:576
 msgid "Zoom in/out"
 msgstr "Nagyítás/Kicsinyítés"
 
-#: Extensions_Qt6/CodeEditor.py:579 Extensions_Qt6/CodeEditor.py:580
+#: Extensions_Qt6/CodeEditor.py:580 Extensions_Qt6/CodeEditor.py:581
 msgid "Indentation Guide"
 msgstr "Behúzási útmutató"
 
-#: Extensions_Qt6/CodeEditor.py:600
+#: Extensions_Qt6/CodeEditor.py:601
+#: Extensions_Qt6/BottomWidgets/FindInFiles.py:180
 msgid "View"
 msgstr "Megtekintés"
 
-#: Extensions_Qt6/CodeEditor.py:697
+#: Extensions_Qt6/CodeEditor.py:698
 msgid "Snapshot"
 msgstr "Pillanatkép"
 
-#: Extensions_Qt6/CodeEditor.py:698
+#: Extensions_Qt6/CodeEditor.py:699
 msgid "Take a snapshot of the current module state?"
 msgstr "Készítsen egy pillanatképet a jelenlegi modul állapotról?"
 
-#: Extensions_Qt6/CodeEditor.py:757
+#: Extensions_Qt6/CodeEditor.py:758
 msgid "Could not fetch snippets."
 msgstr "Nem sikerült lekérni a snippeteket."
 
-#: Extensions_Qt6/CodeEditor.py:762
+#: Extensions_Qt6/CodeEditor.py:763
 msgid "No snippets available."
 msgstr "Snippetek nem érhetőek el."
+
+#: Extensions_Qt6/PathLineEdit.py:19
+msgid "Insert File Path"
+msgstr "Fájlútvonal beszúrása"
+
+#: Extensions_Qt6/PathLineEdit.py:26
+msgid "Insert Directory Path"
+msgstr "Mappaútvonal besszúrása"
 
 #: Extensions_Qt6/FileExplorer.py:35 Extensions_Qt6/FileExplorer.py:232
 msgid "Manage Shortcuts"
@@ -899,7 +1033,11 @@ msgstr "Összes fájl megjelenítése"
 
 #: Extensions_Qt6/FileExplorer.py:219
 msgid "Locate"
-msgstr "Locate"
+msgstr "Lokalizálás"
+
+#: Extensions_Qt6/FileExplorer.py:219
+msgid "Locate this item in filemanager"
+msgstr "Az elem lokalizálása fájlkezelőben"
 
 #: Extensions_Qt6/FileExplorer.py:226 Extensions_Qt6/FileExplorer.py:327
 msgid "Create Shortcut"
@@ -948,17 +1086,18 @@ msgid "License"
 msgstr "Licenc"
 
 #: Extensions_Qt6/About.py:60
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:493
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:490
+#: Extensions_Qt6/Library/Library.py:189
 msgid "Name"
 msgstr "Név"
 
 #: Extensions_Qt6/About.py:60
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:502
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:499
 msgid "Version"
 msgstr "Verziószám"
 
 #: Extensions_Qt6/About.py:60
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:498
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:495
 msgid "Author"
 msgstr "Szerző"
 
@@ -1029,6 +1168,10 @@ msgstr "Külső konzol"
 #: Extensions_Qt6/BottomWidgets/RunWidget.py:119
 msgid "Use Virtual Environment"
 msgstr "Virtuális környezet használata"
+
+#: Extensions_Qt6/BottomWidgets/RunWidget.py:137
+msgid "Installed Python"
+msgstr "Telepített Python"
 
 #: Extensions_Qt6/BottomWidgets/RunWidget.py:155
 msgid "<No Python installed>"
@@ -1113,14 +1256,93 @@ msgstr ""
 "módot, majd állítsa vissza, mielőtt futtatná. <p>A paraméterek gomb elérhető "
 "az eszköztáron...</p>"
 
+#: Extensions_Qt6/BottomWidgets/FindInFiles.py:112
+msgid "There is nothing to replace."
+msgstr "Nincs mire lecserélni."
+
+#: Extensions_Qt6/BottomWidgets/FindInFiles.py:184
+msgid "Open Containing Folder"
+msgstr "A tartalmazó mappa megnyitása"
+
+#: Extensions_Qt6/BottomWidgets/FindInFiles.py:241
+msgid "Find:        "
+msgstr "Keresés:        "
+
+#: Extensions_Qt6/BottomWidgets/FindInFiles.py:249
+msgid "Replace With:"
+msgstr "Cserélje erre:"
+
+#: Extensions_Qt6/BottomWidgets/FindInFiles.py:258
+msgid "Extensions (*.ext; ...)"
+msgstr "Bővítmények (*.ext; ...)"
+
+#: Extensions_Qt6/BottomWidgets/FindInFiles.py:267
+msgid "Directory:"
+msgstr "Könyvtár:"
+
+#: Extensions_Qt6/BottomWidgets/FindInFiles.py:299
+#: Extensions_Qt6/SearchWidget.py:60
+msgid "MC"
+msgstr "Betűérzékeny"
+
+#: Extensions_Qt6/BottomWidgets/FindInFiles.py:300
+#: Extensions_Qt6/SearchWidget.py:61
+msgid "Match Case"
+msgstr "Kis- és nagybetűk megkülönböztetése"
+
+#: Extensions_Qt6/BottomWidgets/FindInFiles.py:304
+#: Extensions_Qt6/SearchWidget.py:65
+msgid "WW"
+msgstr "Teljes szöveg"
+
+#: Extensions_Qt6/BottomWidgets/FindInFiles.py:305
+#: Extensions_Qt6/SearchWidget.py:66
+msgid "Whole Word"
+msgstr "Keresés csak a teljes szövegre"
+
+#: Extensions_Qt6/BottomWidgets/FindInFiles.py:309
+#: Extensions_Qt6/SearchWidget.py:71
+msgid "RE"
+msgstr "RegEx"
+
+#: Extensions_Qt6/BottomWidgets/FindInFiles.py:310
+#: Extensions_Qt6/SearchWidget.py:72
+msgid "Regular Expression"
+msgstr "Keresés reguláris kifejezésre"
+
+#: Extensions_Qt6/BottomWidgets/FindInFiles.py:314
+msgid "Recursive"
+msgstr "Rekúrzív"
+
+#: Extensions_Qt6/BottomWidgets/FindInFiles.py:363
+msgid "This file has changed on disk. You may want to reload it."
+msgstr ""
+"Ez a fájl megváltozott a lemezen. Lehetséges, hogy újratöltése szükséges."
+
+#: Extensions_Qt6/BottomWidgets/TasksWidget.py:39
+msgid "Type"
+msgstr "Típus"
+
+#: Extensions_Qt6/BottomWidgets/TasksWidget.py:39
+#: Extensions_Qt6/Settings/GeneralSettings.py:194
+#: Extensions_Qt6/Settings/GeneralSettings.py:336
+msgid "Line"
+msgstr "Vonal"
+
+#: Extensions_Qt6/BottomWidgets/TasksWidget.py:39
+msgid "Task"
+msgstr "Feladat"
+
 #: Extensions_Qt6/Favourites.py:29 Extensions_Qt6/Favourites.py:37
 msgid "Manage Favourites"
 msgstr "Kedvencek kezelése"
 
 #: Extensions_Qt6/Favourites.py:55
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:597
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:594
 #: Extensions_Qt6/Settings/ColorScheme/ColorScheme.py:147
 #: Extensions_Qt6/Settings/ColorScheme/ColorScheme.py:327
+#: Extensions_Qt6/Library/Library.py:329 Extensions_Qt6/Library/Library.py:330
+#: Extensions_Qt6/Library/Library.py:551 Extensions_Qt6/Library/Library.py:561
 msgid "Remove"
 msgstr "Eltávolítás"
 
@@ -1135,6 +1357,54 @@ msgstr "Nincsenek kedvencek"
 #: Extensions_Qt6/Favourites.py:118
 msgid "File is no longer available."
 msgstr "Fájl már nem elérhető."
+
+#: Extensions_Qt6/SearchWidget.py:32
+msgid "Find:"
+msgstr "Keresés:"
+
+#: Extensions_Qt6/SearchWidget.py:45
+msgid "Find Next"
+msgstr "Következő keresése"
+
+#: Extensions_Qt6/SearchWidget.py:56
+msgid "Find Previous"
+msgstr "Előző keresése"
+
+#: Extensions_Qt6/SearchWidget.py:76
+msgid "WA"
+msgstr "Körkörös"
+
+#: Extensions_Qt6/SearchWidget.py:77
+msgid "Wrap Around"
+msgstr "Az utolsó elem után az elejére ugrik"
+
+#: Extensions_Qt6/SearchWidget.py:110
+msgid "Replace with:"
+msgstr "Cserélje erre:"
+
+#: Extensions_Qt6/SearchWidget.py:120
+msgid "Replace All"
+msgstr "Cserélje mindet"
+
+#: Extensions_Qt6/Diff.py:112
+msgid "Deleted"
+msgstr "Törölt"
+
+#: Extensions_Qt6/Diff.py:112
+msgid "Added"
+msgstr "Hozzáadva"
+
+#: Extensions_Qt6/Diff.py:125 Extensions_Qt6/Diff.py:154
+msgid "Nothing has changed."
+msgstr "Semmi sem változott."
+
+#: Extensions_Qt6/Diff.py:139
+msgid "Original"
+msgstr "Eredeti"
+
+#: Extensions_Qt6/Diff.py:139
+msgid "Current"
+msgstr "Jelenlegi"
 
 #: Extensions_Qt6/Projects/NewProjectDialog.py:47
 #: Extensions_Qt6/Projects/Projects.py:485 Extensions_Qt6/Start.py:125
@@ -1159,13 +1429,13 @@ msgid "Type: "
 msgstr "Típus: "
 
 #: Extensions_Qt6/Projects/NewProjectDialog.py:69
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:571
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:568
 msgid "GUI"
 msgstr "Kezelőfelület"
 
 #: Extensions_Qt6/Projects/NewProjectDialog.py:70
 #: Extensions_Qt6/Projects/ProjectManager/Build.py:27
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:572
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:569
 msgid "Console"
 msgstr "Konzol"
 
@@ -1178,37 +1448,37 @@ msgid "Import Sources: "
 msgstr "Források importálása: "
 
 #: Extensions_Qt6/Projects/ProjectManager/Build.py:38
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:545
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:542
 msgid "Compress"
 msgstr "Tömörítés"
 
 #: Extensions_Qt6/Projects/ProjectManager/Build.py:43
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:537
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:534
 msgid "Don't Optimize"
 msgstr "Ne optimalizálja"
 
 #: Extensions_Qt6/Projects/ProjectManager/Build.py:45
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:538
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:535
 msgid "Optimize"
 msgstr "Optimalizálás"
 
 #: Extensions_Qt6/Projects/ProjectManager/Build.py:47
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:539
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:536
 msgid "Optimize (Remove Doc Strings)"
 msgstr "Optimalizálás (Doku. -stringek eltávolítása)"
 
 #: Extensions_Qt6/Projects/ProjectManager/Build.py:50
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:550
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:547
 msgid "Copy Dependencies"
 msgstr "Függőségek másolása"
 
 #: Extensions_Qt6/Projects/ProjectManager/Build.py:55
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:557
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:554
 msgid "Append Script to Exe"
 msgstr "Adja a scriptet az Exe-hez"
 
 #: Extensions_Qt6/Projects/ProjectManager/Build.py:60
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:564
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:561
 msgid "Append Script to Library"
 msgstr "Script hozzáadása a könyvtárhoz"
 
@@ -1277,51 +1547,51 @@ msgstr "Projekt exportálása... kélek várj!"
 msgid "Export Failed"
 msgstr "Az exportálás nem sikerült"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:136
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:133
 msgid "Ignore Syntax Errors"
 msgstr "Szintaxis hibák ignorálása"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:137
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:134
 msgid "Don't Ignore Syntax Errors"
 msgstr "Ne ignorálja a szintaxis hibákat"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:143
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:140
 msgid "Ignore Bad Imports"
 msgstr "Rossz importálások ingorálása"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:144
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:141
 msgid "Don't Ignore Bad Imports"
 msgstr "Ne ignorálja a rossz importálásokat"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:152
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:149
 msgid "Max History Items: "
 msgstr "Előzmények maximális eleme: "
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:163
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:174
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:160
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:171
 msgid "Extensions_Qt6"
 msgstr "Extensions_Qt6"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:164
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:175
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:161
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:172
 msgid "Ignored Resources"
 msgstr "Ignorált források"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:165
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:176
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:162
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:173
 msgid "Custom Folders"
 msgstr "Egyéni mappák"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:174
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:171
 msgid "Specify which files should be considered python files."
 msgstr "Adja meg, hogy mely fájlok tekintendők python-fájloknak."
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:175
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:172
 msgid "Specify which files and folders to ignore in the project."
 msgstr ""
 "Adja meg, hogy mely fájlokat és mappákat hagyja figyelmen kívül a projektben."
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:177
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:174
 msgid ""
 "By default rope searches the project for finding source folders\n"
 "(folders that should be searched for finding modules).\n"
@@ -1342,33 +1612,33 @@ msgstr ""
 " hogy a \"Rope\" milyen platformon fut. \n"
 "Például: src/my_source_folder."
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:283
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:280
 msgid "Version: "
 msgstr "Verzió: "
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:312
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:355
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:362
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:382
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:392
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:394
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:401
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:309
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:352
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:359
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:379
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:389
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:391
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:398
 msgid "Install"
 msgstr "Telepítés"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:316
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:420
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:313
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:417
 msgid "Upgrade"
 msgstr "Frissítés"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:320
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:430
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:432
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:443
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:317
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:427
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:429
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:440
 msgid "Uninstall"
 msgstr "Eltávolítás"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:356
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:353
 msgid ""
 "This will install a new virtual environment.\n"
 "\n"
@@ -1378,8 +1648,8 @@ msgstr ""
 "\n"
 "Folytassam?"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:362
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:401
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:359
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:398
 msgid ""
 "There is no Python installation to install against.\n"
 "\n"
@@ -1389,24 +1659,24 @@ msgstr ""
 "\n"
 "Kérlek, győződj meg róla, hogy telepítve van a Python."
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:368
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:407
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:365
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:404
 msgid "Choose Python installation"
 msgstr "Python telepítés kiválasztása"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:382
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:379
 msgid "Install virtual environment completed."
 msgstr "Virtuális környezet telepítése ekészült."
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:385
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:382
 msgid "Failed Install"
 msgstr "Sikertelen telpítás"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:392
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:389
 msgid "No virtual environment to upgrade."
 msgstr "Virtuális környezet a frissítéshez."
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:395
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:392
 msgid ""
 "This will upgrade the current the virtual environment.\n"
 "\n"
@@ -1416,19 +1686,19 @@ msgstr ""
 "\n"
 "Folytassam?"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:420
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:417
 msgid "Upgrade virtual environment completed."
 msgstr "Virtuális környezet frissítése elkészült."
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:423
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:420
 msgid "Failed Upgrade"
 msgstr "Fissítés sikertelen"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:430
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:427
 msgid "No virtual environment to uninstall."
 msgstr "Virtuális környezet az eltávolításhoz."
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:433
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:430
 msgid ""
 "This will uninstall the current virtual environment.\n"
 "\n"
@@ -1438,116 +1708,117 @@ msgstr ""
 "\n"
 "Folytassam?"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:443
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:440
 msgid "Uninstall virtual environment completed."
 msgstr "A virtuális környezet eltávolítása elkészült."
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:446
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:443
 msgid "Failed Uninstall"
 msgstr "Eltávolítás sikertelen"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:486
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:483
 msgid "Version Information"
 msgstr "Verzióinformáció"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:506
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:503
 msgid "Description"
 msgstr "Leírás"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:510
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:507
 msgid "Comments"
 msgstr "Megjegyzés"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:514
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:511
 msgid "Company"
 msgstr "Cég"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:518
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:515
 msgid "Copyright"
 msgstr "Minden jog fenntartva"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:521
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:518
 msgid "Trademarks"
 msgstr "Védjegyek"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:525
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:522
 msgid "Product"
 msgstr "Termék"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:531
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:528
 msgid "Options"
 msgstr "Beállítások"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:542
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:539
 msgid "Speed"
 msgstr "Sebesség"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:546
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:543
 msgid "Don't Compress"
 msgstr "Ne tömörítse"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:547
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:544
+#: Extensions_Qt6/Library/Library.py:189
 msgid "Size"
 msgstr "Méret"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:551
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:548
 msgid "Don't Copy Dependencies"
 msgstr "Ne másolja a függőségeket"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:554
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:551
 msgid "Depends"
 msgstr "Függőség"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:558
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:555
 msgid "Don't Append Script to Exe"
 msgstr "Ne adja hozzá a script-et az exe-hez"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:561
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:558
 msgid "ToExe"
 msgstr "Exe-be"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:565
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:562
 msgid "Don't Append Script to Library"
 msgstr "Ne adjon hozzá szkriptet a könyvtárhoz"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:568
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:565
 msgid "ToLibs"
 msgstr "Lib-be"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:577
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:574
 msgid "Window Type"
 msgstr "Ablak típusa"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:589
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:586
 msgid "Add"
 msgstr "Hozzáad"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:603
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:600
 msgid "Icon"
 msgstr "Ikon"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:609
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:606
 msgid "Advanced"
 msgstr "Speciális"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:625
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:622
 msgid "List of modules to include"
 msgstr "A beépítendő modulok listája"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:626
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:623
 msgid "List of modules to exclude"
 msgstr "Kihagyandó modulok listája"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:627
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:624
 msgid "List of constants to include"
 msgstr "A beillesztendő konstansok listája"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:628
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:639
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:625
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:636
 msgid "List of packages to include"
 msgstr "Beépítendő csomagok listája"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:630
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:627
 msgid ""
 "Replace all the paths in modules found in the given paths with the given "
 "replacement string; each value is of the form path=replacement_string; path "
@@ -1558,11 +1829,11 @@ msgstr ""
 "path=replacement_string; Az elérési út * lehet, ami azt jelenti, hogy az "
 "összes még nincs megadva"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:634
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:631
 msgid "List of files to include"
 msgstr "Beépítendő fájlok listája"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:636
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:633
 msgid ""
 "Name of file to add to the zip file or a specification of the form "
 "name=arcname which will specify the archive name to use"
@@ -1571,7 +1842,7 @@ msgstr ""
 "következő formában van megadva: name=archívnév, ami meghatározza az archív "
 "nevét, amelyet használni kell"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:641
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:638
 msgid ""
 "Libraries that need not be included becausethey would normally be expected "
 "to be found on the target system orbecause they are part of a package which "
@@ -1581,7 +1852,7 @@ msgstr ""
 "hogy megtalálhatók legyenek a célszámítógépen, vagy azért, mert azok egy "
 "olyan csomag részei, amelynek független telepítésre van szüksége."
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:646
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:643
 msgid ""
 "File names of libraries which must be included for thefrozen executable to "
 "work."
@@ -1589,13 +1860,13 @@ msgstr ""
 "A befagyaszott futtatható állomány működéséhez szükséges könyvtárak "
 "fájlnevei."
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:649
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:646
 msgid "Paths of directories which contain files that should be included."
 msgstr ""
 "Azoknak a könyvtáraknak az elérési útvonalai, amelyek fájljait be kellene "
 "illeszteni."
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:652
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:649
 msgid ""
 "Paths of directories which contain files that should notbe included, "
 "generally because they contain standard system libraries."
@@ -1604,51 +1875,54 @@ msgstr ""
 "fájlokat, amelyeket nem kellene beilleszteni, általában azért, mert standard "
 "rendszerkönyvtárakat tartalmaznak."
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:736
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:733
 msgid "Icon Files (*.png *.svg);;All Files (*)"
 msgstr "Ikonfájlok (*.png *.svg);;Minden fájl (*)"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:744
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:741
 msgid "Add Icon"
 msgstr "Ikon hozzáadása"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:745
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:742
 msgid "Icon with the same name already exists. Replace?"
 msgstr "Azonos nevű ikon már létezik. Lecseréljem?"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:769
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:766
 msgid "Failed Remove"
 msgstr "Eltávolítás sikertelen"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:881
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:878
 msgid "Save Profile"
 msgstr "Profil mentése"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:881
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:878
 msgid "Saving failed!"
 msgstr "A mentés meghiúsult!"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:930
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:927
 msgid "Project Configuration"
 msgstr "Projektbeállítások"
 
-#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:952
+#: Extensions_Qt6/Projects/ProjectManager/ConfigureProject.py:949
 msgid "Virtual Environment"
 msgstr "Virtuális környezet"
 
 #: Extensions_Qt6/Projects/ProjectManager/ProjectView/ProjectView.py:23
 #: Extensions_Qt6/Settings/ColorScheme/ColorScheme.py:20
+#: Extensions_Qt6/Library/Library.py:70
 msgid "Name:"
 msgstr "Név:"
 
 #: Extensions_Qt6/Projects/ProjectManager/ProjectView/ProjectView.py:59
 #: Extensions_Qt6/Settings/ColorScheme/ColorScheme.py:63
 #: Extensions_Qt6/Settings/ColorScheme/ColorScheme.py:69
+#: Extensions_Qt6/Library/Library.py:116
 msgid "Unavailable"
 msgstr "Elérhetetlen"
 
 #: Extensions_Qt6/Projects/ProjectManager/ProjectView/ProjectView.py:62
 #: Extensions_Qt6/Settings/ColorScheme/ColorScheme.py:72
+#: Extensions_Qt6/Library/Library.py:119
 msgid "Available"
 msgstr "Elérhető"
 
@@ -1810,6 +2084,7 @@ msgstr "Mappa nem található!"
 
 #: Extensions_Qt6/Projects/ProjectManager/ProjectView/ProjectView.py:678
 #: Extensions_Qt6/Settings/GeneralSettings.py:58
+#: Extensions_Qt6/Library/Library.py:209
 msgid "Search"
 msgstr "Keresés"
 
@@ -1933,7 +2208,7 @@ msgstr "Billentyűtérkép"
 
 #: Extensions_Qt6/Settings/Keymap.py:90
 msgid "Function"
-msgstr "Függvény"
+msgstr "Funkció"
 
 #: Extensions_Qt6/Settings/Keymap.py:90 Extensions_Qt6/Settings/Keymap.py:130
 msgid "Shortcut"
@@ -2025,11 +2300,6 @@ msgstr "Záróvonal"
 msgid "Edge Mode"
 msgstr "Záróvonal mód"
 
-#: Extensions_Qt6/Settings/GeneralSettings.py:194
-#: Extensions_Qt6/Settings/GeneralSettings.py:336
-msgid "Line"
-msgstr "Vonal"
-
 #: Extensions_Qt6/Settings/GeneralSettings.py:195
 #: Extensions_Qt6/Settings/GeneralSettings.py:339
 msgid "Background"
@@ -2105,6 +2375,89 @@ msgstr "Indítás"
 msgid "Path is not available."
 msgstr "Fájl már nem elérhető."
 
+#: Extensions_Qt6/Library/Library.py:29 Extensions_Qt6/Library/Library.py:323
+#: Extensions_Qt6/Library/Library.py:324
+msgid "Edit Comment"
+msgstr "Megjegyzés szerkesztése"
+
+#: Extensions_Qt6/Library/Library.py:40
+msgid "OK"
+msgstr "Rendben"
+
+#: Extensions_Qt6/Library/Library.py:207
+msgid "Modules"
+msgstr "Modulok"
+
+#: Extensions_Qt6/Library/Library.py:221 Extensions_Qt6/Library/Library.py:445
+msgid "More"
+msgstr "Több"
+
+#: Extensions_Qt6/Library/Library.py:240
+msgid "Comments:"
+msgstr "Megjegyzések:"
+
+#: Extensions_Qt6/Library/Library.py:246
+msgid "Source:"
+msgstr "Forrás:"
+
+#: Extensions_Qt6/Library/Library.py:349 Extensions_Qt6/Library/Library.py:350
+#: Extensions_Qt6/Library/Library.py:615
+msgid "Export Library"
+msgstr "Könyvtár exportálása"
+
+#: Extensions_Qt6/Library/Library.py:355 Extensions_Qt6/Library/Library.py:356
+msgid "Toggle Sidebar View"
+msgstr "Oldalnézet váltása"
+
+#: Extensions_Qt6/Library/Library.py:505
+msgid " items"
+msgstr " elem(ek)"
+
+#: Extensions_Qt6/Library/Library.py:562
+msgid "Failed to remove item!"
+msgstr "Nem sikerült eltávolítani az elemet!"
+
+#: Extensions_Qt6/Library/Library.py:591
+#, python-brace-format
+msgid ""
+"Renaming failed!\n"
+"\n"
+"{0}"
+msgstr ""
+"Átnevezés sikertelen!\n"
+"\n"
+"{0}"
+
+#: Extensions_Qt6/Library/Library.py:623 Extensions_Qt6/Library/Library.py:632
+#: Extensions_Qt6/Library/Library.py:681
+msgid "Library Add"
+msgstr "Könyvtár hozzáadása"
+
+#: Extensions_Qt6/Library/Library.py:624
+msgid "Source code must be present to add to library!"
+msgstr "Forráskódnak jelen kell lennie a könyvtárhoz való hozzáadáshoz!"
+
+#: Extensions_Qt6/Library/Library.py:631
+msgid ""
+"File already exists in Library.\n"
+"\n"
+"Replace it?"
+msgstr ""
+"Már létezik ebben a könyvtárban: \"{0}\"\n"
+"\n"
+"Lecseréljem?"
+
+#: Extensions_Qt6/Library/Library.py:682
+#, python-brace-format
+msgid ""
+"Adding to Library failed!\n"
+"\n"
+"{0}"
+msgstr ""
+"Hozzáadás a könyvtárhoz sikertelen!\n"
+"\n"
+"{0}"
+
 #: Extensions_Qt6/Start.py:72
 msgid "Getting started..."
 msgstr "A kezdéshez..."
@@ -2131,6 +2484,10 @@ msgstr "A program honlapja"
 msgid "Project Folder"
 msgstr "Projektmappa"
 
+#, fuzzy
+#~ msgid "Edit"
+#~ msgstr "Szerkesztő"
+
 #~ msgid "Excludes"
 #~ msgstr "Kihagyandóak"
 
@@ -2139,9 +2496,6 @@ msgstr "Projektmappa"
 
 #~ msgid "Packages"
 #~ msgstr "Csomagok"
-
-#~ msgid "Replace Paths"
-#~ msgstr "Elérési utak cseréje"
 
 #~ msgid "Include Files"
 #~ msgstr "Beépítendő fájlok"
