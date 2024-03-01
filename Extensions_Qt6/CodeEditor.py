@@ -316,7 +316,6 @@ class CodeEditor(BaseScintilla):
         #
 
         self.createActions()
-
         self.setAutoCompletion()
 
         #" Initialises indicators "
@@ -391,9 +390,9 @@ class CodeEditor(BaseScintilla):
             self.setBraceMatching(QsciScintilla.BraceMatch.SloppyBraceMatch)
 
         if self.useData.SETTINGS["ShowEdgeLine"] == 'True':
-            if self.useData.SETTINGS["EdgeMode"] == 'Line':
+            if self.useData.SETTINGS["EdgeMode"] == _('Line') or self.useData.SETTINGS["EdgeMode"] == 'Line':
                 self.setEdgeMode(QsciScintilla.EdgeMode.EdgeLine)
-            elif self.useData.SETTINGS["EdgeMode"] == 'Background':
+            elif self.useData.SETTINGS["EdgeMode"] == _('Background') or self.useData.SETTINGS["EdgeMode"] == 'Background':
                 self.setEdgeMode(QsciScintilla.EdgeMode.EdgeBackground)
 
         if self.useData.SETTINGS["ShowCaretLine"] == 'True':
@@ -406,7 +405,7 @@ class CodeEditor(BaseScintilla):
 
         # Edge Mode shows a vetical bar at specific number of chars
         if self.useData.SETTINGS["ShowEdgeLine"] == 'True':
-            if self.useData.SETTINGS['EdgeMode'] == "Line":
+            if self.useData.SETTINGS['EdgeMode'] == _("Line") or self.useData.SETTINGS['EdgeMode'] == "Line":
                 self.setEdgeMode(QsciScintilla.EdgeMode.EdgeLine)
             else:
                 self.setEdgeMode(QsciScintilla.EdgeMode.EdgeBackground)
@@ -436,6 +435,8 @@ class CodeEditor(BaseScintilla):
         self.setMarkerBackgroundColor(QtGui.QColor("#EEEE11"), 11)
         self.setMarkerForegroundColor(QtGui.QColor("#EEEE11"), 11)
         #vectpr self.setMarginWidth(3, self.fontMetrics.width("0"))
+        self.setContentsMargins(0, 0, self.fontMetrics.boundingRect("0").width(), 0)
+
 
         mask = (1 << 8) | (1 << 9)
         self.setMarginMarkerMask(1, mask)
