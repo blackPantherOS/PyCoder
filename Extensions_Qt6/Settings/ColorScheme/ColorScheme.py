@@ -17,7 +17,7 @@ class GetName(QtWidgets.QDialog):
         self.path = path
 
         mainLayout = QtWidgets.QVBoxLayout()
-        mainLayout.addWidget(QtWidgets.QLabel("Name:"))
+        mainLayout.addWidget(QtWidgets.QLabel(_("Name:")))
 
         self.nameLine = QtWidgets.QLineEdit()
         if defaultText is not None:
@@ -33,12 +33,12 @@ class GetName(QtWidgets.QDialog):
 
         hbox.addStretch(1)
 
-        self.acceptButton = QtWidgets.QPushButton("Ok")
+        self.acceptButton = QtWidgets.QPushButton(_("Ok"))
         self.acceptButton.setDisabled(True)
         self.acceptButton.clicked.connect(self.accept)
         hbox.addWidget(self.acceptButton)
 
-        self.closeButton = QtWidgets.QPushButton("Cancel")
+        self.closeButton = QtWidgets.QPushButton(_("Cancel"))
         self.closeButton.clicked.connect(self.close)
         hbox.addWidget(self.closeButton)
 
@@ -60,16 +60,16 @@ class GetName(QtWidgets.QDialog):
         else:
             preExistNames = os.listdir(self.path)
             if text in preExistNames:
-                self.statusLabel.setText("Unavailable")
+                self.statusLabel.setText(_("Unavailable"))
                 self.acceptButton.setDisabled(True)
             else:
                 self.acceptButton.setDisabled(False)
                 preExistNames = os.listdir(self.path)
                 if (text in preExistNames) or (text == 'Default'):
-                    self.statusLabel.setText("Unavailable")
+                    self.statusLabel.setText(_("Unavailable"))
                     self.acceptButton.setDisabled(True)
                 else:
-                    self.statusLabel.setText("Available")
+                    self.statusLabel.setText(_("Available"))
                     self.acceptButton.setDisabled(False)
 
     def accept(self):
@@ -99,9 +99,9 @@ class ColorScheme(QtWidgets.QDialog):
             self.lexerStyler.reloadStyles.emit)
 
         optionsTab.addTab(self.lexerStyler,
-                          QtGui.QIcon(os.path.join("Resources", "images", "edit-color")), "Lexer")
+                          QtGui.QIcon(os.path.join("Resources", "images", "edit-color")), _("Lexer"))
         optionsTab.addTab(self.editorStyler,
-                          QtGui.QIcon(os.path.join("Resources", "images", "ui-scroll-pane-blog")), "Editor")
+                          QtGui.QIcon(os.path.join("Resources", "images", "ui-scroll-pane-blog")), _("Editor"))
 
         mainLayout.addWidget(optionsTab)
 
@@ -126,7 +126,7 @@ class ColorScheme(QtWidgets.QDialog):
         self.newButton.setDefaultAction(
             QtGui.QAction(
                 QtGui.QIcon(os.path.join("Resources", "images", "add")),
-                "New", self, triggered=self.newScheme))
+                _("New"), self, triggered=self.newScheme))
         hbox.addWidget(self.newButton)
 
         self.renameButton = QtWidgets.QToolButton()
@@ -135,7 +135,7 @@ class ColorScheme(QtWidgets.QDialog):
             QtGui.QAction(
                 QtGui.QIcon(
                     os.path.join("Resources", "images", "ui-text-field")),
-                "Rename", self, triggered=self.rename))
+                _("Rename"), self, triggered=self.rename))
         self.renameButton.setDisabled(True)
         hbox.addWidget(self.renameButton)
 
@@ -144,18 +144,18 @@ class ColorScheme(QtWidgets.QDialog):
         self.removeButton.setDefaultAction(
             QtGui.QAction(
                 QtGui.QIcon(os.path.join("Resources", "images", "minus")),
-                "Remove", self, triggered=self.remove))
+                _("Remove"), self, triggered=self.remove))
         self.removeButton.setDisabled(True)
         hbox.addWidget(self.removeButton)
 
         hbox.addStretch(1)
 
-        self.saveButton = QtWidgets.QPushButton("Save")
+        self.saveButton = QtWidgets.QPushButton(_("Save"))
         self.saveButton.clicked.connect(self.saveStyleChanges)
         self.saveButton.setDisabled(True)
         hbox.addWidget(self.saveButton)
 
-        self.applyButton = QtWidgets.QPushButton("Apply")
+        self.applyButton = QtWidgets.QPushButton(_("Apply"))
         self.applyButton.clicked.connect(self.applyScheme)
         hbox.addWidget(self.applyButton)
 
@@ -173,7 +173,7 @@ class ColorScheme(QtWidgets.QDialog):
         self.schemeNameBox.clear()
         self.schemeNameBox.addItem(
             QtGui.QIcon(os.path.join("Resources", "images", "mail_pinned")),
-            "Default")
+            _("Default"))
         groupName = self.schemeTypeBox.currentText()
         path = os.path.join(self.useData.appPathDict["stylesdir"], groupName)
         for i in os.listdir(path):
@@ -254,8 +254,8 @@ class ColorScheme(QtWidgets.QDialog):
             file.write(dom_document.toString())
             file.close()
         except Exception as err:
-            message = QtWidgets.QMessageBox.warning(self, "Save",
-                                                "Saving failed: {0}".format(str(err)))
+            message = QtWidgets.QMessageBox.warning(self, _("Save"),
+                                                _("Saving failed: {0}").format(str(err)))
             file.close()
             return
 
@@ -277,7 +277,7 @@ class ColorScheme(QtWidgets.QDialog):
 
     def rename(self):
         old_name = self.schemeNameBox.currentText()
-        newName = GetName("Rename", self.useData.appPathDict["stylesdir"],
+        newName = GetName(_("Rename"), self.useData.appPathDict["stylesdir"],
                           old_name, self)
         old_name = old_name + '.xml'
         if newName.accepted:
@@ -298,15 +298,15 @@ class ColorScheme(QtWidgets.QDialog):
                         "EditorStyle" + self.schemeTypeBox.currentText()] = newName.name
                     self.useData.saveUseData()
             except Exception as err:
-                message = QtWidgets.QMessageBox.warning(self, "Rename",
-                                                    "Rename failed!\n\n{0}".format(str(err)))
+                message = QtWidgets.QMessageBox.warning(self, _("Rename"),
+                                                    _("Rename failed!\n\n{0}").format(str(err)))
 
     def remove(self):
         index = self.schemeNameBox.currentIndex()
         currentScheme = self.schemeNameBox.currentText()
 
-        mess = "Do you really want to remove '{0}'?".format(currentScheme)
-        reply = QtWidgets.QMessageBox.warning(self, "Remove",
+        mess = _("Do you really want to remove '{0}'?").format(currentScheme)
+        reply = QtWidgets.QMessageBox.warning(self, _("Remove"),
                                           mess, QtWidgets.QMessageBox.StandardButton.Yes | 
                                           QtWidgets.QMessageBox.StandardButton.No)
         if reply == QtWidgets.QMessageBox.StandardButton.Yes:
@@ -324,8 +324,8 @@ class ColorScheme(QtWidgets.QDialog):
                         "EditorStyle" + self.schemeTypeBox.currentText()] = self.schemeNameBox.currentText()
                     self.useData.saveUseData()
             except Exception as err:
-                message = QtWidgets.QMessageBox.warning(self, "Remove",
-                                                    "Removing failed!\n\n{0}".format(str(err)))
+                message = QtWidgets.QMessageBox.warning(self, _("Remove"),
+                                                    _("Removing failed!\n\n{0}").format(str(err)))
         elif reply == QtWidgets.QMessageBox.StandardButton.No:
             pass
 

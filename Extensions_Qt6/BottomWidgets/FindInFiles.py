@@ -109,18 +109,18 @@ class ConfirmReplaceDialog(QtWidgets.QDialog):
             mainLayout.addWidget(diff)
         else:
             message = QtWidgets.QMessageBox.information(
-                self, "Replace", "There is nothing to replace.")
+                self, _("Replace"), _("There is nothing to replace."))
             return
 
         hbox = QtWidgets.QHBoxLayout()
         hbox.addStretch(1)
         mainLayout.addLayout(hbox)
 
-        self.replaceButton = QtWidgets.QPushButton("Replace")
+        self.replaceButton = QtWidgets.QPushButton(_("Replace"))
         self.replaceButton.clicked.connect(self.replace)
         hbox.addWidget(self.replaceButton)
 
-        self.cancelButton = QtWidgets.QPushButton("Cancel")
+        self.cancelButton = QtWidgets.QPushButton(_("Cancel"))
         self.cancelButton.pressed.connect(self.close)
         hbox.addWidget(self.cancelButton)
 
@@ -177,11 +177,11 @@ class FoundFilesView(QtWidgets.QTreeWidget):
 
     def createActions(self):
         self.viewAct = QtGui.QAction(
-            "View", self, statusTip="View", triggered=self.parent.viewFile)
+            _("View"), self, statusTip=_("View"), triggered=self.parent.viewFile)
 
         self.locateAct = \
             QtGui.QAction(
-                "Open Containing Folder", self, statusTip="Open Containing Folder", triggered=self.parent.locateFile)
+                _("Open Containing Folder"), self, statusTip=_("Open Containing Folder"), triggered=self.parent.locateFile)
 
         self.contextMenu = QtWidgets.QMenu()
         self.contextMenu.addAction(self.viewAct)
@@ -238,7 +238,7 @@ class FindInFiles(QtWidgets.QWidget):
         hbox = QtWidgets.QHBoxLayout()
         vbox.addLayout(hbox)
 
-        label = QtWidgets.QLabel("Find:        ")  # extra space is for alignment
+        label = QtWidgets.QLabel(_("Find :     "))  # extra space is for alignment
         label.setMinimumWidth(30)
 
         hbox.addWidget(label)
@@ -246,7 +246,7 @@ class FindInFiles(QtWidgets.QWidget):
         self.findtextLine = QtWidgets.QLineEdit()
         hbox.addWidget(self.findtextLine)
 
-        self.replaceLabel = QtWidgets.QLabel("Replace With:")
+        self.replaceLabel = QtWidgets.QLabel(_("Replace With:"))
         hbox.addWidget(self.replaceLabel)
 
         self.replaceLine = QtWidgets.QLineEdit()
@@ -255,7 +255,7 @@ class FindInFiles(QtWidgets.QWidget):
         hbox.setStretch(1, 1)
         hbox.setStretch(3, 1)
 
-        hbox.addWidget(QtWidgets.QLabel("Extensions_Qt6 (*.ext; ...)"))
+        hbox.addWidget(QtWidgets.QLabel(_("Extensions (*.ext; ...)")))
 
         self.filterEdit = QtWidgets.QLineEdit()
         self.filterEdit.setText('*')
@@ -264,7 +264,7 @@ class FindInFiles(QtWidgets.QWidget):
 
         hbox = QtWidgets.QHBoxLayout()
 
-        hbox.addWidget(QtWidgets.QLabel("Directory:"))
+        hbox.addWidget(QtWidgets.QLabel(_("Directory:")))
 
         self.directoryLine = QtWidgets.QLineEdit()
         hbox.addWidget(self.directoryLine)
@@ -272,7 +272,7 @@ class FindInFiles(QtWidgets.QWidget):
         hbox.setStretch(1, 1)
 
         self.projectBox = QtWidgets.QCheckBox(
-            "Project  ")  # extra space is for alignment
+            _("Project  "))  # extra space is for alignment
         self.projectBox.toggled.connect(self.projectBoxToggled)
         hbox.addWidget(self.projectBox)
 
@@ -280,14 +280,14 @@ class FindInFiles(QtWidgets.QWidget):
         self.browseButton.clicked.connect(self.setPath)
         hbox.addWidget(self.browseButton)
 
-        self.stopButton = QtWidgets.QPushButton("Stop")
+        self.stopButton = QtWidgets.QPushButton(_("Stop"))
         self.stopButton.setIcon(
             QtGui.QIcon(os.path.join("Resources", "images", "stop")))
         self.stopButton.clicked.connect(self.stopFinder)
         self.stopButton.hide()
         hbox.addWidget(self.stopButton)
 
-        self.findButton = QtWidgets.QPushButton("Find")
+        self.findButton = QtWidgets.QPushButton(_("Find"))
         self.findButton.clicked.connect(self.find)
         hbox.addWidget(self.findButton)
 
@@ -296,27 +296,27 @@ class FindInFiles(QtWidgets.QWidget):
         hbox = QtWidgets.QHBoxLayout()
         vbox.addLayout(hbox)
 
-        self.matchCaseBox = QtWidgets.QCheckBox("MC")
-        self.matchCaseBox.setToolTip("Match Case")
+        self.matchCaseBox = QtWidgets.QCheckBox(_("MC"))
+        self.matchCaseBox.setToolTip(_("Match Case"))
         self.matchCaseBox.stateChanged.connect(self.searchOptionsChanged)
         hbox.addWidget(self.matchCaseBox)
 
-        self.matchWholeWordBox = QtWidgets.QCheckBox("WW")
-        self.matchWholeWordBox.setToolTip("Whole Word")
+        self.matchWholeWordBox = QtWidgets.QCheckBox(_("WW"))
+        self.matchWholeWordBox.setToolTip(_("Whole Word"))
         self.matchWholeWordBox.stateChanged.connect(self.searchOptionsChanged)
         hbox.addWidget(self.matchWholeWordBox)
 
-        self.regExpBox = QtWidgets.QCheckBox("RE")
-        self.regExpBox.setToolTip("Regular Expression")
+        self.regExpBox = QtWidgets.QCheckBox(_("RE"))
+        self.regExpBox.setToolTip(_("Regular Expression"))
         self.regExpBox.stateChanged.connect(self.searchOptionsChanged)
         hbox.addWidget(self.regExpBox)
 
-        self.recursiveBox = QtWidgets.QCheckBox("Recursive")
+        self.recursiveBox = QtWidgets.QCheckBox(_("Recursive"))
         self.recursiveBox.setChecked(True)
         self.recursiveBox.stateChanged.connect(self.searchOptionsChanged)
         hbox.addWidget(self.recursiveBox)
 
-        self.replaceBox = QtWidgets.QCheckBox("Replace")
+        self.replaceBox = QtWidgets.QCheckBox(_("Replace"))
         self.replaceBox.stateChanged.connect(self.toggleReplace)
         hbox.addWidget(self.replaceBox)
 
@@ -331,7 +331,7 @@ class FindInFiles(QtWidgets.QWidget):
 
         self.searchOptionsChanged()
 
-        # vector self.findtextLine.setFocus(True)
+        self.findtextLine.setFocus()
 
         self.findThread.listItemAvailable.connect(self.updateFilesTable)
         self.findThread.currentDir.connect(self.displayCurrentSearchDir)
@@ -360,7 +360,7 @@ class FindInFiles(QtWidgets.QWidget):
             if replaced.replaced:
                 if self.editorTabWidget.alreadyOpened(path):
                     message = QtWidgets.QMessageBox.information(
-                        self, "Reload", "This file has changed on disk. You may want to reload it.")
+                        self, _("Reload"), _("This file has changed on disk. You may want to reload it."))
         else:
             line = int(item.text(0)) - 1
             pos = item.data(0, 3)
@@ -430,8 +430,8 @@ class FindInFiles(QtWidgets.QWidget):
         try:
             self.search = re.compile(text, flags)
         except re.error as err:
-            message = QtWidgets.QMessageBox.warning(self, "Find-in-Files",
-                                                "Wrong regular expression: {0}!".format(str(err).capitalize()))
+            message = QtWidgets.QMessageBox.warning(self, _("Find-in-Files"),
+                                                _("Wrong regular expression: {0}!").format(str(err).capitalize()))
             return
         fileFilter = self.filterEdit.text()
         fileFilterList = \
@@ -443,15 +443,15 @@ class FindInFiles(QtWidgets.QWidget):
         else:
             dirName = self.directoryLine.text().strip()
             if dirName == '':
-                message = QtWidgets.QMessageBox.warning(self, "Find-in-Files",
-                                                    "Please specify a directory!")
+                message = QtWidgets.QMessageBox.warning(self, _("Find-in-Files"),
+                                                    _("Please specify a directory!"))
                 return
         if not os.path.exists(dirName):
-            message = QtWidgets.QMessageBox.warning(self, "Find-in-Files",
-                                                "Path does not exist!")
+            message = QtWidgets.QMessageBox.warning(self, _("Find-in-Files"),
+                                                _("Path does not exist!"))
         if not os.path.isdir(dirName):
-            message = QtWidgets.QMessageBox.warning(self, "Find-in-Files",
-                                                "Path is not a directory!")
+            message = QtWidgets.QMessageBox.warning(self, _("Find-in-Files"),
+                                                _("Path is not a directory!"))
             return
         else:
             self.filesView.clear()
