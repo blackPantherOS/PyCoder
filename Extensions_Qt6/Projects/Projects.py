@@ -435,6 +435,9 @@ class Projects(QtWidgets.QWidget):
                     projectPathDict["builddir"] = os.path.join(
                         path, "Build", "Linux")
 
+                # Create the directory that the user accidentally deleted
+                if not os.path.exists(projectPathDict["builddir"]):
+                    os.makedirs(projectPathDict["builddir"], exist_ok=True)
                 p_name = os.path.basename(path)
 
                 projectWindow = EditorWindow(projectPathDict, self.library,

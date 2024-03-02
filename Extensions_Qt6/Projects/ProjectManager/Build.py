@@ -307,7 +307,9 @@ class Build(QtWidgets.QWidget):
                 os.system('{} "{}"'.format(opener, self.projectPathDict["builddir"]))
         else:
             message = QtWidgets.QMessageBox.critical(self, _("Open"),
-                                                 _("Build folder is missing!"))
+                                                 _("Build folder '{}' is missing!"
+                                                 "<br>Restart PyCoder to create it..."
+                                                 ).format(self.projectPathDict["builddir"]))
 
     def cancelBuild(self):
         self.buildThread.exit()
