@@ -331,20 +331,25 @@ class UseData(QtCore.QObject):
 
         self.CUSTOM_SHORTCUTS = {'Ide': {}, 'Editor': {}}
 
-        config_path = os.path.expanduser("~/.config/PyCoder")
-        config_file = "settings.ini"
-        settings_file_path = os.path.join(config_path, config_file)
+        config_file = QtCore.QSettings("PyCoder", "settings")
+        settings_file_path = config_file.fileName()
 
-        if not os.path.exists(config_path):
-            print("Dir not found! Create..")
-            os.makedirs(config_path, exist_ok=True)
+        if not os.path.exists(os.path.dirname(settings_file_path)):
+            os.makedirs(os.path.dirname(settings_file_path), exist_ok=True)
 
         if not os.path.exists(settings_file_path):
-            print(f"Copying {config_file} from current directory to {settings_file_path}")
+            print(f"Copying {config_file.fileName()} from the current directory to {settings_file_path}")
             self.copySettingsFromCurrentDirectory(settings_file_path)
 
         # load configuration from file
         tempList = []
+
+        if os.path.exists(settings_file_path):
+            dirname = os.path.dirname(settings_file_path)
+
+        if os.path.exists(os.path.join(dirname, "settings.ini")):
+                os.rename(os.path.join(dirname, "settings.ini"), os.path.join(dirname, "settings.conf"))
+                print(f"The old conf 'settings.ini' file renamed to {settings_file_path}.")
         try:
             file = open(settings_file_path, "r")
         except:
@@ -375,7 +380,7 @@ class UseData(QtCore.QObject):
             print(f"Settings copied successfully")
 
         except Exception as e:
-            print(f"Error copying settings.ini: {e}")
+            print(f"Error copying settings.conf: {e}")
 
     def loadAppData(self):
         self.workspaceDir = self.settings["workspace"]
@@ -453,15 +458,12 @@ class UseData(QtCore.QObject):
             tag = dom_document.createElement(i)
             modules.appendChild(tag)
             tag.setAttribute("use", str(v[1]))
-            print("TAG:", tag, " Use:",str(v[1]))
 
             for subModule in v[0]:
                 item = dom_document.createElement("item")
-                #print("SubModule1:", item)
                 tag.appendChild(item)
 
                 t = dom_document.createTextNode(subModule)
-                #print("SubModule2:", t)
                 item.appendChild(t)
 
         try:
@@ -469,10 +471,10 @@ class UseData(QtCore.QObject):
             file.write('<?xml version="1.0" encoding="UTF-8"?>\n')
             file.write(dom_document.toString())
             xml_content = dom_document.toString()
-            print("DOM dokumentum tartalma:")
+            #print("DOM document content:")
             #print(xml_content)
             file.close()
-            print("Fájl mentve:", self.appPathDict["modules"])
+            print("File saved:", self.appPathDict["modules"])
 
         except:
             exc_type, exc_value, exc_traceback = sys.exc_info()
@@ -615,9 +617,9 @@ class UseData(QtCore.QObject):
 
     def saveSettings(self):
 
-        config_path = os.path.expanduser("~/.config/PyCoder")
-        config_file = "settings.ini"
-        settings_file_path = os.path.join(config_path, config_file)
+        config_file = QtCore.QSettings("PyCoder", "settings")
+        settings_file_path = config_file.fileName()
+        config_path = os.path.dirname(settings_file_path)
 
         if not os.path.exists(settings_file_path):
             print(f"Copying {config_file} from current directory to {settings_file_path}")
