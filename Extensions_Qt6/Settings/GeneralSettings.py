@@ -184,7 +184,16 @@ class GeneralSettings(QtWidgets.QDialog):
 
         self.positionBox = QtWidgets.QSpinBox()
         self.positionBox.setRange(1, 200)
-        self.positionBox.setValue(int(self.useData.SETTINGS["EdgeColumn"]))
+
+        # FixMe Edge position hack related CodeEditor
+        if self.useData.SETTINGS['EdgeMode'] == _("Line") or self.useData.SETTINGS['EdgeMode'] == "Line":
+            set_val = (int(self.useData.SETTINGS["EdgeColumn"]) - 30)
+        else:
+            set_val = (int(self.useData.SETTINGS["EdgeColumn"]) - 1)
+
+        set_val = int(self.useData.SETTINGS["EdgeColumn"])
+        print("Load VAL: ", set_val)
+        self.positionBox.setValue(set_val)
         self.positionBox.valueChanged.connect(self.setEdgeColumn)
         vbox.addWidget(self.positionBox)
 
@@ -326,6 +335,7 @@ class GeneralSettings(QtWidgets.QDialog):
             alertsWidget.setAssistance(2)
 
     def setEdgeMode(self):
+        print("MODE SET")
         self.useData.SETTINGS['EdgeMode'] = self.edgeModeBox.currentText()
         for i in range(self.projectWindowStack.count() - 1):
             editorTabWidget = self.projectWindowStack.widget(i).editorTabWidget
@@ -333,15 +343,23 @@ class GeneralSettings(QtWidgets.QDialog):
                 editor = editorTabWidget.getEditor(i)
                 if editor.DATA["fileType"] == "python":
                     editor2 = editorTabWidget.getCloneEditor(i)
-                    if self.edgeModeBox.currentText() == _("Line"):
+                    if self.edgeModeBox.currentText() == _("Line") or self.edgeModeBox.currentText() == "Line" :
                         editor.setEdgeMode(QsciScintilla.EdgeMode.EdgeLine)
                         editor2.setEdgeMode(QsciScintilla.EdgeMode.EdgeLine)
-                    elif self.edgeModeBox.currentText() == _("Background"):
+                    elif self.edgeModeBox.currentText() == _("Background") or self.edgeModeBox.currentText() == "Background":
                         editor.setEdgeMode(QsciScintilla.EdgeMode.EdgeBackground)
                         editor2.setEdgeMode(QsciScintilla.EdgeMode.EdgeBackground)
 
+        # EdgeLine postion hack
+        if self.useData.SETTINGS["ShowEdgeLine"] == 'True':
+                self.setEdgeColumn(int(self.useData.SETTINGS["EdgeColumn"]))
+
+
     def setEdgeColumn(self, value):
         self.useData.SETTINGS['EdgeColumn'] = str(value)
+        if self.edgeModeBox.currentText() == _("Line") or self.edgeModeBox.currentText() == "Line":
+            value = value + 30
+        print("SET VAL: ", str(value))
         for i in range(self.projectWindowStack.count() - 1):
             editorTabWidget = self.projectWindowStack.widget(i).editorTabWidget
             for i in range(editorTabWidget.count()):

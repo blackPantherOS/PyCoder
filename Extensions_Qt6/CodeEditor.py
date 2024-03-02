@@ -402,14 +402,18 @@ class CodeEditor(BaseScintilla):
         # set annotation display
         # the annotation font can be changed by changing the default lexer font
         self.setAnnotationDisplay(QsciScintilla.AnnotationDisplay.AnnotationBoxed)
-
+        
         # Edge Mode shows a vetical bar at specific number of chars
         if self.useData.SETTINGS["ShowEdgeLine"] == 'True':
             if self.useData.SETTINGS['EdgeMode'] == _("Line") or self.useData.SETTINGS['EdgeMode'] == "Line":
                 self.setEdgeMode(QsciScintilla.EdgeMode.EdgeLine)
+                # EdgeLine positon hack related GeneralSettings spin value
+                self.setEdgeColumn(int(self.useData.SETTINGS["EdgeColumn"]) + 30)
             else:
                 self.setEdgeMode(QsciScintilla.EdgeMode.EdgeBackground)
-        self.setEdgeColumn(int(self.useData.SETTINGS["EdgeColumn"]))
+                self.setEdgeColumn(int(self.useData.SETTINGS["EdgeColumn"]) - 1)
+
+        #self.setEdgeColumn(int(self.useData.SETTINGS["EdgeColumn"]))
 
         # define markers
         # the background markers will not show until the editor has focus
