@@ -192,7 +192,7 @@ class GeneralSettings(QtWidgets.QDialog):
             set_val = (int(self.useData.SETTINGS["EdgeColumn"]) - 1)
 
         set_val = int(self.useData.SETTINGS["EdgeColumn"])
-        print("Load VAL: ", set_val)
+
         self.positionBox.setValue(set_val)
         self.positionBox.valueChanged.connect(self.setEdgeColumn)
         vbox.addWidget(self.positionBox)
@@ -335,7 +335,6 @@ class GeneralSettings(QtWidgets.QDialog):
             alertsWidget.setAssistance(2)
 
     def setEdgeMode(self):
-        print("MODE SET")
         self.useData.SETTINGS['EdgeMode'] = self.edgeModeBox.currentText()
         for i in range(self.projectWindowStack.count() - 1):
             editorTabWidget = self.projectWindowStack.widget(i).editorTabWidget
@@ -359,7 +358,6 @@ class GeneralSettings(QtWidgets.QDialog):
         self.useData.SETTINGS['EdgeColumn'] = str(value)
         if self.edgeModeBox.currentText() == _("Line") or self.edgeModeBox.currentText() == "Line":
             value = value + 30
-        print("SET VAL: ", str(value))
         for i in range(self.projectWindowStack.count() - 1):
             editorTabWidget = self.projectWindowStack.widget(i).editorTabWidget
             for i in range(editorTabWidget.count()):
