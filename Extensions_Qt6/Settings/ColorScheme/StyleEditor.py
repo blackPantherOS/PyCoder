@@ -330,8 +330,16 @@ class StyleEditor(QtWidgets.QWidget):
 
         # FIXME QtXml is no longer supported.
         dom_document = QtXml.QDomDocument()
-        path = os.path.join(self.useData.appPathDict[
+
+        try:
+            path = os.path.join(self.useData.appPathDict[
                             "stylesdir"], groupName, style_name + ".xml")
+            file = open(path, "r")
+        except:
+            path = os.path.join(self.useData.appPathDict[
+                            "stylesdir"], groupName, "blackPantherDark.xml")
+            file = open(path, "r")
+            
         file = open(path, "r")
         dom_document.setContent(file.read())
         file.close()
