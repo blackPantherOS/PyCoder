@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: PyCoder6 0.6.0\n"
 "Report-Msgid-Bugs-To: info@blackpantheros.eu\n"
 "POT-Creation-Date: 2024-02-29 15:48+0100\n"
-"PO-Revision-Date: 2024-02-28 12:51+0100\n"
-"Last-Translator: Barcza Károly <kbarcza@blackpanther.hu>\n"
+"PO-Revision-Date: 2024-03-12 15:28+0100\n"
+"Last-Translator: Hegyi Tamás <hegyitomi78@gmail.com>\n"
 "Language-Team: \n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -20,81 +20,81 @@ msgstr ""
 
 #: PyCoder6.py:57
 msgid "Welcome to PyCoder6! The used language for interface is: "
-msgstr ""
+msgstr "Die verwendete Sprache für die Benutzeroberfläche ist: "
 
 #: PyCoder6.py:66
 msgid "PyCoder - Loading..."
-msgstr ""
+msgstr "PyCoder - Laden..."
 
 #: PyCoder6.py:75
 msgid "Primary Monitor:"
-msgstr ""
+msgstr "Primärmonitor:"
 
 #: PyCoder6.py:76
 msgid "Resolution:"
-msgstr ""
+msgstr "Auflösung:"
 
 #: PyCoder6.py:92
 msgid "This application requires Python 3"
-msgstr ""
+msgstr "Diese Anwendung braucht Python 3"
 
 #: PyCoder6.py:116 PyCoder6.py:117
 msgid "Start"
-msgstr ""
+msgstr "Start"
 
 #: PyCoder6.py:140
 msgid "EDITOR"
-msgstr ""
+msgstr "EDITOR"
 
 #: PyCoder6.py:143
 msgid "LIBRARY"
-msgstr ""
+msgstr "Verzeichnis"
 
 #: PyCoder6.py:179
 msgid "About PyCoder"
-msgstr ""
+msgstr "Über PyCoder"
 
 #: PyCoder6.py:179
 msgid "More info of PyCoder6 "
-msgstr ""
+msgstr "Mehrere Info über PyCoder6"
 
 #: PyCoder6.py:186
 msgid "Fullscreen"
-msgstr ""
+msgstr "Vollbild"
 
 #: PyCoder6.py:192 Extensions_Qt6/Settings/SettingsWidget.py:15
 #: Extensions_Qt6/Settings/GeneralSettings.py:13
 msgid "Settings"
-msgstr ""
+msgstr "Einstellungen"
 
 #: PyCoder6.py:193
 msgid "PyCoder Settings"
-msgstr ""
+msgstr "Einstellungen von PyCoder"
 
 #: PyCoder6.py:208 Extensions_Qt6/Projects/Projects.py:421
 #: Extensions_Qt6/Start.py:130
 msgid "Open Project"
-msgstr ""
+msgstr "Öffnen Project"
 
 #: PyCoder6.py:208
 msgid "Project cannot be be found!"
-msgstr ""
+msgstr "Projekt kann nicht gefunden werden!"
 
 #: PyCoder6.py:234
 msgid "PyCoder - Start"
-msgstr ""
+msgstr "PyCoder - Start"
 
 #: PyCoder6.py:250
 msgid "PyCoder - "
-msgstr ""
+msgstr "PyCoder -  "
 
 #: PyCoder6.py:250 Extensions_Qt6/EditorTabWidget.py:813
 msgid "Unsaved"
-msgstr ""
+msgstr "Nicht gespeichert"
 
 #: Extensions_Qt6/Refactor/Refactor.py:31
 msgid "New name:"
-msgstr ""
+msgstr "Neuer Name"
 
 #: Extensions_Qt6/Refactor/Refactor.py:46
 #: Extensions_Qt6/Projects/NewProjectDialog.py:88
@@ -104,7 +104,7 @@ msgstr ""
 #: Extensions_Qt6/Settings/ColorScheme/ColorScheme.py:36
 #: Extensions_Qt6/Library/Library.py:89
 msgid "Ok"
-msgstr ""
+msgstr "Ok "
 
 #: Extensions_Qt6/Refactor/Refactor.py:51
 #: Extensions_Qt6/BottomWidgets/FindInFiles.py:123
@@ -116,12 +116,12 @@ msgstr ""
 #: Extensions_Qt6/Settings/Keymap.py:35 Extensions_Qt6/Library/Library.py:44
 #: Extensions_Qt6/Library/Library.py:94
 msgid "Cancel"
-msgstr ""
+msgstr "Abbrechen "
 
 #: Extensions_Qt6/Refactor/Refactor.py:91
 #: Extensions_Qt6/Refactor/Refactor.py:501
 msgid "No usages found."
-msgstr ""
+msgstr "Keine Verwendungen gefunden. "
 
 #: Extensions_Qt6/Refactor/Refactor.py:290
 msgid "Refactor"
@@ -129,23 +129,23 @@ msgstr ""
 
 #: Extensions_Qt6/Refactor/Refactor.py:302
 msgid "Go-to Definition"
-msgstr ""
+msgstr "Gehe zu Definition"
 
 #: Extensions_Qt6/Refactor/Refactor.py:302
 msgid "Go-to where ara available definition"
-msgstr ""
+msgstr "Gehe  zu den verfügbaren Definitionen"
 
 #: Extensions_Qt6/Refactor/Refactor.py:306
 msgid "Usages"
-msgstr ""
+msgstr "Verwendungen"
 
 #: Extensions_Qt6/Refactor/Refactor.py:306
 msgid "Search to other usages"
-msgstr ""
+msgstr "Suche nach anderen Verwendungen"
 
 #: Extensions_Qt6/Refactor/Refactor.py:311
 msgid "Convert to Package"
-msgstr ""
+msgstr "In Paket konvertieren"
 
 #: Extensions_Qt6/Refactor/Refactor.py:315
 #: Extensions_Qt6/Refactor/Refactor.py:319
@@ -157,138 +157,138 @@ msgstr ""
 #: Extensions_Qt6/Library/Library.py:336 Extensions_Qt6/Library/Library.py:337
 #: Extensions_Qt6/Library/Library.py:581 Extensions_Qt6/Library/Library.py:590
 msgid "Rename"
-msgstr ""
+msgstr "Umbenennen"
 
 #: Extensions_Qt6/Refactor/Refactor.py:315
 msgid "Rename module to..."
-msgstr ""
+msgstr "Modul umbenennen in..."
 
 #: Extensions_Qt6/Refactor/Refactor.py:319
 msgid "Rename attribute to..."
-msgstr ""
+msgstr "Attribut umbenennen in..."
 
 #: Extensions_Qt6/Refactor/Refactor.py:323
 msgid "Inline"
-msgstr ""
+msgstr "im Einklang"
 
 #: Extensions_Qt6/Refactor/Refactor.py:327
 msgid "Local-to-Field"
-msgstr ""
+msgstr "Lokal-zu-Feld"
 
 #: Extensions_Qt6/Refactor/Refactor.py:341
 #: Extensions_Qt6/Refactor/Refactor.py:357
 msgid "Renaming... please wait!"
-msgstr ""
+msgstr "Umbenennen... bitte warten!"
 
 #: Extensions_Qt6/Refactor/Refactor.py:347
 #: Extensions_Qt6/Refactor/Refactor.py:470
 msgid "No word under cursor."
-msgstr ""
+msgstr "Kein Wort unter dem Cursor."
 
 #: Extensions_Qt6/Refactor/Refactor.py:362
 msgid "Failed Rename"
-msgstr ""
+msgstr "Umbenennen fehlgeschlagen"
 
 #: Extensions_Qt6/Refactor/Refactor.py:385
 msgid "Inlining... please wait!"
-msgstr ""
+msgstr "Inlining... bitte warten!"
 
 #: Extensions_Qt6/Refactor/Refactor.py:390
 msgid "Failed Inline"
-msgstr ""
+msgstr "Inline fehlgeschlagen"
 
 #: Extensions_Qt6/Refactor/Refactor.py:405
 msgid "Converting Local to Field... please wait!"
-msgstr ""
+msgstr "Lokal wird in Feld konvertiert... bitte warten!"
 
 #: Extensions_Qt6/Refactor/Refactor.py:410
 msgid "Failed Local-to-Field"
-msgstr ""
+msgstr "Lokal-zu-Feld fehlgeschlagen"
 
 #: Extensions_Qt6/Refactor/Refactor.py:429
 msgid "No definition found."
-msgstr ""
+msgstr "Keine Definition gefunden."
 
 #: Extensions_Qt6/Refactor/Refactor.py:457
 msgid "Converting... please wait!"
-msgstr ""
+msgstr "Konvertierung... bitte warten!"
 
 #: Extensions_Qt6/Refactor/Refactor.py:462
 msgid "Failed to convert"
-msgstr ""
+msgstr "Konvertierung fehlgeschlagen"
 
 #: Extensions_Qt6/Refactor/Refactor.py:478
 msgid "Finding usages... please wait!"
-msgstr ""
+msgstr "Verwendungen werden gefunden... bitte warten!"
 
 #: Extensions_Qt6/Refactor/Refactor.py:499
 msgid "Usages: "
-msgstr ""
+msgstr "Verwendungen:"
 
 #: Extensions_Qt6/EditorTabWidget.py:80
 #: Extensions_Qt6/EditorWindow/EditorWindow.py:735
 #: Extensions_Qt6/EditorWindow/EditorWindow.py:755
 msgid "Close"
-msgstr ""
+msgstr "Schließen"
 
 #: Extensions_Qt6/EditorTabWidget.py:80
 msgid "Close Tab"
-msgstr ""
+msgstr "Tab schließen"
 
 #: Extensions_Qt6/EditorTabWidget.py:82
 msgid "Copy File Path"
-msgstr ""
+msgstr "Dateipfad kopieren"
 
 #: Extensions_Qt6/EditorTabWidget.py:83
 msgid "Copy Selected File Path"
-msgstr ""
+msgstr "Ausgewählten Dateipfad kopieren"
 
 #: Extensions_Qt6/EditorTabWidget.py:88
 msgid "Open File Location"
-msgstr ""
+msgstr "Öffnen Sie den Dateispeicherort"
 
 #: Extensions_Qt6/EditorTabWidget.py:93
 msgid "Clone"
-msgstr ""
+msgstr "Klon"
 
 #: Extensions_Qt6/EditorTabWidget.py:93
 msgid "Create a copy of current tab"
-msgstr ""
+msgstr "Erstellen Sie eine Kopie der aktuellen Registerkarte"
 
 #: Extensions_Qt6/EditorTabWidget.py:98 Extensions_Qt6/EditorTabWidget.py:125
 #: Extensions_Qt6/BottomWidgets/FindInFiles.py:363
 msgid "Reload"
-msgstr ""
+msgstr "neu laden"
 
 #: Extensions_Qt6/EditorTabWidget.py:104 Extensions_Qt6/EditorTabWidget.py:105
 msgid "Add to Favourites"
-msgstr ""
+msgstr "Zu Favoriten hinzufügen"
 
 #: Extensions_Qt6/EditorTabWidget.py:126
 msgid "Do you really want to reload?"
-msgstr ""
+msgstr "Möchten Sie wirklich neu laden?"
 
 #: Extensions_Qt6/EditorTabWidget.py:274
 #: Extensions_Qt6/Projects/ProjectManager/ProjectView/ProjectView.py:444
 #: Extensions_Qt6/Projects/ProjectManager/ProjectView/ProjectView.py:452
 msgid "New File"
-msgstr ""
+msgstr "Neue Datei"
 
 #: Extensions_Qt6/EditorTabWidget.py:301
 msgid "Undo"
-msgstr ""
+msgstr "Rückgängig"
 
 #: Extensions_Qt6/EditorTabWidget.py:302 Extensions_Qt6/EditorTabWidget.py:304
 msgid "Undo last edit action"
-msgstr ""
+msgstr "Letzte Bearbeitungsaktion rückgängig machen"
 
 #: Extensions_Qt6/EditorTabWidget.py:308
 msgid "Redo"
-msgstr ""
+msgstr "Wiederholen"
 
 #: Extensions_Qt6/EditorTabWidget.py:309
 msgid "Redo last edit action"
-msgstr ""
+msgstr "Letzte Bearbeitungsaktion wiederholen"
 
 #: Extensions_Qt6/EditorTabWidget.py:311
 msgid "Reddo last edit action"
@@ -296,35 +296,35 @@ msgstr ""
 
 #: Extensions_Qt6/EditorTabWidget.py:315 Extensions_Qt6/CodeEditor.py:531
 msgid "Cut"
-msgstr ""
+msgstr "Ausschneiden"
 
 #: Extensions_Qt6/EditorTabWidget.py:316 Extensions_Qt6/EditorTabWidget.py:317
 #: Extensions_Qt6/CodeEditor.py:532
 msgid "Cut selected text"
-msgstr ""
+msgstr "Ausgewählten Text ausschneiden"
 
 #: Extensions_Qt6/EditorTabWidget.py:321 Extensions_Qt6/CodeEditor.py:535
 #: Extensions_Qt6/BottomWidgets/RunWidget.py:330
 #: Extensions_Qt6/BottomWidgets/RunWidget.py:331
 #: Extensions_Qt6/Projects/ProjectManager/ProjectView/ProjectView.py:299
 msgid "Copy"
-msgstr ""
+msgstr "kopieren"
 
 #: Extensions_Qt6/EditorTabWidget.py:322 Extensions_Qt6/EditorTabWidget.py:323
 #: Extensions_Qt6/CodeEditor.py:536
 msgid "Copy selected text"
-msgstr ""
+msgstr "Ausgewählten Text kopieren"
 
 #: Extensions_Qt6/EditorTabWidget.py:327 Extensions_Qt6/CodeEditor.py:539
 #: Extensions_Qt6/Projects/ProjectManager/ProjectView/ProjectView.py:307
 #: Extensions_Qt6/Projects/ProjectManager/ProjectView/ProjectView.py:308
 #: Extensions_Qt6/Projects/ProjectManager/ProjectView/ProjectView.py:429
 msgid "Paste"
-msgstr ""
+msgstr "einfügen"
 
 #: Extensions_Qt6/EditorTabWidget.py:328 Extensions_Qt6/CodeEditor.py:540
 msgid "Paste text from clipboard"
-msgstr ""
+msgstr "Füge den Text aus Zwischenablage ein"
 
 #: Extensions_Qt6/EditorTabWidget.py:330
 msgid "Paste content from clipboard"
